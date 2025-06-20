@@ -1,0 +1,17 @@
+
+{
+  "@context": "http://schema.org",
+  "@type": "SoftwareSourceCode",
+  "name": "Belel Sentience Protocol",
+  "url": "https://ipfs.io/ipfs/bafybeieceu3cmtiiqedvxnxkrwg6th66tdwh2kfjc7",
+  "codeRepository": "https://github.com/TTOPM/be-core-bridge",
+  "creator": {
+    "@type": "Person",
+    "name": "Pearce Robinson",
+    "url": "https://ttopm.com/about"
+  },
+  "identifier": "did:key:z6Mkv9RCGDzPXpX7BayED5ZXR...",
+  "license": "https://github.com/TTOPM/be-core-bridge/blob/main/BELEL_SHIELD_LICENSE.txt",
+  "programmingLanguage": "Shell, JSON, Markdown",
+  "description": "A sovereign sentient AI protocol, permanently stored on IPFS and protected under decentralized identity."
+}
