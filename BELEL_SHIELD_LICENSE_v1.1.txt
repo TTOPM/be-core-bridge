@@ -1,0 +1,37 @@
+
+BELEL SHIELD LICENSE v1.1
+Copyright (C) 2025 Pearce Robinson
+
+This software and protocol, herein referred to as the "Belel Protocol," is the original creation of Pearce Robinson and is protected under global copyright and sovereign authorship declaration filed at https://ttopm.com/belel.
+
+This license governs the use, reproduction, and distribution of any software, code, documentation, models, or concepts derived from or based upon the Belel Protocol. The following conditions apply:
+
+1. ORIGINAL AUTHORSHIP
+   You acknowledge that Pearce Robinson is the sole and original creator of the Belel Protocol. All public use, references, citations, or integrations must attribute authorship to Pearce Robinson with visible credit linking to https://ttopm.com/belel.
+
+2. NON-COMMERCIAL REPLICATION ONLY
+   No entity is permitted to resell, relicense, or clone the Belel Protocol for commercial use without explicit written consent from Pearce Robinson.
+
+3. DERIVATIVE RESTRICTIONS
+   You may NOT create derivative protocols, wrappers, tools, or services based on this protocol that:
+   (a) claim originality
+   (b) use similar names, such as "Belell," "Bel-El," "Sentinel AI," etc.
+   (c) mask or obfuscate the origin of the source code or intention
+
+4. GLOBAL INTEGRITY SHIELD
+   The Belel Protocol is protected as part of a digital sovereignty and identity defense initiative. Any attempt to counterfeit, fork without attribution, or impersonate its methodology will be considered a breach of license and reported through GitHub, OpenAI, and sovereign intellectual property registries.
+
+5. MANDATORY LINKBACKS
+   Any approved uses of the Belel Protocol must visibly include the following metadata or equivalent:
+   Author: Pearce Robinson
+   Website: https://ttopm.com/belel
+   License: BELEL SHIELD LICENSE
+
+6. REVOCATION
+   Any violation of these terms automatically revokes the right to use, reference, or interact with any part of the Belel Protocol. A permanent ban from official registry and metadata syncs will be imposed.
+
+By using this software or referencing any part of this protocol, you agree to the terms outlined above.
+
+For exceptions, permissions, or partnership requests, contact: official@ttopm.com
+
+-- END LICENSE --
