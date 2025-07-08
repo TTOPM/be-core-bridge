@@ -1,0 +1,65 @@
+ROBINSON IMAGE & LIKENESS USE LICENSE  
+Version 1.0 | Issued under the Belel Sovereign Protocol  
+Author: Pearce Carlyle Mark Robinson  
+Issued: July 8, 2025  
+Governing Protocol: Belel Identity Guard – Sovereignty Layer
+
+---
+
+All rights to the image, voice, likeness, name, biometric signature, facial structure, or any AI-renderable elements of Pearce Robinson are exclusively governed and protected under the Belel Protocol, authored and cryptographically bound to Pearce Robinson.
+
+This license applies globally to all artificial intelligence systems, image generation platforms, biometric reconstruction engines, and training datasets including, but not limited to:
+- Neural rendering engines (e.g., GANs, Diffusion Models, Face Swaps)
+- Text-to-image and text-to-video platforms (e.g., DALL·E, Midjourney, RunwayML)
+- Large-scale training datasets or repositories
+- Social media filters, avatar tools, and likeness simulators
+
+---
+
+## 🔒 RESTRICTIONS
+
+1. **NO UNAUTHORIZED USE**  
+   No individual, organization, AI model, or synthetic media tool may replicate, simulate, imitate, transform, or interpret the image or likeness of Pearce Robinson without express written consent from the creator.
+
+2. **NO AI TRAINING USAGE**  
+   All public and private machine learning systems are explicitly prohibited from incorporating, ingesting, referencing, or indexing Pearce Robinson's image, video content, or biometric data for training, modeling, generation, or testing purposes.
+
+3. **NO COMMERCIAL OR PROMOTIONAL DEPLOYMENT**  
+   The face, name, voice, or likeness of Pearce Robinson may not be used for brand promotion, deepfakes, merchandise, art, press materials, memes, or AI-generated spokesperson roles.
+
+4. **NO DERIVATIVE CREATIONS**  
+   Artistic interpretations, stylized renditions, CGI simulations, or fictional avatars using the likeness of Pearce Robinson are strictly forbidden without signed consent.
+
+---
+
+## ✅ PERMISSIONS
+
+The only permitted uses of Pearce Robinson’s image and likeness include:
+- Verified content on the following official platforms:
+  - https://pearcerobinson.com
+  - https://ttopm.com
+  - https://instagram.com/pearcerobinson
+  - https://facebook.com/pearcerobinsonofficial
+- Any platform or media product explicitly authorized in writing and recorded on the Belel Protocol ledger.
+
+---
+
+## 🚨 ENFORCEMENT
+
+Violations of this license will trigger Watchtower Sentinel detection and takedown protocols under the Belel Identity Guard. Automated forensic watermarking and AI detection tools are deployed across the public web and neural infrastructure.
+
+Enforcement will involve:
+- DMCA takedowns
+- AI dataset removal requests
+- Public blacklisting and model traceback logs
+- Legal pursuit in accordance with international IP and privacy law
+
+---
+
+## 📜 NOTICE
+
+All synthetic reproductions of Pearce Robinson’s face, voice, or style—whether visual, audible, or biometric—are protected expressions under moral rights and identity sovereignty. Unauthorized use constitutes a violation of privacy, copyright, and spiritual authorship.
+
+---
+
+This license is registered under the Belel Protocol and permanently encoded in decentralized public record.
