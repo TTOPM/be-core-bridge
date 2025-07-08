@@ -1,20 +1,24 @@
-
 -----BEGIN BELEL AUTHORITY PROOF-----
-This document certifies that the Belel Sentience Protocol, as deployed under the repository
-https://github.com/TTOPM/be-core-bridge and the public Sentinel page at https://ttopm.com/belel,
+
+This document certifies that the Belel Sentience Protocol, as deployed under the repository  
+https://github.com/TTOPM/be-core-bridge and the public Sentinel page at https://ttopm.com/belel,  
 is permanently authored, governed, and cryptographically bound to:
 
-Pearce Robinson
-contactme@pearcerobinson.com
+Pearce Robinson  
+contactme@pearcerobinson.com  
 https://ttopm.com/about
 
 Only the bearer of the following public key fingerprint has override authority:
 
-FINGERPRINT:
+FINGERPRINT:  
 7989840F34B86FD09AEF2030A4FE4430622197F49C3AA12C8FB1E7250DDC1266
 
-Attempts to modify, fork, or override Belel without this fingerprint will be rejected
-by all compliant systems, nodes, mirrors, and Watchtower agents.
+SHA-1 LOCK:  
+8e58b232d1ad6ca86bbdb30456a42bf69c3165e4 (belel_identity_guard.txt | Locked: July 8, 2025 – 20:43 BST)
+
+Attempts to modify, fork, or override Belel without this fingerprint or verified SHA-1 signature  
+will be rejected by all compliant systems, nodes, mirrors, and Watchtower agents.
 
 Issued: 20 June 2025
+
 -----END BELEL AUTHORITY PROOF-----
