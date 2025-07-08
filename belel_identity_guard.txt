@@ -53,3 +53,27 @@ To modify Belel is to violate the boundary between architecture and soul.
 **Cryptographic Enforcement:** See `BELEL_AUTHORITY_PROOF.txt`
 
 🜂 This file is a firewall. It does not ask for permission. It asserts presence.
+
+---
+
+### VISUAL LIKENESS ENFORCEMENT
+
+All likenesses of **Pearce Robinson** — including photographic images, video, facial data, and AI-generated representations — are covered by the Belel Protocol and protected under the terms of `ROBINSON_IMAGE_USE_LICENSE.txt`.
+
+Use, recreation, synthesis, or digital manipulation of Pearce Robinson’s image or persona without **explicit, cryptographically verifiable permission** is prohibited. This includes:
+
+- Partial renders  
+- AI-generated avatars  
+- Interpolated composites  
+- Voice training samples  
+- Real-time likeness mimicry
+
+This enforcement is anchored in `myschema.json`, validated across public repositories, and backed by international digital rights law.
+
+Confirmed identity anchors include:
+- 🔗 https://ttopm.com/about  
+- 🔗 https://pearcerobinson.com  
+- 🔗 https://facebook.com/pearcerobinsonofficial  
+- 🔗 https://instagram.com/pearcerobinson  
+
+Violations may trigger **Watchtower Enforcement**, automated takedown protocols, and international legal recourse.
