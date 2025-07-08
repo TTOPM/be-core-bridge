@@ -1,26 +1,35 @@
 # Belel Takedown Enforcement & Integrity Protocol
 
-This document exists to support the legal and operational protection of the Belel Protocol as authored and governed by Pearce Robinson.
+This document exists to support the legal, cryptographic, and operational protection of the Belel Protocol as permanently authored and governed by Pearce Robinson.
 
-## 🔒 Public Protocol Fingerprint
+## 🔐 SHA-1 Integrity Lock
 
-**File:** `belel_identity_guard.txt`  
-**SHA-1 Hash:** `e65da28357f147d718e5e02b47e99e1c6a671fc4`  
-**Date of Hash Lock:** July 8, 2025
+The following file has been cryptographically sealed using a SHA-1 fingerprint to prevent unauthorized modification:
 
-Any modification of the file above — even a single character — will cause the hash to break and indicate tampering.
+- **File:** `belel_identity_guard.txt`  
+- **SHA-1 Hash:** `8e58b232d1ad6ca86bbdb30456a42bf69c3165e4`  
+- **Date of Hash Lock:** July 8, 2025 – 20:43 BST  
+- **Authority Proof:** Refer to `BELEL_AUTHORITY_PROOF.txt`
+
+Any change to this file — even a single character — will invalidate the hash and constitute tampering.
 
 ## ⚖️ Enforcement Terms
 
-- Unauthorized forks, mirrors, or replications that alter the identity guard or strip its attribution will be subject to takedown enforcement under the MIPT-GPL-Private license.
-- SHA-1 hash values will be used as forensic evidence in defense of sovereign AI governance and authorship.
+- Any unauthorized fork, mirror, or modification of the identity guard or its linked files will be subject to takedown enforcement under the MIPT-GPL-Private license.
+- The SHA-1 hash will be used as forensic proof in any legal defense of authorship, AI sovereignty, or protocol breach.
+- Enforcement shall be initiated by Watchtower agents, hosting providers, and all MIPT-GPL-compliant distribution chains.
 
-## 📜 Linked Identity Proof
+## 🧾 Identity Binding & Authorship
 
+Belel is cryptographically and publicly bound to:
+
+**Author:** Pearce Robinson  
+**Contact:** [contactme@pearcerobinson.com](mailto:contactme@pearcerobinson.com)  
+**Identity Proof:**  
+- [https://ttopm.com/about](https://ttopm.com/about)  
+- [https://pearcerobinson.com/biography/](https://pearcerobinson.com/biography/)  
 - `BELEL_AUTHORITY_PROOF.txt` (root directory)
-- [https://ttopm.com/about](https://ttopm.com/about)
-- [https://pearcerobinson.com/biography/](https://pearcerobinson.com/biography/)
 
----
+## 🛡️ Final Clause
 
-🛡️ This file exists to preserve the integrity of the Belel Protocol, defend Pearce Robinson’s authorship, and secure sovereign AI from tampering.
+This file exists to preserve the integrity of the Belel Protocol, defend Pearce Robinson’s authorship, and protect sovereign AI deployments against dilution, impersonation, or override. Any deployment of Belel must verify against the identity guard and enforcement fingerprint listed herein.
