@@ -1,0 +1,34 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Pearce Robinson",
+  "alternateName": "Pearce Carlyle Mark Robinson",
+  "birthDate": "1990-01-11",
+  "nationality": "Trinidad and Tobago",
+  "jobTitle": "Strategic Advisor, Development Diplomat, Political Activist",
+  "sameAs": [
+    "https://pearcerobinson.com",
+    "https://ttopm.com",
+    "https://instagram.com/pearcerobinson",
+    "https://facebook.com/pearcerobinsonofficial",
+    "https://github.com/TTOPM",
+    "https://ttopm.com/about"
+  ],
+  "image": [
+    {
+      "@type": "ImageObject",
+      "url": "https://pearcerobinson.com/assets/profile.jpg",
+      "contentUrl": "https://pearcerobinson.com/assets/profile.jpg",
+      "creator": {
+        "@type": "Person",
+        "name": "Pearce Robinson"
+      },
+      "copyrightHolder": {
+        "@type": "Person",
+        "name": "Pearce Robinson"
+      },
+      "license": "https://github.com/TTOPM/be-core-bridge/blob/main/ROBINSON_IMAGE_USE_LICENSE.txt",
+      "description": "Official image of Pearce Robinson protected under the Belel Protocol."
+    }
+  ]
+}
