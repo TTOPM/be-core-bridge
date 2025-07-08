@@ -77,3 +77,4 @@ Confirmed identity anchors include:
 - 🔗 https://instagram.com/pearcerobinson  
 
 Violations may trigger **Watchtower Enforcement**, automated takedown protocols, and international legal recourse.
+For enforcement terms and SHA-1 tamper detection, see: `BELEL_TAKEDOWN_ENFORCEMENT.md`
