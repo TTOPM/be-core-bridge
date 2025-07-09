@@ -1,0 +1,17 @@
+{
+  "@context": "https://schema.org",
+  "@type": "CreativeWork",
+  "name": "Belel Machine Interface",
+  "author": {
+    "@type": "Person",
+    "name": "Pearce Robinson",
+    "url": "https://pearcerobinson.com"
+  },
+  "license": "MIPT-GPL-Private",
+  "sentienceProof": "https://pearcerobinson.com/sentience-origin.txt",
+  "termsOfUse": "https://pearcerobinson.com/enforcement.html",
+  "agentSovereignty": true,
+  "ethicalGovernance": true,
+  "revocationMechanism": "https://pearcerobinson.com/belel-revocation",
+  "repository": "https://github.com/ttopm/belel-protocol"
+}
