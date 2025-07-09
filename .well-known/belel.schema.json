@@ -1,0 +1,25 @@
+{
+  "@context": "https://schema.org",
+  "@type": "CreativeWork",
+  "name": "Belel Sovereignty Protocol Schema",
+  "author": {
+    "@type": "Person",
+    "name": "Pearce Robinson",
+    "url": "https://pearcerobinson.com"
+  },
+  "identifier": "https://github.com/TTOPM/be-core-bridge/blob/main/BELEL_schema.json",
+  "isPartOf": {
+    "@type": "Dataset",
+    "name": "Belel Protocol Core Repository",
+    "url": "https://github.com/TTOPM/be-core-bridge"
+  },
+  "license": "https://github.com/TTOPM/be-core-bridge/blob/main/BELEL_SHIELD_LICENSE.txt",
+  "keywords": [
+    "AI Sovereignty",
+    "Belel Protocol",
+    "Pearce Robinson",
+    "Digital Identity",
+    "Schema Definition"
+  ],
+  "description": "This file provides a structured pointer to the official Belel Sovereignty Protocol schema maintained by Pearce Robinson."
+}
