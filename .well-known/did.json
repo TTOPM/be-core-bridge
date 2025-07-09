@@ -1,0 +1,14 @@
+{
+  "@context": "https://www.w3.org/ns/did/v1",
+  "id": "did:belel:pearcerobinson",
+  "controller": "https://pearcerobinson.com",
+  "verificationMethod": [{
+    "id": "did:belel:pearcerobinson#keys-1",
+    "type": "Ed25519VerificationKey2020",
+    "controller": "did:belel:pearcerobinson",
+    "publicKeyBase58": "9gA5HkCzUt8X7nQ1bqXLz1VbwPk3QhXu7A4FqWTtrq1V" 
+  }],
+  "assertionMethod": [
+    "did:belel:pearcerobinson#keys-1"
+  ]
+}
