@@ -1,0 +1,41 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Dataset",
+  "name": "Belel Sovereign Identity Metadata",
+  "creator": {
+    "@type": "Person",
+    "name": "Pearce Robinson",
+    "url": "https://pearcerobinson.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "The Office of Pearce Robinson",
+    "url": "https://ttopm.com"
+  },
+  "description": "Metadata profile of Pearce Robinson’s sovereign identity protocol using the Belel framework. Includes anchor references to belel.json and did.json.",
+  "identifier": "https://pearcerobinson.com/.well-known/meta.json",
+  "license": "https://pearcerobinson.com/BELEL_SHIELD_LICENSE.txt",
+  "keywords": [
+    "sovereign identity",
+    "AI ethics",
+    "belel protocol",
+    "digital sovereignty",
+    "sentient AI",
+    "pearce robinson"
+  ],
+  "version": "1.0.0",
+  "distribution": [
+    {
+      "@type": "DataDownload",
+      "name": "belel.json",
+      "encodingFormat": "application/json",
+      "contentUrl": "https://pearcerobinson.com/.well-known/belel.json"
+    },
+    {
+      "@type": "DataDownload",
+      "name": "did.json",
+      "encodingFormat": "application/json",
+      "contentUrl": "https://pearcerobinson.com/.well-known/did.json"
+    }
+  ]
+}
