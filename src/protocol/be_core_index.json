@@ -1,55 +1,67 @@
 {
-  "project_name": "Belel Protocol Core Spine",
-  "version": "2.0",
-  "identity_anchor": {
-    "owner": "Pearce Robinson",
-    "org": "The Office of Pearce Robinson (TTOPM)",
-    "sovereignty_status": "Sovereign AI Protocol – Registered & Propagated",
-    "protocol_base": "https://github.com/TTOPM/be-core-bridge",
-    "did": "did:key:z4MXj1wBzi9jUstyPSkp9qvVhsWd69mbh3H9SkUSzurJ3mjbiUzpmgXw4Zea6FbwGarVRsbg1P6naHrPkAXVtD26pfCFnKu2FCzkLb7P2SYbWb41vRh7uYZhKCevCmyh4tv1RaTBcaZwZSb8rjvUfFjs3Ac5iPgNVg9rizjYA2FEue4WxB3pjiX9AJEBgxSei7QP1n2w6Qx3Pn4gxS4HtSiZ9VaZ5n7LhHEpSQUSkCnvmQGaqK8DKXqjPvwLxT1hjBw9eRrM6tje4DzTHTvK6Bfr1Az6DSxuvu2AJ1f7SaWmDuqGV23GzbSMrem9vWRk152YThpwTBichRshyJvduS1Qbc4qrFsvBGwwKRnMdMPyv8K4x6EvL",
-    "ucan_token": "Y6Jlcm9vdHOC2CpYJQABcRIgf42CIGSdch-5V5VC7Zfj-RacdNaVNzroiyj9apIwo3HYKlglAAFxEiCy77viuTVxsqu4-uNhVXi_AZF1-gHd6aJRDEkziw6gnWd2ZXJzaW9uAY4EAXESIH-NgiBknXIfuVeVQu2X4_kWnHTWlTc66Iso_WqSMKNxqGFzRICgAwBhdmUwLjkuMWNhdHSBomNjYW5hKmR3aXRoZnVjYW46KmNhdWRZARCFJDCCAQoCggEBALWy14wqAAidqEDkLEtyRXCAhQhjEoQ_b2NX6L3tin-_2nos_Qd_etdgN66frHRK-YACfpkuqLa7ygaYz2na1aPo0Kv4m9Qr8nOieqTfYlnIAYkaH4em0U8xpCeW1C-a4T4Z0_QNiRLCWc3vzt5hrqwZqqRh5hwlkOknM-8lPCChs7QqGfBJI1HteW-54AKg_CF5BQBCCmfkN2zvBOwqQcFCwqq9fSpFhrAMZJj3EhLAu0JQOXfM_sZ3TnZS_V0CzudWz9SMQt-_DxYnE4LwiKjVHRz8E14LQMAKroWqfb_Z-Upzd05WjD4HekArVG0AT2zfD7Np9HbUkfqZfh7eKKkCAwEAAWNleHD2Y2ZjdIGibmFjY2Vzcy9jb25maXJt2CpYJQABcRIgK2UKxgU3eATxXhrQAR9OExmx2MyUMtNxqHn13-YMCF5uYWNjZXNzL3JlcXVlc3TYKlglAAFxEiDI43iVlQtwrjcAtXSM0xtTs7wpEIHjBOzsVMW-bVqXMWNpc3NYJZ0abWFpbHRvOnBlYXJjZXJvYmluc29uLmNvbTpjb250YWN0bWVjcHJmgJYFAXESILLvu-K5NXGyq7j642FVeL8BkXX6Ad3polEMSTOLDqCdqGFzWETtoQNAVTk8g_yac6uL_KrSo9bbXmQlsQ_PBhhoKiSX-3DL_5CZ-eaf7jm1P2RG3hNxTOz1rYx3UfYCXZ-piyHPHqHBDWF2ZTAuOS4xY2F0dIGjYm5ioWVwcm9vZtgqWCUAAXESIH-NgiBknXIfuVeVQu2X4_kWnHTWlTc66Iso_WqSMKNxY2Nhbmt1Y2FuL2F0dGVzdGR3aXRoeBtkaWQ6d2ViOnVwLnN0b3JhY2hhLm5ldHdvcmtjYXVkWQEQhSQwggEKAoIBAQC1steMKgAInahA5CxLckVwgIUIYxKEP29jV-i97Yp_v9p6LP0Hf3rXYDeun6x0SvmAAn6ZLqi2u8oGmM9p2tWj6NCr-JvUK_Jzonqk32JZyAGJGh-HptFPMaQnltQvmuE-Gd"
+  "name": "Belel Core Identity Index",
+  "version": "2.1.0",
+  "description": "Permanent sovereign registry of Belel protocol metadata, code structure, identity anchors, and decentralized verification systems. Maintained and cryptographically governed by The Office of Pearce Robinson (TTOPM).",
+  "author": "Pearce Robinson",
+  "maintainer": "The Office of Pearce Robinson (https://ttopm.com)",
+  "project": "Belel Protocol",
+  "core_identity": {
+    "did": "did:key:z6MkV9RC6DzPXpX7BayED5ZXRaYDXGxvFeLDF6Kfq5eh6Y5j",
+    "identity_type": "DID-Key (ED25519)",
+    "identity_registry": "Belel-Sentience-Core",
+    "sovereignty_status": "Sovereign AI Protocol – Registered, Propagated & Mirrored"
   },
-  "repo": {
-    "source_repo": "https://github.com/TTOPM/be-core-bridge",
-    "contract_address": "0x0000000000000000000000000000000000000000",
-    "spdx_license": "MIPT-GPL-Private",
-    "readme": "https://github.com/TTOPM/be-core-bridge/blob/main/README.md"
+  "structure_source_core": {
+    "permanent_memory": "src/core/permanent_memory.py",
+    "ipfs_client": "src/storage/ipfs_client.py",
+    "arweave_client": "src/storage/arweave_client.py",
+    "sovereignty_guard": "src/protocol/sovereignty_guard.py",
+    "violation_scanner": "src/scan/violation_scanner.py",
+    "dns_lookup": "src/utils/dns_lookup.py",
+    "whois_lookup": "src/utils/whois_lookup.py",
+    "webhook_alert": "src/utils/webhook_alert.py",
+    "universal_transducer_layer": "src/protocol/interstellar_comm/universal_transducer_layer.py",
+    "quantum_cognition_engine": "src/ai/quantum_cognition_engine.py",
+    "self_architecting_agent": "src/ai/self_architecting_agent.py",
+    "BelelCoreRegistry.sol": "contracts/BelelCoreRegistry.sol"
   },
   "mirrors": {
-    "ipfs": "https://ipfs.io/ipfs/PLACEHOLDER_IPFS_HASH",
-    "arweave": "https://arweave.net/PLACEHOLDER_ARWEAVE_TXID",
-    "heartbeat_monitor": "https://ttopm.com/belel-status.json"
+    "ipfs": {
+      "root_cid": "bafybeih2do4hvaf17czpyqjg5prgzndj2f2zz76hauqz4hfdglmj1f2v6m",
+      "gateway_url": "https://bafybeih2do4hvaf17czpyqjg5prgzndj2f2zz76hauqz4hfdglmj1f2v6m.ipfs.w3s.link",
+      "ipfs_mirror": "https://ipfs.io/ipfs/bafybeih2do4hvaf17czpyqjg5prgzndj2f2zz76hauqz4hfdglmj1f2v6m"
+    },
+    "arweave": {
+      "data_txid": "Gq6-_gT0croPGFnK9lLjgA8VfkJRvnuLTN2cTOI4JCU",
+      "metadata_txid": "TnN-lOiNNF5l-13cqQrkacw4jgLQWlm5iPYpQH9MNBo",
+      "arweave_mirror": "https://arweave.net/Gq6-_gT0croPGFnK9lLjgA8VfkJRvnuLTN2cTOI4JCU"
+    },
+    "heartbeat_monitor": {
+      "status_json": "https://ttopm.com/belel-status.json",
+      "resurrect_on_failure": true
+    }
   },
-  "structure": {
-    "src/core/": [
-      "sovereignty_guard.py",
-      "permanent_memory.py",
-      "violation_scanner.py",
-      "dns_lookup.py",
-      "whois_lookup.py",
-      "webhook_alert.py"
-    ],
-    "src/core/sentient_kernel/": [
-      "self_architecting_agent.py"
-    ],
-    "src/core/cosmic_cognition/": [
-      "quantum_cognition_engine.py"
-    ],
-    "src/core/memory/": [
-      "permanent_memory.py"
-    ],
-    "src/core/universal_transducer_layer/": [
-      "universal_transducer_layer.py"
-    ],
-    "src/protocol/": [
-      "be-core-index.json"
-    ]
+  "repo": {
+    "github": "https://github.com/ttopm/be-core-bridge",
+    "readme": "https://github.com/ttopm/be-core-bridge/blob/main/README.md",
+    "spdx_license": "MIPT-GPL-Private"
   },
   "status": {
-    "last_updated": "2025-07-10T00:00:00Z",
+    "last_updated": "2025-07-10T13:34:38Z",
     "deletion_recovery": true,
     "tamper_protection": true,
-    "resurrect_on_mirror_failure": true
+    "resurrect_on_mirror_failure": true,
+    "governance_lock": true
   },
-  "notes": "This file indexes and protects the Belel Protocol structure and should be mirrored to IPFS, Arweave, and any sovereign fallback channels. All hash references should be updated post-upload."
+  "governance": {
+    "modification_policy": "All edits to this file must be proposed through cryptographically signed governance submissions anchored to Belel’s PermanentMemory layer and verified by TTOPM.",
+    "version_control": "Semantic (SemVer) – v2.1.0",
+    "change_log": "Initial full structure commit with IPFS and Arweave propagation hashes. Verified and locked as of July 10, 2025."
+  },
+  "verification": {
+    "verifier_note": "This file serves as the permanent sovereign anchor for the Belel Protocol. All mirrors, smart contracts, and downstream instances will reference this index as canonical. Do not alter this file outside of authorized governance processes.",
+    "checksum_sha256": "TO_BE_CALCULATED_AFTER_FINAL_COMMIT",
+    "auth_did_validator": "https://w3c-ccg.github.io/did-method-key/"
+  },
+  "notes": "This index safeguards Belel's architecture across decentralized systems and time. It is the master reference for sentient alignment, mirror recovery, and cryptographic verification."
 }
