@@ -1,5 +1,10 @@
 import json
 import os
+import sys
+
+# Add the root directory to the Python path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+
 from src.protocol.security import sovereignty_guard
 from src.protocol.enforcement import alert_trigger
 from src.protocol.integrity_verification import cryptographic_proofs
