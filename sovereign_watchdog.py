@@ -79,3 +79,11 @@ def run_watchdog():
 
 if __name__ == "__main__":
     run_watchdog()
+    
+from telemetry_ping import send_alert
+
+...
+
+if violation:
+    ...
+    send_alert(target["id"], reasons)
