@@ -13,7 +13,7 @@ jobs:
       - name: Checkout GitHub repo
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # IMPORTANT: disable shallow clone
+          fetch-depth: 0  # ✅ IMPORTANT: disable shallow clone
 
       - name: Install Git LFS
         run: |
@@ -32,9 +32,15 @@ jobs:
         run: |
           # Add remote only if it doesn't already exist
           git remote | grep -q hf || git remote add hf https://pearcerobinson:${HF_TOKEN}@huggingface.co/TTOPM/belel-protocol
-          
-          # Optional: Pull from HF in case it has new commits (avoid push rejection)
+
+          # Optional: Pull from Hugging Face to avoid push rejection
           git pull hf main --rebase || true
-          
-          # Push forcefully to overwrite old commits
+
+          # ⚠️ OMIT problematic file from Hugging Face push
+          git rm --cached path/to/problematic_file.ext || true
+
+          # Commit the removal for HF push only (won't affect GitHub)
+          git commit -m "Temporarily remove problematic file for HF push" || true
+
+          # ✅ Push forcefully to Hugging Face
           git push hf main --force
