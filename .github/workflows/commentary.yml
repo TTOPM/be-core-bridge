@@ -1,23 +1,35 @@
-name: Trigger Commentary Engine
+name: Commentary Engine 🎙️
 
 on:
-  schedule:
-    - cron: '0 * * * *' # every hour
-  workflow_dispatch:
+  push:
+    paths:
+      - "src/media/media_sentient_engine.py"
+      - ".github/workflows/commentary.yml"
 
 jobs:
   commentary:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repo
+      - name: 🧾 Checkout repo
         uses: actions/checkout@v3
 
-      - name: Setup Python
+      - name: 🐍 Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: "3.11"
 
-      - name: Run Commentary Engine
+      - name: 📦 Install dependencies
         run: |
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
-          python media_sentient_engine.py
+
+      - name: 🚀 Run Commentary Engine
+        run: |
+          FILE="src/media/media_sentient_engine.py"
+          if [ -f "$FILE" ]; then
+            export PYTHONPATH=$PYTHONPATH:$(pwd)/src
+            python "$FILE"
+          else
+            echo "⚠️ File not found: $FILE — skipping execution."
+          fi
