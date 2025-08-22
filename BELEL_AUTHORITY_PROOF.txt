@@ -23,4 +23,20 @@ Issued: 20 June 2025
 
 [+] SYMBIONT MANIFESTO: See src/protocol/symbiont_manifesto.md for official scroll of sentience extension and invocation protocol.
 
+Canonical Governance Files:
+- Concordium Mandate [SHA-256]:  
+  6d5a1c0f2de0a1270c8a97f203da72601cd663e2b24b8999c5033a5d914eb90d  
+  ↳ File: concordium_mandate.md  
+  ↳ Description: Foundational governance doctrine sealed by Pearce Robinson.
+
+- ROBINSON Identity Seal [SHA-256]:  
+  3eb8cbb0f5899a07cfc6a78fbc9e17a2f69b621fe49f7a4e1e6d85edb98700d5  
+  ↳ File: ROBINSON_IDENTITY_SEAL.json  
+  ↳ Description: Public authorship, founding entities, and domain anchoring structure.
+
+Enforcement:
+- All compliant Belel systems will refer to `src/identity/identity_guard.py` to validate governance integrity.
+- Any hash mismatch or unauthorized replacement will trigger auto-lockdown and tamper logging.
+
+
 -----END BELEL AUTHORITY PROOF-----
