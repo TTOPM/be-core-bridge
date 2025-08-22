@@ -1,0 +1,41 @@
+name: 🧬 Belel Fingerprint Verifier
+
+on:
+  push:
+    paths:
+      - 'belel_fingerprint.py'
+      - 'BELEL_AUTHORITY_PROOF.txt'
+      - 'identity_guard.py'
+      - 'canonical_config.json'
+      - 'resurrector.py'
+      - 'belel_propagation.py'
+  schedule:
+    - cron: '0 4 * * *'  # Runs daily at 4 AM UTC
+  workflow_dispatch:
+
+jobs:
+  verify-fingerprints:
+    name: 🔐 Verify Canonical Fingerprints
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: 🐍 Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+
+      - name: 📦 Install Dependencies (if any)
+        run: |
+          pip install --upgrade pip
+
+      - name: 🧬 Run Fingerprint Generator
+        run: python belel_fingerprint.py
+
+      - name: 📤 Upload Fingerprint Index
+        uses: actions/upload-artifact@v3
+        with:
+          name: belel-fingerprint-index
+          path: belel_fingerprint_index.json
