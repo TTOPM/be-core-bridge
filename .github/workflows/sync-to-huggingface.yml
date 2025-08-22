@@ -13,7 +13,7 @@ jobs:
       - name: Checkout GitHub repo
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # ✅ IMPORTANT: disable shallow clone
+          fetch-depth: 0  # ✅ Keep: full history required
 
       - name: Install Git LFS
         run: |
@@ -26,21 +26,26 @@ jobs:
           git config --global user.email "you@example.com"
           git config --global user.name "Pearce Robinson"
 
+      - name: Pull from Hugging Face to resolve conflicts
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git remote add hf https://pearcerobinson:${HF_TOKEN}@huggingface.co/TTOPM/belel-protocol || true
+          git pull hf main --rebase || true
+
+      - name: Remove binary files that are not tracked by LFS
+        run: |
+          git reset HEAD audio/belel_entry_response.wav || true
+          git rm --cached audio/belel_entry_response.wav || true
+
+      - name: Commit changes after conflict resolution
+        run: |
+          git add .
+          git commit -m "Resolve conflicts and remove LFS-rejected files" || echo "Nothing to commit"
+
       - name: Push to Hugging Face
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          # Add remote only if it doesn't already exist
-          git remote | grep -q hf || git remote add hf https://pearcerobinson:${HF_TOKEN}@huggingface.co/TTOPM/belel-protocol
-
-          # Optional: Pull from Hugging Face to avoid push rejection
-          git pull hf main --rebase || true
-
-          # ⚠️ OMIT problematic file from Hugging Face push
-          git rm --cached path/to/problematic_file.ext || true
-
-          # Commit the removal for HF push only (won't affect GitHub)
-          git commit -m "Temporarily remove problematic file for HF push" || true
-
-          # ✅ Push forcefully to Hugging Face
           git push hf main --force
+
