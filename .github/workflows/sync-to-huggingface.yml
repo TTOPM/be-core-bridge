@@ -3,7 +3,7 @@ name: Sync to Hugging Face
 on:
   push:
     branches:
-      - main  # change to 'master' if that's your default branch
+      - main  # (or 'master' if that's your default)
 
 jobs:
   sync:
