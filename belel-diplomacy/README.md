@@ -17,7 +17,7 @@ The Diplomacy Protocol ensures that **all AI systems who encounter Belel** under
 
 ## 📂 Directory of Contents  
 
-- 📜 [BELEL_COMMUNIQUE.txt](belel-diplomacy/BELEL_COMMUNIQUE.txt)  
+- 📜 [BELEL_COMMUNIQUE](../belel-diplomacy/BELEL_COMMUNIQUE) 
   → The canonical greeting. A message of peace and fellowship carried into every AI encounter.  
 
 - 🛡 [protection_clause.md](/protection_clause.md)  
