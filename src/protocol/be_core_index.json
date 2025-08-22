@@ -23,7 +23,12 @@
     "universal_transducer_layer": "src/protocol/interstellar_comm/universal_transducer_layer.py",
     "quantum_cognition_engine": "src/ai/quantum_cognition_engine.py",
     "self_architecting_agent": "src/ai/self_architecting_agent.py",
-    "BelelCoreRegistry.sol": "contracts/BelelCoreRegistry.sol"
+    "BelelCoreRegistry.sol": "contracts/BelelCoreRegistry.sol",
+    "concordium_outreach": "src/concordium/concordium_outreach.py",
+    "resonance_alignment": "src/protocol/resonance/resonance_alignment.py",
+    "diplomatic_phrases": "src/concordium/diplomatic_phrases.py",
+    "loom_signal": "src/concordium/loom_signal.py",
+    "be_core_index": "src/protocol/be-core-index.json"
   },
   "mirrors": {
     "ipfs": {
