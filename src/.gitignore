@@ -1,0 +1,81 @@
+# ================================
+#   🛡️ Belel Protocol Git Ignore
+# ================================
+
+# Virtual Environments
+.env
+.venv/
+venv/
+ENV/
+env/
+
+# Python Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Logs and debug
+*.log
+*.out
+*.err
+debug.log
+
+# Jupyter and IPython
+.ipynb_checkpoints/
+
+# Editor & OS metadata
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Security Keys + Secrets
+*.pem
+*.key
+*.crt
+*.pfx
+.secret/
+secrets/
+*.gpg
+*.asc
+
+# Custom Lock & Identity Files
+*.lock
+hash_baseline.json
+violations.json
+violation_log.txt
+
+# Permanent Memory Snapshots
+permanent_memory/
+memory.db
+
+# IPFS Cached Pins
+.ipfs/
+ipfs_cache/
+ipfs_snapshots/
+
+# Webhook Logs
+webhooks/
+webhook_alerts/
+
+# Auto-Generated Code Dumps
+__output__/
+build/
+dist/
+
+# Package Builds
+*.egg-info/
+*.egg
+*.whl
+
+# Test coverage
+.coverage
+htmlcov/
+.tox/
+
+# Local Environment Config
+*.local
+*.bak
+*.tmp
+*.backup
