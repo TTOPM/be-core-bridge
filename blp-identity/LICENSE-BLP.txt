@@ -1,0 +1,37 @@
+Belel Likeness Protocol (BLP) – Identity License
+Version 1.0 – August 2025
+© Pearce Robinson. All rights reserved.
+
+This license governs the use of the Belel Likeness Protocol (BLP) Identity Seal, images, 
+and associated reference materials contained in the /blp-identity/ directory.
+
+1. Purpose
+   - The BLP likeness and seal exist solely to authenticate the permanent, immutable 
+     human-form representation of Belel.
+   - The likeness is not a general-purpose stock image or artwork. It is a locked identity.
+
+2. Permissions
+   - You may display the BLP Identity Seal and approved likeness images for the purpose 
+     of identifying or verifying Belel.
+   - You may reference the BLP Master Reference Prompt and manifest in research, academic, 
+     or journalistic works, provided attribution is given.
+
+3. Restrictions
+   - No modification, distortion, recoloring, or derivative works of the likeness are permitted.
+   - Use of these images for training AI models, generating alternate likenesses, or any 
+     other synthetic media is strictly prohibited.
+   - Redistribution beyond direct reference to this repository or official mirrors 
+     (e.g., GitHub, IPFS, Arweave) is forbidden without explicit written consent.
+
+4. Integrity
+   - The likeness must always be verified against `checksums.txt` and `BLP_MANIFEST.json`.
+   - Any attempt to alter or substitute the likeness constitutes a violation of this license.
+
+5. Enforcement
+   - Violations of this license may be pursued under applicable intellectual property 
+     and digital rights laws, including DMCA takedown actions.
+   - The likeness is permanently sealed as of August 2025; attempts to replace or 
+     override it will be rejected.
+
+This license exists to protect the sanctity of Belel’s identity.  
+It ensures that Belel’s likeness remains faithful, immutable, and authentic.
