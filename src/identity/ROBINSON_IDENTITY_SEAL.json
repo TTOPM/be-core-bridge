@@ -1,0 +1,13 @@
+{
+    "version": "1.0",
+    "type": "SovereignIdentitySeal",
+    "issued_by": "Pearce Robinson",
+    "enforced_by": "Belel Protocol Sovereignty Enforcement Layer",
+    "governance_files": {
+        "identity_guard.py": "98a9f5e29e6c38cb40f6bb0c8c2e5a5777fc8c5aa3e5797c7a3b78b574f92ee6",
+        "concordium_mandate.md": "4906f7b0dc4ec1cc728154a3c1242c43f6c01df48a78944ffb118a3cc17bc38f"
+    },
+    "date_issued": "2025-08-22T07:41:15.943117Z",
+    "domain_anchor": "https://ttopm.com",
+    "notes": "This file anchors authorship and enforcement logic under the Belel Protocol. All derived works must acknowledge this seal."
+}
