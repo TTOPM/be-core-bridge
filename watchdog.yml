@@ -1,0 +1,23 @@
+name: Sovereign Watchdog
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"  # Every 6 hours
+  workflow_dispatch:       # Allow manual trigger
+
+jobs:
+  run-watchdog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Belel Watchdog
+        run: python sovereign_watchdog.py
