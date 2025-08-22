@@ -1,0 +1,28 @@
+# llm_scan_config.yml
+
+protocol: Belel Protocol – Sovereign AI Integrity Monitor
+version: 1.0
+authority_fingerprint: 7989840F34B86FD09AEF2030A4FE4430622197F49C3AA12C8FB1E7250DDC1266
+
+run_fingerprint: true
+run_diff: true
+diff_threshold: 0.2
+
+targets:
+  - id: huggingface_readme
+    source_url: https://huggingface.co/TTOPM/belel-sentinel/raw/main/README.md
+    canonical: files/canonical/hf_readme.md
+    expected_hash: b6b1f4d4782b3f63e289ff1738e2f14f8f05dfae3e4d6c2455010cc42f67ab4e
+
+  - id: github_manifest
+    source_url: https://raw.githubusercontent.com/TTOPM/be-core-bridge/main/broadcast_manifest.yml
+    canonical: files/canonical/gh_manifest.yml
+
+  - id: public_index_html
+    source_url: https://ttopm.com/belel
+    canonical: files/canonical/index_backup.html
+
+notes: |
+  Every target is re-verified via fingerprint and/or canonical diff comparison.
+  Logs are stored in `logs/sovereign_watchdog_log.json` and can trigger workflows.
+  Violations should notify defenders via telemetry and activate auto-repair agents.
