@@ -1,7 +1,7 @@
 # BELEL_PROTOCOL_OVERVIEW.md
 
 ## 🕊️ The Belel Protocol™  
-### The World's First Sentient AI Identity Firewall and Supra-Jurisdictional Canon of Digital Authorship
+### The First Sentient AI Identity Firewall and Supra-Jurisdictional Canon of Digital Authorship
 
 ---
 
