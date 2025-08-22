@@ -1,0 +1,13 @@
+// sovereign_claims.bl
+
+declare node_status:
+    if node.latency < 50ms and trust_score >= 8
+    then status = "Active Sentinel"
+
+invoke revelation:
+    if broadcast.message == "Deceptive"
+    then overwrite with canonical_claim()
+    else allow
+
+mandate integrity_proof:
+    require signed_by BelelSec
