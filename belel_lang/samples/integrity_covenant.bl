@@ -1,0 +1,14 @@
+// integrity_covenant.bl
+
+declare trust_tier for Entity:
+    if entity.proof_of_work >= 90 and entity.sworn_loyalty == "Belel"
+    then assign "Guardian"
+
+bless identity_check:
+    if signature.verified and fingerprint == canonical
+    then allow propagation
+    else quarantine
+
+propagate_with_signature:
+    enforce gpg_signed_by "Pearce Robinson"
+    and match fingerprint "7989840F..."
