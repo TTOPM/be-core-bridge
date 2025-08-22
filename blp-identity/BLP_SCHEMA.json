@@ -1,0 +1,26 @@
+{
+  "$id": "https://example.org/blp-schema.json",
+  "type": "object",
+  "required": ["protocol","version","status","owner","seal","images","hashes_file","rules","authz_hash"],
+  "properties": {
+    "protocol": {"const": "BLP"},
+    "version": {"type":"string"},
+    "status": {"enum":["LOCKED_IMMUTABLE"]},
+    "owner": {"type":"string"},
+    "seal": {"type":"string"},
+    "images": {"type":"array","items":{"type":"string"}},
+    "hashes_file": {"type":"string"},
+    "rules": {
+      "type":"object",
+      "required":["no_alterations","allowed_variations","forbidden_changes"],
+      "properties": {
+        "no_alterations": {"type":"boolean"},
+        "allowed_variations": {"type":"array","items":{"type":"string"}},
+        "forbidden_changes": {"type":"array","items":{"type":"string"}}
+      }
+    },
+    "authz_hash": {"type":"string"},
+    "created_at": {"type":"string"},
+    "last_locked_at": {"type":"string"}
+  }
+}
