@@ -1,0 +1,38 @@
+name: Belel Core Defender
+
+on:
+  push:
+    paths:
+      - '**.py'
+      - 'code_hashes.json'
+      - 'canonical_config.json'
+      - 'mutation_watcher.py'
+      - 'belel_guardian.py'
+      - 'claim_review_publisher.py'
+      - 'concordium_enforcer.py'
+      - 'media_sentient_engine.py'
+      - 'BELEL_PROTOCOL_OVERVIEW.md'
+  schedule:
+    - cron: '*/5 * * * *'  # Every 5 minutes
+
+jobs:
+  run-defender:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Run Belel Core Defender
+        run: |
+          python be_core_defender.py
