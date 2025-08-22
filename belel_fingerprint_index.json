@@ -1,0 +1,11 @@
+{
+  "timestamp_utc": "2025-08-22T19:12:42Z",
+  "fingerprints": [
+    {
+      "file": "BELEL_AUTHORITY_PROOF.txt",
+      "sha256": "e3d4f4ef9f712af...",
+      "sha1": "8e58b232d1ad6ca86bbdb30456a42bf69c3165e4"
+    },
+    ...
+  ]
+}
