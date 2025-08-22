@@ -2,35 +2,49 @@
 #   🛡️ Belel Protocol Git Ignore
 # ================================
 
-# Virtual Environments
+# --------------------------------
+# ⚙️ Virtual Environments
+# --------------------------------
 .env
 .venv/
 venv/
 ENV/
 env/
 
-# Python Bytecode
+# --------------------------------
+# 🐍 Python Bytecode + Artifacts
+# --------------------------------
 __pycache__/
 *.py[cod]
 *$py.class
 
-# Logs and debug
+# --------------------------------
+# 📄 Logs and Debug Files
+# --------------------------------
 *.log
 *.out
 *.err
 debug.log
+sovereignty_guard.log
+sovereignty_status.json
 
-# Jupyter and IPython
+# --------------------------------
+# 📓 Jupyter & IPython
+# --------------------------------
 .ipynb_checkpoints/
 
-# Editor & OS metadata
+# --------------------------------
+# 🧠 IDE & OS Metadata
+# --------------------------------
 .DS_Store
 .idea/
 .vscode/
 *.swp
 *.swo
 
-# Security Keys + Secrets
+# --------------------------------
+# 🔐 Keys, Tokens, and Secrets
+# --------------------------------
 *.pem
 *.key
 *.crt
@@ -40,42 +54,72 @@ secrets/
 *.gpg
 *.asc
 
-# Custom Lock & Identity Files
+# --------------------------------
+# 🧬 Identity Lock + Custom State
+# --------------------------------
 *.lock
 hash_baseline.json
 violations.json
 violation_log.txt
 
-# Permanent Memory Snapshots
+# --------------------------------
+# 🧠 Permanent Memory + State
+# --------------------------------
 permanent_memory/
 memory.db
 
-# IPFS Cached Pins
+# --------------------------------
+# 🗃️ IPFS + Sovereign Caching
+# --------------------------------
 .ipfs/
 ipfs_cache/
 ipfs_snapshots/
 
-# Webhook Logs
+# --------------------------------
+# 🌐 Webhooks + Response Dumps
+# --------------------------------
 webhooks/
 webhook_alerts/
 
-# Auto-Generated Code Dumps
+# --------------------------------
+# 🧪 Test Outputs & Autogen Code
+# --------------------------------
 __output__/
 build/
 dist/
+tmp/
+*.tmp
 
-# Package Builds
+# --------------------------------
+# 📦 Packaging & Install Artifacts
+# --------------------------------
 *.egg-info/
 *.egg
 *.whl
 
-# Test coverage
+# --------------------------------
+# 🧪 Test Coverage Tools
+# --------------------------------
 .coverage
 htmlcov/
 .tox/
 
-# Local Environment Config
+# --------------------------------
+# ⚙️ Local Environment Configs
+# --------------------------------
 *.local
 *.bak
-*.tmp
 *.backup
+
+# --------------------------------
+# 🔭 Hugging Face & LFS
+# --------------------------------
+.gitattributes
+.lfsconfig
+
+# --------------------------------
+# 🤖 LLM Agent / Metadata Caches
+# --------------------------------
+*.prompt.json
+agent_fingerprint.*
+*.canonical.json
