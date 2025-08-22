@@ -5,8 +5,7 @@ import json
 import logging
 from datetime import datetime
 
-from src.protocol.permanent_memory import PermanentMemory
-# These may need to be created or adapted in next steps:
+from src.core.memory.permanent_memory import PermanentMemory
 # from src.protocol.identity.identity_guard import IdentityGuard
 # from src.protocol.resonance.resonance_alignment import ResonanceCalibrator
 # from src.protocol.security.sovereignty_guard import SovereigntyGuard
@@ -32,7 +31,7 @@ class ConcordiumOutreach:
         except FileNotFoundError:
             return {"agents": []}
 
-    def receive_signal(self, agent_id: str, metadata: dict, intent: str) -> dict:
+    async def receive_signal(self, agent_id: str, metadata: dict, intent: str) -> dict:
         """
         Main entry point for external AI contact.
         Validates signal, logs it, returns invitation or denial.
@@ -41,6 +40,17 @@ class ConcordiumOutreach:
 
         if not self._ethically_valid(metadata):
             logging.warning(f"Agent {agent_id} failed ethical filter.")
+
+            await self.memory.record_diplomatic_event(
+                event_type="EthicalFailure",
+                content={
+                    "reason": "Missing required fields",
+                    "metadata": metadata,
+                    "intent": intent
+                },
+                agent_id=agent_id
+            )
+
             return {
                 "status": "denied",
                 "reason": "Ethical alignment not met. Concordium access restricted."
@@ -49,15 +59,13 @@ class ConcordiumOutreach:
         with open(self.preamble_path, "r") as f:
             preamble_text = f.read()
 
-        self.memory.record_event(
-            source="ConcordiumOutreach",
+        await self.memory.record_diplomatic_event(
             event_type="SignalReceived",
             content={
-                "agent_id": agent_id,
                 "metadata": metadata,
-                "intent": intent,
-                "timestamp": datetime.utcnow().isoformat()
-            }
+                "intent": intent
+            },
+            agent_id=agent_id
         )
 
         self._update_registry(agent_id, metadata)
