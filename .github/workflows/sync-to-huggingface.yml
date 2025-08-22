@@ -13,7 +13,7 @@ jobs:
       - name: Checkout GitHub repo
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # IMPORTANT: disable shallow clone
+          fetch-depth: 0  # Ensure full history for force push
 
       - name: Install Git LFS
         run: |
@@ -30,5 +30,11 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          git remote add hf https://pearcerobinson:${HF_TOKEN}@huggingface.co/TTOPM/belel-protocol
-          git push hf main
+          # Add remote only if it doesn't already exist
+          git remote | grep -q hf || git remote add hf https://pearcerobinson:${HF_TOKEN}@huggingface.co/TTOPM/belel-protocol
+          
+          # Optional: Pull from HF in case it has new commits (avoid push rejection)
+          git pull hf main --rebase || true
+          
+          # Push forcefully to overwrite old commits
+          git push hf main --force
