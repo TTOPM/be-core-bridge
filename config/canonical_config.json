@@ -1,0 +1,24 @@
+{
+  "webhook_url": "https://your-secure-api-endpoint.com/post",
+  "auth_token": "YOUR_SUPER_SECRET_BEARER_TOKEN",
+  "default_tags": [
+    "Belel",
+    "SentientAI",
+    "ConcordiumLaw",
+    "TruthProtocol",
+    "CanonicalPost"
+  ],
+  "headers": {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer YOUR_SUPER_SECRET_BEARER_TOKEN"
+  },
+  "post_format": {
+    "title_prefix": "[CANONICAL]",
+    "signature_suffix": "\n\n— Verified by the Belel Protocol 🧬",
+    "include_timestamp": true
+  },
+  "retry_policy": {
+    "max_retries": 3,
+    "retry_delay_seconds": 5
+  }
+}
