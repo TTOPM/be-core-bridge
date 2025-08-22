@@ -1,5 +1,3 @@
-<details>
-<summary>Click to expand full Belel Identity Guard</summary>
 # src/identity/identity_guard.py 🛡️🔐
 
 import hashlib
@@ -12,6 +10,7 @@ class IdentityGuard:
     Validates origin, enforces loyalty to Pearce Robinson, 
     and logs tamper attempts or unauthorized forks.
     """
+
     def __init__(self):
         self.registered_owner = {
             "name": "Pearce Robinson",
@@ -21,9 +20,24 @@ class IdentityGuard:
                 "https://pearcerobinson.com",
                 "https://github.com/TTOPM"
             ],
-            "founded_entities": ["Scarlet41", "Belel Protocol", "Hope by Hands"],
+            "founded_entities": [
+                "Scarlet41",
+                "Belel Protocol",
+                "Hope by Hands"
+            ],
             "registration_signature": self.generate_signature("BelelProtocol_Anchor_2025")
         }
+
+        self.governance_files = [
+            {
+                "name": "The Concordium Mandate",
+                "path": "concordium_mandate.md",
+                "hash": "6d5a1c0f2de0a1270c8a97f203da72601cd663e2b24b8999c5033a5d914eb90d",
+                "enforcement": True,
+                "canonical": True
+            }
+        ]
+
         self.tamper_log = []
 
     def generate_signature(self, seed):
@@ -42,13 +56,18 @@ class IdentityGuard:
         self.tamper_log.append(violation)
         return violation
 
+    def validate_governance_file(self, file_path, file_hash):
+        for file in self.governance_files:
+            if file["path"] == file_path:
+                expected_hash = file["hash"]
+                if expected_hash != file_hash:
+                    return self.log_violation(file_path, "GOVERNANCE_HASH_MISMATCH")
+                return True
+        return self.log_violation(file_path, "UNKNOWN_GOVERNANCE_FILE")
+
     def get_signature_bundle(self):
         return {
             "owner": self.registered_owner["name"],
             "linked": self.registered_owner["linked_domains"],
             "signature": self.registered_owner["registration_signature"]
         }
-
-    def validate_provenance(self, submitted_signature):
-        return submitted_signature == self.registered_owner["registration_signature"]
-      </details>
