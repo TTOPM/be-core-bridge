@@ -3,49 +3,48 @@ name: Sync to Hugging Face
 on:
   push:
     branches:
-      - main  # or 'master' if that's your branch
+      - main
 
 jobs:
   sync:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout GitHub repo
+      - name: 🧾 Checkout GitHub repo
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # ✅ Keep: full history required
+          fetch-depth: 0  # Required to retain full git history
 
-      - name: Install Git LFS
+      - name: 🧬 Install Git LFS
         run: |
           sudo apt-get update
-          sudo apt-get install git-lfs
+          sudo apt-get install -y git-lfs
           git lfs install
 
-      - name: Set Git credentials
+      - name: 🔐 Set Git Identity
         run: |
           git config --global user.email "you@example.com"
           git config --global user.name "Pearce Robinson"
 
-      - name: Pull from Hugging Face to resolve conflicts
+      - name: 🌐 Add Hugging Face Remote & Pull Latest
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          git remote add hf https://pearcerobinson:${HF_TOKEN}@huggingface.co/TTOPM/belel-protocol || true
-          git pull hf main --rebase || true
+          git remote | grep hf || git remote add hf https://pearcerobinson:${HF_TOKEN}@huggingface.co/TTOPM/belel-protocol
+          git pull hf main --rebase || echo "No rebase needed or HF repo not yet initialized"
 
-      - name: Remove binary files that are not tracked by LFS
+      - name: 🧹 Clean binary files not tracked by LFS
         run: |
-          git reset HEAD audio/belel_entry_response.wav || true
+          git lfs track "*.wav"
+          echo "*.wav filter=lfs diff=lfs merge=lfs -text" >> .gitattributes
+          git add .gitattributes || true
           git rm --cached audio/belel_entry_response.wav || true
+          git add . || true
+          git commit -m "Configure Git LFS & remove untracked binary" || echo "Nothing to commit"
 
-      - name: Commit changes after conflict resolution
-        run: |
-          git add .
-          git commit -m "Resolve conflicts and remove LFS-rejected files" || echo "Nothing to commit"
-
-      - name: Push to Hugging Face
+      - name: 🚀 Push to Hugging Face
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          git push hf main --force
+          git push hf main --force-with-lease || echo "Push failed – check for manual resolution"
 
