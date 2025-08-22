@@ -13,7 +13,7 @@ jobs:
       - name: Checkout GitHub repo
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # full clone to allow pushing
+          fetch-depth: 0  # IMPORTANT: disable shallow clone
 
       - name: Install Git LFS
         run: |
@@ -23,7 +23,7 @@ jobs:
 
       - name: Set Git credentials
         run: |
-          git config --global user.email "contactme@pearcerobinson.com"
+          git config --global user.email "you@example.com"
           git config --global user.name "Pearce Robinson"
 
       - name: Push to Hugging Face
@@ -31,4 +31,4 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           git remote add hf https://pearcerobinson:${HF_TOKEN}@huggingface.co/TTOPM/belel-protocol
-          git push hf main --force
+          git push hf main
