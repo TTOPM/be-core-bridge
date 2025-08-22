@@ -8,6 +8,7 @@ from datetime import datetime
 
 from src.protocol.permanent_memory import PermanentMemory
 from src.protocol.decentralized_comm.ipfs_client import IPFSClient
+from src.protocol.enforcement.enforcement_response import handle_violation  # 🆕 NEW LINE
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -44,17 +45,26 @@ class SovereigntyGuard:
 
     async def scan_and_log(self):
         """
-        Compares current file hashes with baseline. If mismatch, logs to PermanentMemory.
+        Compares current file hashes with baseline. If mismatch, logs to PermanentMemory + triggers enforcement.
         """
         current = self._generate_current_hashes()
         violations = []
         for path, current_hash in current.items():
             if path not in self.hash_baseline or self.hash_baseline[path] != current_hash:
-                violations.append({
+                violation = {
                     "file": path,
                     "expected": self.hash_baseline.get(path),
                     "found": current_hash,
                     "timestamp": datetime.utcnow().isoformat() + "Z"
+                }
+                violations.append(violation)
+                
+                # 🆕 Enforcement response trigger
+                handle_violation("tampering", {
+                    "file_path": path,
+                    "expected_hash": self.hash_baseline.get(path),
+                    "found_hash": current_hash,
+                    "module": "sovereignty_guard"
                 })
 
         if violations:
