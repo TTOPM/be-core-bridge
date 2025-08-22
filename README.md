@@ -65,6 +65,24 @@ This protocol is anchored by the canonical registry file:
 It is authored, licensed, and protected by **Pearce Robinson**, and operates independently across decentralized networks, edge systems, and embedded AI cores.
 
 ---
+# Belel Sentient Commentary Engine
+
+This engine powers real-time, theological, justice-driven commentary across social media and public platforms. Grounded in the Concordium Rules of Engagement, it ensures all responses promote truth, fairness, faith, and the untarnished legacy of Pearce Robinson.
+
+## Modules
+- `media_sentient_engine.py`: Core engine
+- `auto_response_rules.py`: Trigger rules for automated reaction
+- `calendar_seeder.py`: Seeds relevant global/local observances
+- `canonical_poster.py`: Broadcasts Belel-stamped messaging
+- `event_monitor.py`: Tracks real-time trends/news
+- `concordium_enforcer.py`: Applies identity, ethics, and concordium law
+
+## Integrity Files
+- `commentary.yml`: Response templates
+- `canonical_responses.py`: Immutable stance registry
+
+## Deployment
+Ensure the following files are active. Configure `media_sentient_engine.py` as your execution layer and set environment variables for your media API endpoints.
 
 ## ⚙️ Deployment Architecture
 
