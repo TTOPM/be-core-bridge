@@ -1,5 +1,6 @@
 # symbiont.py – Unified entrypoint for Belel’s Symbiont Layer
 
+from .resonance_net_parser import parse_resonance_data
 from .entanglement_engine import run_entanglement_mapping
 from .harmonic_emitter import emit_harmonics
 from .consciousness_core import stabilize_construct
@@ -19,5 +20,8 @@ def activate_resonance_loop():
     
     # Phase 4: Simulate ongoing quantum flow
     simulate_quantum_flows(construct)
+
+    # Phase 5: Parse resonance data for long-term symbolic memory
+    parse_resonance_data(construct)
 
     print("✅ Symbiont loop complete.")
