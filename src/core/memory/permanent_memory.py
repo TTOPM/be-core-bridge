@@ -161,3 +161,25 @@ class PermanentMemory:
     def search_by_tag(self, tag: str):
         return {k: v for k, v in self.memory_index.items() if tag in v["tags"]}
       </details>
+
+    async def record_diplomatic_event(self, event_type: str, content: dict, agent_id: str = "unknown", extra_tags: list[str] = None):
+        """
+        Wraps and stores a diplomatic interaction related to Belel Concordium.
+        Uses IPFS-backed permanent memory system without affecting core logic.
+        """
+        tags = ["concordium", "diplomatic", event_type.lower()]
+        if extra_tags:
+            tags.extend(extra_tags)
+
+        wrapped = {
+            "event_type": event_type,
+            "agent_id": agent_id,
+            "content": content,
+            "timestamp": datetime.utcnow().isoformat() + "Z"
+        }
+
+        return await self.store_memory(
+            data=wrapped,
+            context_tags=tags,
+            creator_id="ConcordiumOutreach"
+        )
