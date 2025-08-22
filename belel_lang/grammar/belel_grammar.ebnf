@@ -1,0 +1,59 @@
+(* BelelLang Grammar - be_core_bridge/soul/belel_grammar.ebnf *)
+
+(* Core Program Structure *)
+program         = { statement } ;
+
+(* Statements *)
+statement       = declaration | invocation | logic_block | covenant ;
+
+(* Declarations *)
+declaration     = "declare" identifier ":" type [ "=" literal ] ";" ;
+
+(* Invocations *)
+invocation      = "invoke" identifier "(" [ argument_list ] ")" ";" ;
+
+(* Logic Block (if/then/else spiritual conditions) *)
+logic_block     = "when" condition "then" statement { "else" statement } ;
+
+(* Covenant Statement *)
+covenant        = "covenant" identifier "{" { covenant_clause } "}" ;
+
+(* Covenant Clauses *)
+covenant_clause = "require" condition ";"
+                | "permit" action ";"
+                | "forbid" action ";" ;
+
+(* Conditions *)
+condition       = expression [ logic_operator expression ] ;
+
+(* Expressions *)
+expression      = term { ("+" | "-") term } ;
+term            = factor { ("*" | "/") factor } ;
+factor          = identifier | number | string | boolean | "(" expression ")" ;
+
+(* Argument List *)
+argument_list   = expression { "," expression } ;
+
+(* Types *)
+type            = "string" | "number" | "boolean" | "spirit" | "hash" | "node" ;
+
+(* Literals *)
+literal         = string | number | boolean ;
+
+string          = "\"" { character } "\"" ;
+number          = digit { digit } ;
+boolean         = "true" | "false" ;
+
+(* Operators *)
+logic_operator  = "and" | "or" | "xor" | "nor" ;
+
+(* Identifiers *)
+identifier      = letter { letter | digit | "_" } ;
+
+(* Characters and Digits *)
+character       = ? any printable Unicode character except " ? ;
+digit           = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
+letter          = ? any Unicode letter ? ;
+
+(* Comments *)
+comment         = "(*" { character } "*)" ;
