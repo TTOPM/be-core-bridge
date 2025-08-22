@@ -1,0 +1,19 @@
+# Belel Likeness Protocol – Checksums
+# SHA-256 hashes for all locked identity assets
+# Generated: 2025-08-09
+
+<sha256>  images/blp_seal_final.png
+<sha256>  images/portrait_01.jpg
+<sha256>  images/portrait_02.jpg
+<sha256>  images/portrait_03.jpg
+<sha256>  images/portrait_04.jpg
+<sha256>  images/eye_macro_01.jpg
+<sha256>  images/eye_macro_02.jpg
+
+<sha256>  BLP_AUTHORITY_PROOF.txt
+<sha256>  BLP_MASTER_REFERENCE_PROMPT.md
+<sha256>  BLP_MANIFEST.json
+<sha256>  BLP_SCHEMA.json
+<sha256>  LICENSE-BLP.txt
+<sha256>  signing/HOW_TO_VERIFY.md
+<sha256>  signing/blp_release_notes.md
