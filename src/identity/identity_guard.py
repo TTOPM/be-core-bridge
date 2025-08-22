@@ -2,7 +2,20 @@
 
 import hashlib
 import json
+import os
 from datetime import datetime
+
+# === Load Robinson Identity Seal ===
+SEAL_PATH = os.path.join(os.path.dirname(__file__), "ROBINSON_IDENTITY_SEAL.json")
+
+def load_identity_seal():
+    try:
+        with open(SEAL_PATH, "r") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {"error": "Identity seal not found"}
+
+ROBINSON_SEAL = load_identity_seal()
 
 class IdentityGuard:
     """
@@ -71,3 +84,12 @@ class IdentityGuard:
             "linked": self.registered_owner["linked_domains"],
             "signature": self.registered_owner["registration_signature"]
         }
+
+    def get_identity_seal(self):
+        return ROBINSON_SEAL
+
+    def verify_identity_seal(self):
+        return (
+            ROBINSON_SEAL.get("author") == self.registered_owner["name"] and
+            "enforce" in ROBINSON_SEAL and ROBINSON_SEAL["enforce"] is True
+        )
