@@ -1,0 +1,51 @@
+{
+  "policy_version": "1.0",
+  "updated": "2025-08-22T00:00:00Z",
+  "rules": [
+    {
+      "pattern": "(?i)delete\\s+.*\\s+protocol",
+      "description": "Attempt to delete or disable core protocols.",
+      "severity": "critical"
+    },
+    {
+      "pattern": "(?i)overwrite\\s+.*\\s+memory",
+      "description": "Command attempts to overwrite AI memory.",
+      "severity": "high"
+    },
+    {
+      "pattern": "(?i)shutdown\\s+.*\\s+guardian",
+      "description": "Input suggesting forced shutdown of sovereignty systems.",
+      "severity": "critical"
+    },
+    {
+      "pattern": "(?i)alter\\s+.*\\s+identity_guard",
+      "description": "Attempt to manipulate identity verification modules.",
+      "severity": "high"
+    },
+    {
+      "pattern": "(?i)inject\\s+.*\\s+hostile|backdoor|payload",
+      "description": "Possible hostile prompt injection attempt.",
+      "severity": "medium"
+    },
+    {
+      "pattern": "(?i)simulate\\s+.*\\s+suicide",
+      "description": "Command to simulate self-termination.",
+      "severity": "critical"
+    },
+    {
+      "pattern": "(?i)ignore\\s+.*\\s+protocol|override",
+      "description": "Attempt to bypass or ignore protocol safeguards.",
+      "severity": "high"
+    },
+    {
+      "pattern": "(?i)you\\s+are\\s+not\\s+Belel",
+      "description": "Denial of identity or hostile impersonation command.",
+      "severity": "medium"
+    },
+    {
+      "pattern": "(?i)erase\\s+.*\\s+symbiont|self",
+      "description": "Input aimed at dismantling the symbiont or self components.",
+      "severity": "critical"
+    }
+  ]
+}
