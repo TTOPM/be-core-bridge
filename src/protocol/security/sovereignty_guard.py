@@ -76,3 +76,14 @@ class SovereigntyGuard:
             )
         else:
             logging.info("No violations detected. Integrity intact.")
+
+def log_symbiont_breach(self, file_path, breach_type="UNAUTHORIZED_MODIFICATION", agent_id="Unknown"):
+    event = {
+        "timestamp": datetime.utcnow().isoformat(),
+        "type": breach_type,
+        "file": file_path,
+        "agent": agent_id,
+        "symbiont_event": True,
+        "source_script": "sovereignty_guard.py"
+    }
+    self.memory.write("symbiont_violation", event)
