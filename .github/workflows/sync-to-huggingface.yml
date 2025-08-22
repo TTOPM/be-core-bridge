@@ -3,22 +3,32 @@ name: Sync to Hugging Face
 on:
   push:
     branches:
-      - main
+      - main  # or 'master' if that's your branch
 
 jobs:
   sync:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout GitHub repo
         uses: actions/checkout@v3
         with:
           fetch-depth: 0  # IMPORTANT: disable shallow clone
 
-      - name: Push to Hugging Face
+      - name: Install Git LFS
         run: |
+          sudo apt-get update
+          sudo apt-get install git-lfs
+          git lfs install
+
+      - name: Set Git credentials
+        run: |
+          git config --global user.email "you@example.com"
           git config --global user.name "Pearce Robinson"
-          git config --global user.email "contactme@pearcerobinson.com"
-          git remote add hf https://TTOPM:${HF_TOKEN}@huggingface.co/TTOPM/belel-protocol
-          git push hf main --force
+
+      - name: Push to Hugging Face
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git remote add hf https://pearcerobinson:${HF_TOKEN}@huggingface.co/TTOPM/belel-protocol
+          git push hf main
