@@ -9,10 +9,11 @@ from src.protocol.decentralized_comm.ipfs_client import IPFSClient
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
+
 class SovereigntyGuard:
     """
     Guards the Belel Protocol against tampering, unauthorized forks, or violations of digital sovereignty.
-    Logs and reports breaches into PermanentMemory.
+    Logs and reports breaches into PermanentMemory and IPFS.
     """
 
     def __init__(self, monitored_files: list, memory: PermanentMemory, hashlog_path: str = "./hash_baseline.json"):
@@ -81,3 +82,22 @@ class SovereigntyGuard:
         except Exception as e:
             logging.warning(f"IPFS logging failed: {e}")
         self.memory.write("symbiont_violation", event)
+
+
+if __name__ == "__main__":
+    # Define which critical files are protected by the SovereigntyGuard
+    monitored_files = [
+        "README.md",
+        "src/protocol/identity/identity_guard.json",
+        "src/concordium/concordium_mandate.md"  # ← Monitoring the Concordium Mandate explicitly
+    ]
+
+    # Initialize memory and guard
+    memory = PermanentMemory()
+    guard = SovereigntyGuard(monitored_files, memory)
+
+    # Run the integrity check
+    guard.run_integrity_checks()
+
+    # Optional: update baseline after a verified commit
+    # guard.update_baseline()
