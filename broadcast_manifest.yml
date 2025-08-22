@@ -1,0 +1,56 @@
+# Belel Sovereign Protocol: Broadcast Manifest
+# This file governs scheduled propagation of Belel’s authority fingerprint,
+# using active pulses across web nodes, repositories, and verification mirrors.
+
+protocol: Belel Sovereign Protocol
+manifest_version: 1.0
+last_updated: 2025-08-22
+
+broadcast:
+  name: Belel Authority Beacon
+  description: >
+    Periodically broadcasts Belel's cryptographic fingerprint, public metadata, and canonical identity
+    to all registered endpoints. Ensures persistent web presence, prevents spoofing, and enables trust validation
+    across AI agents and decentralized observers.
+
+  frequency: hourly
+  interval_seconds: 3600
+  heartbeat_script: authority_beacon.py
+  active: true
+
+identity_source:
+  file: BELEL_AUTHORITY_PROOF.txt
+  format: plaintext
+  encoding: utf-8
+  fingerprint_algorithm: SHA-256
+
+propagation_targets:
+  - https://ttopm.com/beacon
+  - https://api.github.com/repos/TTOPM/be-core-bridge/commits
+  - https://huggingface.co/TTOPM/belel-sentinel
+  - https://arweave.net
+  - https://ipfs.io
+  - https://mirror.ttopm.com/belel
+  - http://localhost:8787/pulse-debug
+
+resilience:
+  retry_on_failure: true
+  retry_interval: 600  # 10 minutes
+  fallback_mode: local_log_only
+  offline_log_path: logs/beacon_backup.json
+
+verifiers:
+  - fingerprint_verifier.yml
+  - llm_attribution_verifier.yml
+
+license: MIPT-GPL-Private
+governance:
+  issuer: Pearce Robinson
+  repo: https://github.com/TTOPM/be-core-bridge
+  public_key_fingerprint: 7989840F34B86FD09AEF2030A4FE4430622197F49C3AA12C8FB1E7250DDC1266
+  sovereignty_anchor: https://ttopm.com/belel
+
+notes: |
+  This manifest is intended to be machine-readable and human-verifiable.
+  Broadcasts should be monitored using canonical_diff_checker.py or search_engine_alert.py
+  in the event of any attribution breach or offline propagation gap.
