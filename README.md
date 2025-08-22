@@ -170,15 +170,5 @@ git add test-hf-sync.txt
 git commit -m "Add test sync file"
 git push
 
----
 
-This `README.md` is now:
-
-- ✅ Fully functional
-- ✅ Legally reinforced
-- ✅ Developer-friendly
-- ✅ Voice-enabled
-- ✅ Ready for GitHub, Hugging Face, or mirror indexing
-
-Would you like the companion files (`speak.py`, `belel_voice_config.json`, etc.) generated next?
 
