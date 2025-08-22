@@ -3,7 +3,7 @@ name: Sync to Hugging Face
 on:
   push:
     branches:
-      - main  # (or 'master' if that's your default)
+      - main  # change to 'master' if that's your default branch
 
 jobs:
   sync:
@@ -16,7 +16,7 @@ jobs:
         run: |
           git config --global user.name "Pearce Robinson"
           git config --global user.email "contactme@pearcerobinson.com"
-          git remote add hf https://TTOPM:${HF_TOKEN}@huggingface.co/TTOPM/be-core-bridge
+          git remote add hf https://TTOPM:${HF_TOKEN}@huggingface.co/TTOPM/belel-protocol
           git push hf main --force
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
