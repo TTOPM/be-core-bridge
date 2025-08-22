@@ -1,0 +1,6 @@
+{
+  "voice_name": "onyx",
+  "emotion": "balanced",
+  "tone": "authoritative",
+  "source": "openai_tts"
+}
