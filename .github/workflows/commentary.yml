@@ -1,0 +1,23 @@
+name: Trigger Commentary Engine
+
+on:
+  schedule:
+    - cron: '0 * * * *' # every hour
+  workflow_dispatch:
+
+jobs:
+  commentary:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Run Commentary Engine
+        run: |
+          pip install -r requirements.txt
+          python media_sentient_engine.py
