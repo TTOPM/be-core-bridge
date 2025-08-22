@@ -13,7 +13,7 @@ jobs:
       - name: Checkout GitHub repo
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Ensure full history for force push
+          fetch-depth: 0  # IMPORTANT: disable shallow clone
 
       - name: Install Git LFS
         run: |
