@@ -2,6 +2,13 @@ import json
 import os
 import sys
 
+# Conditional import of ResonanceNet
+try:
+    from src.protocol.resonance.symbiont import activate_resonance_loop
+    resonance_enabled = True
+except ImportError:
+    print("⚠️ ResonanceNet not available. Running without symbiont layer.")
+    resonance_enabled = False
 # Add the root directory to the Python path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
@@ -39,3 +46,7 @@ def launch_belel():
 
 if __name__ == "__main__":
     launch_belel()
+    
+if resonance_enabled:
+    print("🔁 Activating ResonanceNet symbiont layer...")
+    activate_resonance_loop()
