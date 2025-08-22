@@ -7,6 +7,7 @@ from datetime import datetime
 
 from src.protocol.permanent_memory import PermanentMemory
 from src.protocol.security.alert_webhook import WebhookAlerter
+from src.utils.violation_logout import log_violation  # 🆕 Added
 
 class RequestInterceptor:
     """
@@ -56,7 +57,18 @@ class RequestInterceptor:
                 "symbiont_event": True,
                 "source_script": "request_interceptor.py"
             }
+
             self.memory.write("policy_violation", event)
+
+            # 🆕 Log to violation_logout
+            log_violation(
+                violation_type="InputViolation",
+                description="One or more policy patterns matched user input.",
+                source_url="src/protocol/security/request_interceptor.py",
+                severity=violations[0]["severity"],
+                detected_by=agent_id,
+                context={"input_text": input_text, "matches": violations}
+            )
 
             if self.webhook:
                 self.webhook.send_alert("🚨 Input violation detected:\n" + json.dumps(violations, indent=2))
