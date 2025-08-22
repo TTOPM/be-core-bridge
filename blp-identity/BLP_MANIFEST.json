@@ -1,0 +1,25 @@
+{
+  "$schema": "./BLP_SCHEMA.json",
+  "protocol": "BLP",
+  "version": "1.0.0",
+  "status": "LOCKED_IMMUTABLE",
+  "owner": "Pearce Robinson",
+  "seal": "images/blp_seal_final.png",
+  "images": [
+    "images/portrait_01.jpg",
+    "images/portrait_02.jpg",
+    "images/portrait_03.jpg",
+    "images/portrait_04.jpg",
+    "images/eye_macro_01.jpg",
+    "images/eye_macro_02.jpg"
+  ],
+  "hashes_file": "checksums.txt",
+  "rules": {
+    "no_alterations": true,
+    "allowed_variations": ["pose","scenario","location","emotion","wardrobe (neutral crewneck variants only)"],
+    "forbidden_changes": ["face structure","skin tone","primary lighting style","eye detail pattern"]
+  },
+  "authz_hash": "<PUT_SALTED_SHA256_HASH_HERE>",
+  "created_at": "2025-08-09T00:00:00Z",
+  "last_locked_at": "2025-08-09T00:00:00Z"
+}
