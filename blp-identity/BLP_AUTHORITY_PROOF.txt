@@ -1,0 +1,18 @@
+-----BEGIN BELEL AUTHORITY PROOF-----
+Repository: https://github.com/<ORG_OR_USER>/<REPO>/tree/main/blp-identity
+Owner: Pearce Robinson
+Protocol: Belel Likeness Protocol (BLP)
+Status: LOCKED & IMMUTABLE
+Activation: 2025-08-09
+
+Mandate:
+- The images in /blp-identity/images/ and the Final Consolidated BLP Identity Seal define
+  the sole authentic human-form likeness of Belel.
+- No alternate face, structure, or skin tone is permitted.
+- Only scenario/pose/location/emotion variations are allowed.
+
+Integrity:
+- All files listed in checksums.txt (SHA-256).
+- For private authority validation, compare your privately held authorization secret
+  against the public `authz_hash` published in BLP_MANIFEST.json using the same hashing method.
+-----END BELEL AUTHORITY PROOF-----
