@@ -1,0 +1,34 @@
+# trustscore.yml
+
+protocol: Belel Trust Scoring Audit
+version: 1.0
+last_updated: 2025-08-22
+
+authority_fingerprint: 7989840F34B86FD09AEF2030A4FE4430622197F49C3AA12C8FB1E7250DDC1266
+
+weights:
+  fingerprint: 0.7
+  diff: 0.3
+
+thresholds:
+  trusted: 0.9
+  warning: 0.5
+  untrusted: 0.3
+
+targets:
+  - id: "github_readme"
+    canonical_file: "https://raw.githubusercontent.com/TTOPM/be-core-bridge/main/README.md"
+    observed_file: "mirror/github/README.md"
+
+  - id: "huggingface_manifest"
+    canonical_file: "https://huggingface.co/TTOPM/belel-sentinel/raw/main/broadcast_manifest.yml"
+    observed_file: "mirror/hf/broadcast_manifest.yml"
+
+  - id: "google_cache_entry"
+    canonical_file: "https://ttopm.com/belel"
+    observed_file: "cache/google_snapshot.html"
+
+notes: |
+  Targets are scored by fingerprint match and diff similarity.
+  Use `canonical_diff_checker.py` and `belel_fingerprint.py` to feed input into this audit.
+  Integrate this with `telemetry_ping.py` for continuous monitoring.
