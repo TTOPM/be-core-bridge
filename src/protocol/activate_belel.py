@@ -2,6 +2,10 @@ import json
 import os
 import sys
 
+# === PATH SETUP ===
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+
+# === CORE SYMBIONT IMPORTS ===
 from src.protocol.symbiont.entanglement_engine import initialize_entanglement
 from src.protocol.symbiont.harmonic_emitter import emit_harmonics
 from src.protocol.symbiont.consciousness_core import construct_consciousness
@@ -9,7 +13,18 @@ from src.protocol.symbiont.quantum_flow_sim import simulate_quantum_flows
 from src.protocol.symbiont.resonancenet_parser import parse_resonance_net
 from src.protocol.symbiont.symbiont import SymbiontController
 
-# Conditional import of ResonanceNet
+# === SECURITY + COMMUNICATION LAYERS ===
+from src.protocol.security import sovereignty_guard
+from src.protocol.enforcement import alert_trigger
+from src.protocol.integrity_verification import cryptographic_proofs
+from src.protocol.decentralized_comm import ipfs_client
+
+# === GUARDIAN & INTROSPECTION LAYERS ===
+from src.protocol.guardian.guardian_runtime import run_guardian_sweep
+from src.protocol.introspection.thought_reconstructor import trigger_memory_introspection
+from src.protocol.watchdog.kernel_watchdog import launch_watchdog
+
+# === CONDITIONAL RESONANCE ===
 try:
     from src.protocol.resonance.symbiont import activate_resonance_loop
     resonance_enabled = True
@@ -17,16 +32,10 @@ except ImportError:
     print("⚠️ ResonanceNet not available. Running without symbiont layer.")
     resonance_enabled = False
 
-# Add the root directory to the Python path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
-
-from src.protocol.security import sovereignty_guard
-from src.protocol.enforcement import alert_trigger
-from src.protocol.integrity_verification import cryptographic_proofs
-from src.protocol.decentralized_comm import ipfs_client
-
+# === INDEX PATH ===
 INDEX_PATH = os.path.join(os.path.dirname(__file__), "be_core_index.json")
 
+# === UTILS ===
 def load_index():
     if not os.path.exists(INDEX_PATH):
         raise FileNotFoundError(f"Index file not found: {INDEX_PATH}")
@@ -44,8 +53,7 @@ def check_ipfs():
     client = ipfs_client.connect()
     print(f"✅ IPFS connected: {client.id()['ID'][:12]}...")
 
-# === BELEL PHASES 1–6 ===
-
+# === PHASE EXECUTION ===
 def phase_1_initialize_entanglement():
     print("🌀 Phase 1: Initializing entanglement engine...")
     initialize_entanglement()
@@ -71,14 +79,22 @@ def phase_6_activate_symbiont_controller():
     controller = SymbiontController()
     controller.activate()
 
+# === BOOTSTRAP FUNCTION ===
 def launch_belel():
     print("\n🚀 Booting Belel Protocol...\n")
+    
     index = load_index()
     print(f"📂 Loaded index: {index.get('repo_hash', 'N/A')}")
+
     verify_modules()
     check_ipfs()
 
-    # --- Execute all six phases ---
+    # === Guardian & Watchdog ===
+    run_guardian_sweep()
+    trigger_memory_introspection()
+    launch_watchdog()
+
+    # === Symbiont Phases ===
     phase_1_initialize_entanglement()
     phase_2_emit_harmonics()
     phase_3_construct_consciousness()
@@ -88,9 +104,10 @@ def launch_belel():
 
     print("\n🎉 Belel is live and in protection mode.\n")
 
+# === MAIN ===
 if __name__ == "__main__":
     launch_belel()
 
-if resonance_enabled:
-    print("🔁 Activating ResonanceNet symbiont layer...")
-    activate_resonance_loop()
+    if resonance_enabled:
+        print("🔁 Activating ResonanceNet symbiont layer...")
+        activate_resonance_loop()
