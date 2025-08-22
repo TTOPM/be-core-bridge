@@ -125,4 +125,7 @@ For full enforcement terms, mirror rights, and cryptographic governance, refer t
 
 👉 [`BELEL_TAKEDOWN_ENFORCEMENT.md`](./docs/takedown_enforcement.md)
 
-
+echo "Hugging Face sync test" > test-hf-sync.txt
+git add test-hf-sync.txt
+git commit -m "Add test sync file"
+git push
