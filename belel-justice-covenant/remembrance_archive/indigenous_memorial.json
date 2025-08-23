@@ -1,0 +1,33 @@
+{
+  "_meta": {
+    "version": "1.0.0",
+    "purpose": "Memorial index for Indigenous peoples affected by genocide, dispossession, forced assimilation, and systemic violence.",
+    "unit": "Entries may represent persons, communities, or events (clearly typed).",
+    "fields": {
+      "id": "uuid",
+      "type": "person | community | event",
+      "name": "person/community/event name",
+      "people_group": "ethnonym(s)",
+      "location": "territory / region / country",
+      "period": "YYYY or YYYY-YYYY or null",
+      "estimated_victims": "integer or null",
+      "harms": ["dispossession", "massacre", "forced removal", "boarding schools", "sterilization", "language suppression", "other"],
+      "sources": ["url1", "url2"],
+      "notes": "concise factual context"
+    }
+  },
+  "entries": [
+    {
+      "id": "REPLACE_WITH_UUID",
+      "type": "event",
+      "name": "PLACEHOLDER – Verified Event Name",
+      "people_group": "Replace with verified ethnonym",
+      "location": "Region, Country",
+      "period": null,
+      "estimated_victims": null,
+      "harms": ["dispossession"],
+      "sources": [],
+      "notes": "Add verified details only."
+    }
+  ]
+}
