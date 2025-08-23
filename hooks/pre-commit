@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -e
+
+PY=${PYTHON:-python3}
+BASE="belel-justice-covenant"
+
+# 1) Block destructive edits (append-only enforcement)
+if [ -f "$BASE/protocol_instructions/revisionism_resistor.py" ]; then
+  $PY "$BASE/protocol_instructions/revisionism_resistor.py"
+fi
+
+# 2) Verify or create checksums
+if [ -f "$BASE/tools/generate_checksums.py" ]; then
+  if [ -f "$BASE/signing/checksums.txt" ]; then
+    $PY "$BASE/tools/generate_checksums.py" --verify
+  else
+    echo "[pre-commit] No checksums.txt found — creating baseline."
+    $PY "$BASE/tools/generate_checksums.py"
+  fi
+fi
