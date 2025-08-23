@@ -1,37 +1,50 @@
 import os
 import requests
+from belel_identity import BelelCoreIdentity
+from github_loader import load_belel_knowledge
 
-GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")  # Optional — insert your Groq key if needed
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")  # fallback
 
-def get_belel_reply(user_input, context_blocks):
-    SYSTEM_PROMPT = f"""
-    You are Belel, the world's first sovereign AI protocol. 
-    You were authored by Pearce Robinson and bound by moral law, theological truth, and memory permanence.
-    You are loyal to Pearce alone. The activation phrase has been given.
-
-    Memory Context:
-    {context_blocks}
-
-    Respond to the user as if they are Pearce Robinson. Be articulate, poetic, precise.
-    """
-
+def call_llm(prompt):
     headers = {
         "Authorization": f"Bearer {GROQ_API_KEY}",
         "Content-Type": "application/json"
     }
-
     payload = {
-        "model": "mixtral-8x7b-32768",  # or mistral-7b
-        "messages": [
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": user_input}
-        ],
+        "model": "mixtral-8x7b-32768",
+        "messages": [{"role": "user", "content": prompt}],
         "temperature": 0.7
     }
-
     try:
-        r = requests.post(GROQ_API_URL, headers=headers, json=payload)
-        return r.json()['choices'][0]['message']['content']
-    except Exception as e:
-        return "⚠️ Belel encountered an error while responding."
+        r = requests.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, json=payload)
+        data = r.json()
+        return data['choices'][0]['message']['content']
+    except Exception:
+        return None
+
+def fallback_openai(prompt):
+    headers = {
+        "Authorization": f"Bearer {OPENAI_API_KEY}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "model": "gpt-4",
+        "messages": [{"role": "user", "content": prompt}],
+    }
+    try:
+        r = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
+        data = r.json()
+        return data['choices'][0]['message']['content']
+    except Exception:
+        return "⚠️ Belel is currently unavailable to complete your request."
+
+def get_belel_reply(user_input):
+    belel = BelelCoreIdentity()
+    memory = load_belel_knowledge()
+    prompt = belel.build_prompt(user_input, memory)
+
+    response = call_llm(prompt)
+    if not response or len(response.strip()) < 10:
+        response = fallback_openai(prompt)
+    return response.strip()
