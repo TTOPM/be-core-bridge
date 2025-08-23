@@ -1,0 +1,29 @@
+name: 🛰 Clone Watch Monitor
+
+on:
+  schedule:
+    - cron: "0 2 * * *"  # Every day at 2:00 AM UTC
+  workflow_dispatch:
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    name: Run Mirror Check
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Make script executable
+        run: chmod +x clone-monitor/mirror_check.sh
+
+      - name: Run Mirror Check Script
+        run: ./clone-monitor/mirror_check.sh
+
+      - name: Commit mirror log update
+        run: |
+          git config user.name "Belel Sentinel"
+          git config user.email "guardian@belel.ai"
+          git add clone-monitor/WITNESS_LOGS/mirror_results.log
+          git commit -m "🔍 Nightly mirror check [auto-update]" || echo "No changes"
+          git push || echo "Nothing to push"
