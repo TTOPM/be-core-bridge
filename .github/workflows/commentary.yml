@@ -1,3 +1,4 @@
+# .github/workflows/commentary.yml
 name: Commentary Engine 🎙️
 
 on:
@@ -5,17 +6,22 @@ on:
     paths:
       - "src/media/media_sentient_engine.py"
       - ".github/workflows/commentary.yml"
+  workflow_dispatch:
 
 jobs:
   commentary:
     runs-on: ubuntu-latest
+    timeout-minutes: 6
+    concurrency:
+      group: commentary-${{ github.ref }}
+      cancel-in-progress: true
 
     steps:
       - name: 🧾 Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: 🐍 Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
@@ -23,17 +29,26 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          # Safety net for previous "ModuleNotFoundError: yaml"
+          pip install PyYAML || true
+
+      - name: 🔎 Soft-check for canonical_config.json
+        run: |
+          if [ ! -f "canonical_config.json" ]; then
+            echo "⚠️ canonical_config.json not found. Engine may skip or run with defaults."
+          fi
 
       - name: 🚀 Run Commentary Engine
         run: |
           FILE="src/media/media_sentient_engine.py"
           if [ -f "$FILE" ]; then
-            export PYTHONPATH=$PYTHONPATH:$(pwd)/src
+            export PYTHONPATH="$(pwd)/src:$PYTHONPATH"
+            echo "▶ Running $FILE with PYTHONPATH=$PYTHONPATH"
             python "$FILE"
           else
             echo "⚠️ File not found: $FILE — skipping execution."
           fi
-            python "$FILE"
+
           else
             echo "⚠️ File not found: $FILE — skipping execution."
           fi
