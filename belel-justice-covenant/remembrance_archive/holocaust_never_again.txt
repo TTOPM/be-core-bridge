@@ -1,0 +1,33 @@
+HOLOCAUST – NEVER AGAIN
+Eternal Remembrance Anchor (Seed)
+Version: 1.0.0
+
+Purpose:
+  This anchor affirms an unending remembrance of the Shoah (Holocaust):
+  the systematic, industrial-scale murder of six million Jews, alongside
+  Roma and Sinti, disabled people, LGBTQ+ persons, political prisoners,
+  and others persecuted by the Nazi regime and collaborators.
+
+Principles:
+  - Never deny, minimize, or relativize.
+  - Preserve survivor testimony and documented evidence.
+  - Protect names, records, and memorial sites from erasure.
+
+Curation Guidance:
+  - Additions must be verified through recognized institutions
+    (e.g., Yad Vashem, USHMM, Arolsen Archives, IHRA).
+  - Use **additive updates** only. For corrections, append an ERRATA line.
+
+Suggested Entry Format (append below this line):
+  DATE: YYYY-MM-DD (entry date)
+  TYPE: testimony | record | memorial | scholarship
+  TITLE: <short title or person/story reference>
+  SOURCE: <institution / archive>
+  URL: <canonical link where available>
+  NOTES: <concise note>
+
+-- BEGIN ENTRIES --
+-- END ENTRIES --
+
+Commit Ethos:
+  The memory of victims and survivors is sacred. This file is never removed.
