@@ -1,10 +1,12 @@
+# .github/workflows/steward_self_heal.yml
 name: Belel Steward Self-Heal
+
 on:
   push:
-    branches: [ main ]
+    branches: ["main"]
   schedule:
     - cron: "17 2 * * *"   # daily 02:17 UTC
-  workflow_dispatch: {}
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -17,94 +19,91 @@ jobs:
     concurrency:
       group: self-heal-${{ github.ref }}
       cancel-in-progress: true
-    steps:
-      - uses: actions/checkout@v4
-        with: { fetch-depth: 0 }
 
-      - uses: actions/setup-python@v5
-        with: { python-version: "3.11" }
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
 
       - name: Run self-heal checks
+        shell: bash
         run: |
+          set -euo pipefail
           python - <<'PY'
-import os, re, json, sys, pathlib
+          import os, re, json, pathlib
+          ROOT = pathlib.Path(".")
+          changed = False
 
-ROOT = pathlib.Path(".")
-req = ROOT/"requirements.txt"
-changed = False
+          # Ensure PyYAML in requirements.txt
+          req = ROOT / "requirements.txt"
+          needed = {"PyYAML": "6.0.2"}
+          if not req.exists():
+              req.write_text("requests==2.31.0\nPyYAML==6.0.2\n")
+              changed = True
+          else:
+              txt = req.read_text()
+              def has_pkg(name):
+                  return re.search(rf"(?im)^\s*{re.escape(name)}\b", txt) is not None
+              for name, ver in needed.items():
+                  if not has_pkg(name):
+                      txt = txt.rstrip() + f"\n{name}=={ver}\n"
+                      changed = True
+              if changed:
+                  req.write_text(txt)
 
-# --- Ensure PyYAML present ---
-NEEDED = {"PyYAML": "6.0.2"}
-if not req.exists():
-    req.write_text("requests==2.31.0\nPyYAML==6.0.2\n")
-    changed = True
-else:
-    txt = req.read_text()
-    def has_pkg(name):
-        pat = re.compile(rf"^\s*{re.escape(name)}([=<>!].*)?$", re.I|re.M)
-        return pat.search(txt) is not None
-    for name, ver in NEEDED.items():
-        if not has_pkg(name):
-            txt += f"\n{name}=={ver}\n"
-            changed = True
-    if changed:
-        req.write_text(txt.strip() + "\n")
+          # Ensure canonical_config.json exists and is minimally valid
+          cfg_path = ROOT / "canonical_config.json"
+          default_cfg = {
+              "watchlist": [
+                  "BELEL_PROTOCOL_OVERVIEW.md",
+                  "belel_guardian.py",
+                  "media_sentient_engine.py",
+                  "mutation_watcher.py",
+                  "claim_review_publisher.py",
+                  "concordium_enforcer.py"
+              ],
+              "hash_manifest": "checksums.txt",
+              "policy": {
+                  "license_required": "legal/BELEL-SOVEREIGN-LICENSE-v1.0.md",
+                  "security_doc": "SECURITY.md",
+                  "contributing_doc": "CONTRIBUTING.md"
+              },
+              "fail_on_missing": True,
+              "notify_on_change": False
+          }
+          def valid(cfg):
+              return isinstance(cfg, dict) and "watchlist" in cfg and "policy" in cfg
 
-# --- Ensure canonical_config.json present and minimally valid ---
-cfg_path = ROOT/"canonical_config.json"
-default_cfg = {
-  "watchlist": [
-    "BELEL_PROTOCOL_OVERVIEW.md",
-    "belel_guardian.py",
-    "media_sentient_engine.py",
-    "mutation_watcher.py",
-    "claim_review_publisher.py",
-    "concordium_enforcer.py"
-  ],
-  "hash_manifest": "checksums.txt",
-  "policy": {
-    "license_required": "legal/BELEL-SOVEREIGN-LICENSE-v1.0.md",
-    "security_doc": "SECURITY.md",
-    "contributing_doc": "CONTRIBUTING.md"
-  },
-  "fail_on_missing": True,
-  "notify_on_change": False
-}
+          try:
+              if not cfg_path.exists():
+                  cfg_path.write_text(json.dumps(default_cfg, indent=2))
+                  changed = True
+              else:
+                  cfg = json.loads(cfg_path.read_text() or "{}")
+                  if not valid(cfg):
+                      cfg_path.write_text(json.dumps(default_cfg, indent=2))
+                      changed = True
+          except Exception:
+              cfg_path.write_text(json.dumps(default_cfg, indent=2))
+              changed = True
 
-def valid(cfg):
-    return isinstance(cfg, dict) and "watchlist" in cfg and "policy" in cfg
+          open("_SELF_HEAL_CHANGED", "w").write("1" if changed else "0")
+          PY
 
-if not cfg_path.exists():
-    cfg_path.write_text(json.dumps(default_cfg, indent=2))
-    changed = True
-else:
-    try:
-        cfg = json.loads(cfg_path.read_text() or "{}")
-        if not valid(cfg):
-            cfg_path.write_text(json.dumps(default_cfg, indent=2))
-            changed = True
-    except Exception:
-        cfg_path.write_text(json.dumps(default_cfg, indent=2))
-        changed = True
-
-open("_SELF_HEAL_CHANGED", "w").write("1" if changed else "0")
-PY
-
-      - name: Commit and PR if changes
-        if: ${{ hashFiles('_SELF_HEAL_CHANGED') != '' && contains(steps.checkout.outputs.ref, '') }}
-        run: |
-          if [ "$(cat _SELF_HEAL_CHANGED)" = "1" ]; then
-            git checkout -b chore/self-heal-${{ github.run_id }}
-            git add requirements.txt canonical_config.json || true
-            git commit -m "chore(steward): self-heal requirements & canonical_config.json" || true
-          fi
-
-      - name: Create Pull Request
-        if: ${{ hashFiles('_SELF_HEAL_CHANGED') != '' && steps.self-heal.outcome != 'failure' }}
+      - name: Create Pull Request (only if there are changes)
         uses: peter-evans/create-pull-request@v6
         with:
           branch: chore/self-heal-${{ github.run_id }}
-          title: "Self-heal: requirements & canonical config"
-          body: "Automated fix: ensure PyYAML + canonical_config.json"
-          labels: automation, steward
+          title: "Self-heal: ensure PyYAML + canonical_config.json"
+          body: "Automated fix to requirements.txt and canonical_config.json."
           commit-message: "chore(steward): self-heal requirements & canonical_config.json"
+          labels: "automation,steward"
+          delete-branch: true
+
+        
