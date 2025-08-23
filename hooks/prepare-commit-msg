@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+BASE="belel-justice-covenant"
+
+# If remembrance/covenant files are being committed, append a gentle note.
+if git diff --cached --name-only | grep -E "^$BASE/(remembrance_archive|JUSTICE_COVENANT_PROOF\.txt|eternal_memory_manifest\.yml)"; then
+  {
+    echo ""
+    echo "[note] Consider evolving snapshot: python $BASE/tools/generate_checksums.py --evolve"
+  } >> "$1"
+fi
