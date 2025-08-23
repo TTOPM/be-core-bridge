@@ -33,3 +33,7 @@ jobs:
           else
             echo "⚠️ File not found: $FILE — skipping execution."
           fi
+            python "$FILE"
+          else
+            echo "⚠️ File not found: $FILE — skipping execution."
+          fi
