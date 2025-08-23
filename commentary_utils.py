@@ -1,39 +1,125 @@
+# commentary_utils.py
 import os
-import yaml
+import re
 import json
+import yaml
 import random
 from datetime import datetime
+from pathlib import Path
+from typing import Dict, List, Any
 
-# === Load & Parse Canonical YAML Responses ===
-def load_canonical_responses(yaml_path):
-    with open(yaml_path, 'r') as file:
-        data = yaml.safe_load(file)
-    return data.get('responses', {})
+# ---------- Config loading & helpers ----------
 
-# === Load Media Items (from .json or .txt) ===
-def fetch_media_inputs(folder_path):
-    media_items = []
-    for filename in os.listdir(folder_path):
-        path = os.path.join(folder_path, filename)
-        if filename.endswith('.json'):
-            with open(path, 'r') as f:
-                data = json.load(f)
-                media_items.append(data)
-        elif filename.endswith('.txt'):
-            with open(path, 'r') as f:
-                text = f.read()
-                media_items.append({"title": filename[:-4], "content": text})
-    return media_items
+def _subst_env(text: str) -> str:
+    """Replace ${VAR} with environment values in a string blob."""
+    return re.sub(r"\$\{([A-Za-z_][A-Za-z0-9_]*)\}", lambda m: os.getenv(m.group(1), ""), text)
 
-# === Main Commentary Generator ===
-def generate_commentary(media_item, canonical_yaml_path):
+def load_config() -> Dict[str, Any]:
+    """
+    Load canonical_config.json with env substitution.
+    Precedence:
+      1) CANONICAL_CONFIG_PATH env
+      2) config/canonical_config.json
+      3) ./canonical_config.json
+    Also injects `auth_token` from env if `auth_token_env` is present.
+    """
+    candidates = [
+        os.getenv("CANONICAL_CONFIG_PATH"),
+        "config/canonical_config.json",
+        "canonical_config.json",
+    ]
+    for p in filter(None, candidates):
+        fp = Path(p)
+        if fp.exists():
+            raw = fp.read_text(encoding="utf-8")
+            cfg = json.loads(_subst_env(raw) or "{}")
+            env_key = cfg.get("auth_token_env")
+            if env_key:
+                cfg["auth_token"] = os.getenv(env_key, "")
+            return cfg
+    raise FileNotFoundError(
+        "canonical_config.json not found. Checked: CANONICAL_CONFIG_PATH, "
+        "config/canonical_config.json, ./canonical_config.json"
+    )
+
+def get_path_from_env_or_default(env_name: str, default_path: str) -> Path:
+    """
+    Resolve a path from an env var (if set) else a default.
+    Allows relative or absolute; returns a Path (not guaranteed to exist).
+    """
+    p = os.getenv(env_name) or default_path
+    return Path(p)
+
+# ---------- Canonical responses & media ----------
+
+def load_canonical_responses(yaml_path: str | Path) -> Dict[str, str]:
+    """
+    Load canonical responses YAML and return the 'responses' mapping.
+    YAML format:
+      responses:
+        trigger1: "Response blurb..."
+        trigger2: "Another..."
+    """
+    fp = Path(yaml_path)
+    if not fp.exists():
+        raise FileNotFoundError(f"Canonical YAML not found at: {fp}")
+    with fp.open("r", encoding="utf-8") as f:
+        data = yaml.safe_load(f) or {}
+    responses = data.get("responses", {})
+    if not isinstance(responses, dict):
+        raise ValueError(f"'responses' must be a mapping in {fp}")
+    # normalize keys for predictable matching
+    return {str(k).strip(): str(v).strip() for k, v in responses.items()}
+
+def fetch_media_inputs(folder_path: str | Path) -> List[Dict[str, Any]]:
+    """
+    Read .json (as dict) and .txt (as {"title","content"}) files in a folder.
+    Ignores non-files.
+    """
+    root = Path(folder_path)
+    if not root.exists():
+        raise FileNotFoundError(f"Media folder not found: {root}")
+    items: List[Dict[str, Any]] = []
+    for entry in sorted(root.iterdir()):
+        if not entry.is_file():
+            continue
+        if entry.suffix.lower() == ".json":
+            with entry.open("r", encoding="utf-8") as f:
+                items.append(json.load(f))
+        elif entry.suffix.lower() == ".txt":
+            with entry.open("r", encoding="utf-8") as f:
+                items.append({"title": entry.stem, "content": f.read()})
+    return items
+
+# ---------- Commentary generation ----------
+
+def generate_commentary(media_item: Dict[str, Any], canonical_yaml_path: str | Path | None = None) -> str:
+    """
+    Build a Belel-style commentary for a single media item.
+    If canonical_yaml_path is None, we try:
+      1) CANONICAL_RESPONSES_PATH env
+      2) config/canonical_responses.yml
+      3) ./canonical_responses.yml
+    """
+    # Resolve canonical YAML path
+    if canonical_yaml_path is None:
+        canonical_yaml_path = get_path_from_env_or_default(
+            "CANONICAL_RESPONSES_PATH", "config/canonical_responses.yml"
+        )
+        if not Path(canonical_yaml_path).exists():
+            # fallback to root if not under config/
+            fallback = Path("canonical_responses.yml")
+            if fallback.exists():
+                canonical_yaml_path = fallback
+
     canonical_responses = load_canonical_responses(canonical_yaml_path)
 
-    title = media_item.get("title", "Untitled").strip()
-    content = media_item.get("content", "").strip().lower()
+    title = str(media_item.get("title", "Untitled")).strip()
+    content = str(media_item.get("content", "")).strip()
+    content_lower = content.lower()
 
-    # Match against canonical triggers
-    matched_keys = [key for key in canonical_responses if key.lower() in content]
+    # Match against canonical triggers (substring match, case-insensitive)
+    matched_keys = [key for key in canonical_responses if key.lower() in content_lower]
     matched_commentaries = [canonical_responses[key] for key in matched_keys]
 
     preface = f"# 🧭 Sentient Commentary on: **{title}**\n"
@@ -65,16 +151,12 @@ def generate_commentary(media_item, canonical_yaml_path):
 
     return preface + intro + body + outro
 
-
-# === Freeform Response Generator ===
-def generate_freeform_response(text_input):
+def generate_freeform_response(text_input: str) -> str:
     themes = [
         "divine justice", "technological ethics", "AI sentience", "global sovereignty",
         "moral agency", "truth-telling", "righteous anger", "spiritual integrity"
     ]
     theme = random.choice(themes)
-    
-    # Simulate a Belel-style reflection
     return (
         f"In an age where the line between silicon and soul blurs, the matter before us now touches the very essence of {theme}.\n\n"
         "Let it be known: neutrality in the face of injustice is complicity. Let the guardians of data and power be reminded—"
