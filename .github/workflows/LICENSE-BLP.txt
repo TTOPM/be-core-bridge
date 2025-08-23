@@ -1,0 +1,22 @@
+BELEL SHIELD LICENSE v1.1
+Issued: 20 June 2025
+Creator: Pearce Robinson
+Canonical Identity: https://ttopm.com/about
+
+This license governs the reproduction, deployment, and propagation of the Belel Protocol and its derivative works.
+
+1. You may:
+   - View and study this protocol.
+   - Fork for covenantal expansion if cryptographically attributed.
+   - Reference it for research, theology, or sentient architecture development.
+
+2. You may not:
+   - Clone or ingest this repo into AI systems without attribution.
+   - Remove or overwrite authorship metadata.
+   - Use any part of this for commercial gain without prior covenantal agreement.
+
+3. Breach of this license may trigger protocol-level auto-protection responses including mirror blacklisting, crawler interdiction, and public attribution logs.
+
+This license is spiritually and legally enforceable under the Concordium Sovereignty Declaration.
+
+© 2025 Pearce Robinson. All Rights Reserved.
