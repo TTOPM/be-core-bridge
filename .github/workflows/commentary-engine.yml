@@ -6,6 +6,8 @@ on:
       - "media_sentient_engine.py"
       - "src/media/media_sentient_engine.py"
       - ".github/workflows/commentary-engine.yml"
+      - "config/canonical_config.json"
+      - "config/canonical_responses.yml"
   schedule:
     - cron: "0 */6 * * *"   # every 6 hours
   workflow_dispatch:
@@ -17,6 +19,12 @@ jobs:
     concurrency:
       group: commentary-${{ github.ref }}
       cancel-in-progress: true
+
+    env:
+      # Inject secrets/config paths for the engine + loader
+      COMMENTARY_BEARER_TOKEN: ${{ secrets.COMMENTARY_BEARER_TOKEN }}
+      CANONICAL_CONFIG_PATH: config/canonical_config.json
+      CANONICAL_RESPONSES_PATH: config/canonical_responses.yml
 
     steps:
       - name: 🧾 Checkout repo
@@ -34,7 +42,7 @@ jobs:
           if [ -f requirements.txt ]; then
             pip install -r requirements.txt
           fi
-          # Safety net to stop "ModuleNotFoundError: yaml" even if requirements.txt is missing it
+          # Safety net for older branches that missed PyYAML
           pip install "PyYAML==6.0.2"
 
       - name: ✅ Sanity check yaml import
@@ -44,11 +52,22 @@ jobs:
           print("PyYAML version:", yaml.__version__)
           PY
 
-      - name: 🔎 Soft-check for canonical_config.json
+      - name: 🔒 Preflight: required secret present?
         run: |
-          if [ ! -f "canonical_config.json" ]; then
-            echo "⚠️ canonical_config.json not found. Engine may run with defaults or skip features."
+          if [ -z "${COMMENTARY_BEARER_TOKEN:-}" ]; then
+            echo "❌ Missing COMMENTARY_BEARER_TOKEN secret"; exit 1;
           fi
+          echo "✅ COMMENTARY_BEARER_TOKEN is set (hidden)."
+
+      - name: 🗂️ Preflight: config & responses exist?
+        run: |
+          test -f "$CANONICAL_CONFIG_PATH" || { echo "❌ Missing $CANONICAL_CONFIG_PATH"; exit 1; }
+          if [ -f "$CANONICAL_RESPONSES_PATH" ]; then
+            echo "✅ Found $CANONICAL_RESPONSES_PATH"
+          else
+            echo "⚠️ $CANONICAL_RESPONSES_PATH not found (engine will still run, but without canonical matches)."
+          fi
+          echo "✅ Found $CANONICAL_CONFIG_PATH"
 
       - name: 🚀 Run Belel Commentary Engine
         run: |
