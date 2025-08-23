@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+# Covenant auto-snapshot + integrity gate (pre-push)
+# - Blocks if archives violate append-only policy
+# - Auto-evolves + commits checksums snapshot when changes are additive
+
+set -euo pipefail
+
+PY=${PYTHON:-python3}
+BASE="belel-justice-covenant"
+GEN="$BASE/tools/generate_checksums.py"
+RES="$BASE/protocol_instructions/revisionism_resistor.py"
+CHK="$BASE/signing/checksums.txt"
+AUTO="${COVENANT_AUTO_EVOLVE:-1}"
+
+echo "[pre-push] Covenant integrity gate…"
+
+# 1) Enforce append-only integrity (blocks on destructive edits)
+if [ -f "$RES" ]; then
+  $PY "$RES"
+fi
+
+# 2) Verify checksums; if mismatched and AUTO_EVOLVE=1, roll + commit new snapshot
+if [ -f "$GEN" ]; then
+  if [ ! -f "$CHK" ]; then
+    echo "[pre-push] No checksums baseline — generating…"
+    $PY "$GEN"
+    git add "$BASE/signing" || true
+    git commit -m "Covenant: add baseline checksums snapshot [ci skip]" || true
+  else
+    set +e
+    $PY "$GEN" --verify
+    RC=$?
+    set -e
+    if [ $RC -ne 0 ]; then
+      if [ "$AUTO" = "1" ]; then
+        echo "[pre-push] Checksums outdated but integrity OK — auto-evolving…"
+        $PY "$GEN" --evolve
+        git add "$BASE/signing/checksums.txt" "$BASE/signing/snapshots" || true
+        git commit -m "Covenant: auto-evolve snapshot for additive remembrance updates [ci skip]" || true
+        $PY "$GEN" --verify
+      else
+        echo "[pre-push] ERROR: Checksums outdated. Run:"
+        echo "  python $GEN --evolve && git add $BASE/signing && git commit -m 'Evolve covenant snapshot'"
+        exit 1
+      fi
+    fi
+  fi
+fi
+
+echo "[pre-push] OK."
+exit 0
