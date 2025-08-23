@@ -36,7 +36,7 @@ jobs:
           if [ -f requirements.txt ]; then
             pip install -r requirements.txt
           fi
-          # Safety net for PyYAML
+          # Safety net for older branches that missed PyYAML
           pip install "PyYAML==6.0.2"
 
       - name: ✅ Sanity check yaml import
@@ -47,8 +47,10 @@ jobs:
           PY
 
       - name: 🔒 Preflight: required secret present?
+        env:
+          TOKEN: ${{ secrets.COMMENTARY_BEARER_TOKEN }}
         run: |
-          if [ -z "${{ secrets.COMMENTARY_BEARER_TOKEN }}" ]; then
+          if [ -z "$TOKEN" ]; then
             echo "❌ Missing COMMENTARY_BEARER_TOKEN secret"; exit 1;
           fi
           echo "✅ COMMENTARY_BEARER_TOKEN is set (hidden)."
