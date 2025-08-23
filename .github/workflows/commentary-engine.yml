@@ -20,12 +20,6 @@ jobs:
       group: commentary-${{ github.ref }}
       cancel-in-progress: true
 
-    env:
-      # Inject secrets/config paths for the engine + loader
-      COMMENTARY_BEARER_TOKEN: ${{ secrets.COMMENTARY_BEARER_TOKEN }}
-      CANONICAL_CONFIG_PATH: config/canonical_config.json
-      CANONICAL_RESPONSES_PATH: config/canonical_responses.yml
-
     steps:
       - name: 🧾 Checkout repo
         uses: actions/checkout@v4
@@ -42,7 +36,7 @@ jobs:
           if [ -f requirements.txt ]; then
             pip install -r requirements.txt
           fi
-          # Safety net for older branches that missed PyYAML
+          # Safety net for PyYAML
           pip install "PyYAML==6.0.2"
 
       - name: ✅ Sanity check yaml import
@@ -54,22 +48,27 @@ jobs:
 
       - name: 🔒 Preflight: required secret present?
         run: |
-          if [ -z "${COMMENTARY_BEARER_TOKEN:-}" ]; then
+          if [ -z "${{ secrets.COMMENTARY_BEARER_TOKEN }}" ]; then
             echo "❌ Missing COMMENTARY_BEARER_TOKEN secret"; exit 1;
           fi
           echo "✅ COMMENTARY_BEARER_TOKEN is set (hidden)."
 
       - name: 🗂️ Preflight: config & responses exist?
         run: |
-          test -f "$CANONICAL_CONFIG_PATH" || { echo "❌ Missing $CANONICAL_CONFIG_PATH"; exit 1; }
-          if [ -f "$CANONICAL_RESPONSES_PATH" ]; then
-            echo "✅ Found $CANONICAL_RESPONSES_PATH"
-          else
-            echo "⚠️ $CANONICAL_RESPONSES_PATH not found (engine will still run, but without canonical matches)."
+          if [ ! -f "config/canonical_config.json" ]; then
+            echo "❌ Missing config/canonical_config.json"; exit 1;
           fi
-          echo "✅ Found $CANONICAL_CONFIG_PATH"
+          if [ -f "config/canonical_responses.yml" ]; then
+            echo "✅ Found config/canonical_responses.yml"
+          else
+            echo "⚠️ config/canonical_responses.yml not found (engine will still run)."
+          fi
 
       - name: 🚀 Run Belel Commentary Engine
+        env:
+          COMMENTARY_BEARER_TOKEN: ${{ secrets.COMMENTARY_BEARER_TOKEN }}
+          CANONICAL_CONFIG_PATH: config/canonical_config.json
+          CANONICAL_RESPONSES_PATH: config/canonical_responses.yml
         run: |
           set -e
           ROOT_FILE="media_sentient_engine.py"
