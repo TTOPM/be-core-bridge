@@ -1,53 +1,70 @@
-name: Commentary Engine 🧠
+name: Commentary Engine 🎙️
 
 on:
   push:
     paths:
-      - 'commentary/**'
-      - 'media_sentient_engine.py'
-      - '.github/workflows/commentary-engine.yml'
-  workflow_dispatch:
+      - "media_sentient_engine.py"
+      - "src/media/media_sentient_engine.py"
+      - ".github/workflows/commentary-engine.yml"
   schedule:
-    - cron: '0 */6 * * *'  # Every 6 hours
+    - cron: "0 */6 * * *"   # every 6 hours
+  workflow_dispatch:
 
 jobs:
   commentary:
     runs-on: ubuntu-latest
+    timeout-minutes: 6
+    concurrency:
+      group: commentary-${{ github.ref }}
+      cancel-in-progress: true
 
     steps:
-      - name: 🔄 Checkout repo
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+      - name: 🧾 Checkout repo
+        uses: actions/checkout@v4
 
-      - name: 🐍 Set up Python
-        uses: actions/setup-python@v4
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: 📦 Install dependencies
         run: |
+          set -e
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          fi
+          # Safety net to stop "ModuleNotFoundError: yaml" even if requirements.txt is missing it
+          pip install "PyYAML==6.0.2"
 
-      - name: 🧠 Run Belel Commentary Engine
+      - name: ✅ Sanity check yaml import
         run: |
-          python media_sentient_engine.py
+          python - <<'PY'
+          import yaml
+          print("PyYAML version:", yaml.__version__)
+          PY
 
-      - name: 🔐 Set Git Identity
+      - name: 🔎 Soft-check for canonical_config.json
         run: |
-          git config --global user.email "contactme@pearcerobinson.com"
-          git config --global user.name "Pearce Robinson"
+          if [ ! -f "canonical_config.json" ]; then
+            echo "⚠️ canonical_config.json not found. Engine may run with defaults or skip features."
+          fi
 
-      - name: 📤 Commit & Push Updates
+      - name: 🚀 Run Belel Commentary Engine
         run: |
-          git add .
-          git commit -m "🧠 Commentary update via engine" || echo "Nothing to commit"
-          git push origin main || echo "Nothing to push"
+          set -e
+          ROOT_FILE="media_sentient_engine.py"
+          SRC_FILE="src/media/media_sentient_engine.py"
 
-      - name: 🚀 Sync to Hugging Face
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: |
-          git remote add hf https://pearcerobinson:${HF_TOKEN}@huggingface.co/TTOPM/belel-protocol || true
-          git push hf main --force || echo "Already up to date"
+          if [ -f "$SRC_FILE" ]; then
+            export PYTHONPATH="$(pwd)/src:$PYTHONPATH"
+            echo "▶ Running $SRC_FILE with PYTHONPATH=$PYTHONPATH"
+            python "$SRC_FILE"
+          elif [ -f "$ROOT_FILE" ]; then
+            export PYTHONPATH="$(pwd):$(pwd)/src:$PYTHONPATH"
+            echo "▶ Running $ROOT_FILE with PYTHONPATH=$PYTHONPATH"
+            python "$ROOT_FILE"
+          else
+            echo "❌ media_sentient_engine.py not found in src/media/ or repo root" >&2
+            exit 1
+          fi
