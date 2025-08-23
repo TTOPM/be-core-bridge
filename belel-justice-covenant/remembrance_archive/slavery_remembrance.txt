@@ -1,0 +1,27 @@
+SLAVERY REMEMBRANCE ANCHOR
+Transatlantic, Trans-Saharan, Indian Ocean, and other systems of enslavement
+Version: 1.0.0
+
+Purpose:
+  To honour the memory of enslaved peoples and their descendants, record verified accounts,
+  and resist erasure, minimization, or sanitization of slavery’s cruelty and legacy.
+
+Principles:
+  - Record names where possible; where not, record communities and contexts.
+  - Cite reputable archives, museums, court records, and peer-reviewed research.
+  - Add entries; never delete history. Corrections are logged as ERRATA.
+
+Suggested Entry Format:
+  DATE: YYYY-MM-DD (entry creation date)
+  REGION: <e.g., Caribbean, West Africa, North America, Brazil, Indian Ocean, etc.>
+  TYPE: person | ship | plantation | court_record | emancipation_record | scholarship
+  TITLE: <short, respectful identifier>
+  SOURCE: <archive/museum/institution>
+  URL: <canonical link>
+  NOTES: <concise factual note>
+
+-- BEGIN ENTRIES --
+-- END ENTRIES --
+
+Commit Ethos:
+  The dignity of enslaved peoples is inviolable. This anchor persists permanently.
