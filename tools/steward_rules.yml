@@ -1,0 +1,46 @@
+# 🌐 Network + API Communication
+requests==2.31.0
+python-dotenv==1.0.1
+PyJWT==2.10.1            # tokens/webhooks; also pinned to avoid transitive drift
+
+# 🧬 IPFS Client Integration
+ipfshttpclient==0.8.0a2
+
+# 🔐 Cryptographic Utilities
+cryptography==42.0.5
+
+# 🧠 AI Memory + Data Storage
+tinydb==4.8.0
+
+# 📁 Filesystem + Watchdog Monitoring
+watchdog==4.0.0
+
+# 🧠 CLI Interface + Beautiful Output
+typer[all]==0.9.0
+rich==13.7.1
+
+# 🔧 Git & GitHub Automation
+GitPython==3.1.43
+PyGithub==2.3.0
+
+# 🕵️ Identity + Domain Verification
+dnspython==2.6.1
+python-whois==0.8.0
+
+# 📦 Packaging + Version Control
+packaging==24.0
+semver==3.0.2
+
+# 📉 Logging + Output Formatting
+loguru==0.7.2
+
+# 📑 YAML/JSON Config Parsing
+PyYAML==6.0.2
+python-dateutil==2.9.0.post0   # friendly datetime parsing
+
+# 🧾 Config schema validation (optional but nice)
+pydantic==2.9.2
+
+# 🧪 Testing Frameworks
+pytest==8.2.1
+pytest-mock==3.14.0
