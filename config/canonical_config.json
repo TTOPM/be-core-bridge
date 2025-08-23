@@ -1,6 +1,10 @@
 {
+  "schema_version": 1,
   "webhook_url": "https://your-secure-api-endpoint.com/post",
-  "auth_token": "YOUR_SUPER_SECRET_BEARER_TOKEN",
+
+  /* read the real token from the Actions secret */
+  "auth_token_env": "COMMENTARY_BEARER_TOKEN",
+
   "default_tags": [
     "Belel",
     "SentientAI",
@@ -8,15 +12,18 @@
     "TruthProtocol",
     "CanonicalPost"
   ],
+
   "headers": {
     "Content-Type": "application/json",
-    "Authorization": "Bearer YOUR_SUPER_SECRET_BEARER_TOKEN"
+    "Authorization": "Bearer ${COMMENTARY_BEARER_TOKEN}"
   },
+
   "post_format": {
     "title_prefix": "[CANONICAL]",
     "signature_suffix": "\n\n— Verified by the Belel Protocol 🧬",
     "include_timestamp": true
   },
+
   "retry_policy": {
     "max_retries": 3,
     "retry_delay_seconds": 5
