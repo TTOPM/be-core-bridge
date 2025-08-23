@@ -44,3 +44,7 @@ pydantic==2.9.2
 # 🧪 Testing Frameworks
 pytest==8.2.1
 pytest-mock==3.14.0
+
+# 🧠 Sovereign Belel API + Chat
+fastapi==0.110.2
+uvicorn==0.29.0
