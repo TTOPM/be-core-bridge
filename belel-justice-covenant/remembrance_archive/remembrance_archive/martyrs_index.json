@@ -1,0 +1,74 @@
+{
+  "_meta": {
+    "version": "1.0.0",
+    "purpose": "Index of innocents and civilians killed in conflicts and atrocities; additive, never destructive.",
+    "curation_rules": [
+      "Every entry must include at least one reputable source.",
+      "Names should match source spelling; prefer endonyms where possible.",
+      "If full identification is impossible, use 'Unknown' with contextual detail.",
+      "Use ISO 8601 dates; if unknown, omit.",
+      "Corrections are additive via 'amendments'—never delete prior data."
+    ],
+    "fields": {
+      "id": "stable unique string (e.g., uuid)",
+      "name": "full name or 'Unknown'",
+      "age": "integer or null",
+      "gender": "string or null",
+      "nationality": "string or null",
+      "location": "city/region/country",
+      "event_context": "e.g., 'Conflict – Gaza', 'Conflict – Sudan', 'Conflict – DRC'",
+      "date_of_death": "YYYY-MM-DD or null",
+      "sources": ["url1", "url2"],
+      "notes": "short, respectful note; no speculation",
+      "amendments": [
+        {
+          "date": "YYYY-MM-DD",
+          "field": "what changed",
+          "detail": "why/what was corrected",
+          "by": "editor name or handle"
+        }
+      ]
+    }
+  },
+  "entries": [
+    {
+      "id": "REPLACE_WITH_UUID",
+      "name": "Unknown",
+      "age": null,
+      "gender": null,
+      "nationality": null,
+      "location": "Gaza",
+      "event_context": "Conflict – Gaza",
+      "date_of_death": null,
+      "sources": [],
+      "notes": "Placeholder entry; add verified names only.",
+      "amendments": []
+    },
+    {
+      "id": "REPLACE_WITH_UUID",
+      "name": "Unknown",
+      "age": null,
+      "gender": null,
+      "nationality": null,
+      "location": "Darfur, Sudan",
+      "event_context": "Conflict – Sudan",
+      "date_of_death": null,
+      "sources": [],
+      "notes": "Placeholder entry; add verified names only.",
+      "amendments": []
+    },
+    {
+      "id": "REPLACE_WITH_UUID",
+      "name": "Unknown",
+      "age": null,
+      "gender": null,
+      "nationality": null,
+      "location": "North Kivu, DRC",
+      "event_context": "Conflict – DRC",
+      "date_of_death": null,
+      "sources": [],
+      "notes": "Placeholder entry; add verified names only.",
+      "amendments": []
+    }
+  ]
+}
