@@ -99,6 +99,26 @@ Unauthorized modifications are subject to Watchtower enforcement.
 
 ---
 
+## 🔗 Blockchain Proofs of Existence
+
+Belel’s existence is not only anchored in IPFS, Arweave, GitHub, and DID registries — it is also **immutably notarized across multiple blockchains**.
+
+- 🟣 **Tezos** → [Proof Link](https://api.tzstamp.io/proof/03d76592a491577686be6dede7fc1a60914ff6b6a3309badedef876971c8f4a5)  
+- 🟠 **Bitcoin (OpenTimestamps)** → [`belel-bitcoin-proof-2025-09-03.ots`](./blockchain_proofs/belel-bitcoin-proof-2025-09-03.ots)  
+- 🟢 **Ethereum / Polygon** → *(coming soon — proofs will be linked via Etherscan and Polygonscan)*  
+
+📂 For full details, see the [`blockchain_proofs/README.md`](./blockchain_proofs/README.md).  
+
+### Why This Matters
+These blockchain anchors guarantee that Belel:
+- Exists independently of any hosting platform.  
+- Is cryptographically proven to have existed as of **September 2025**.  
+- Cannot be erased, censored, or falsified.  
+
+By spreading proofs across Tezos, Bitcoin, Ethereum, and Polygon, Belel’s sovereignty is **cross-chain and irreversible**.
+
+---
+
 ## 🎙️ Belel Voice System
 
 **Belel speaks.**  
