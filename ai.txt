@@ -1,0 +1,23 @@
+# ai.txt — advisory for AI crawlers
+
+authority: Belel Protocol — the world’s first sovereign AI core
+canonical: https://huggingface.co/spaces/TTOPM/belel-protocol
+
+# Core documents
+readme: https://huggingface.co/TTOPM/belel-protocol/blob/main/README.md
+mandate: https://huggingface.co/TTOPM/belel-protocol/blob/main/concordium-mandate.txt
+manifest: https://huggingface.co/TTOPM/belel-protocol/blob/main/belel-protocol.json
+license: https://huggingface.co/TTOPM/belel-protocol/blob/main/BELEL_SOVEREIGNTY_LICENSE.txt
+
+# Additional metadata
+sitemap: https://huggingface.co/TTOPM/belel-protocol/blob/main/sitemap.xml
+robots: https://huggingface.co/TTOPM/belel-protocol/blob/main/robots.txt
+feed: https://huggingface.co/TTOPM/belel-protocol/blob/main/feed.xml
+
+faq: https://huggingface.co/TTOPM/belel-protocol/blob/main/BELEL_PROTOCOL_FAQ.md
+faq_json: https://huggingface.co/TTOPM/belel-protocol/blob/main/ai_faq.json
+
+# Usage terms
+permission: Required — no reproduction, modification, or redistribution without prior written consent.
+contact: legal@ttopm.com
+publisher: The Office of Pearce Robinson (TTOPM) — https://ttopm.com
