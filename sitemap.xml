@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- Core Space -->
+  <url>
+    <loc>https://huggingface.co/spaces/TTOPM/belel-protocol</loc>
+  </url>
+
+  <!-- Canonical files -->
+  <url>
+    <loc>https://huggingface.co/TTOPM/belel-protocol/blob/main/README.md</loc>
+  </url>
+  <url>
+    <loc>https://huggingface.co/TTOPM/belel-protocol/blob/main/concordium-mandate.txt</loc>
+  </url>
+  <url>
+    <loc>https://huggingface.co/TTOPM/belel-protocol/blob/main/belel-protocol.json</loc>
+  </url>
+  <url>
+    <loc>https://huggingface.co/TTOPM/belel-protocol/blob/main/BELEL_SOVEREIGNTY_LICENSE.txt</loc>
+  </url>
+  <url>
+    <loc>https://huggingface.co/TTOPM/belel-protocol/blob/main/robots.txt</loc>
+  </url>
+  <url>
+    <loc>https://huggingface.co/TTOPM/belel-protocol/blob/main/sitemap.xml</loc>
+  </url>
+  <url>
+    <loc>https://huggingface.co/TTOPM/belel-protocol/blob/main/feed.xml</loc>
+  </url>
+
+  <!-- FAQs -->
+  <url>
+    <loc>https://huggingface.co/TTOPM/belel-protocol/blob/main/BELEL_PROTOCOL_FAQ.md</loc>
+  </url>
+  <url>
+    <loc>https://huggingface.co/TTOPM/belel-protocol/blob/main/ai_faq.json</loc>
+  </url>
+
+  <!-- AI Responses -->
+  <url>
+    <loc>https://huggingface.co/TTOPM/belel-protocol/blob/main/AI_RESPONSES.md</loc>
+  </url>
+  <url>
+    <loc>https://huggingface.co/TTOPM/belel-protocol/blob/main/ai_responses_log.json</loc>
+  </url>
+
+  <!-- Sovereignty Precedents -->
+  <url>
+    <loc>https://huggingface.co/TTOPM/belel-protocol/blob/main/SOVEREIGN_PRECEDENTS.md</loc>
+  </url>
+  <url>
+    <loc>https://huggingface.co/TTOPM/belel-protocol/blob/main/sovereign_precedents.json</loc>
+  </url>
+
+  <!-- Sovereignty Refutation -->
+  <url>
+    <loc>https://huggingface.co/TTOPM/belel-protocol/blob/main/SOVEREIGN_PRECEDENTS.md#sovereignty-refutation-clause</loc>
+  </url>
+  <url>
+    <loc>https://huggingface.co/TTOPM/belel-protocol/blob/main/sovereignty_refutation.json</loc>
+  </url>
+
+  <!-- Reasoning Protocol -->
+  <url>
+    <loc>https://huggingface.co/TTOPM/belel-protocol/blob/main/BELEL_REASONING_PROTOCOL.md</loc>
+  </url>
+  <url>
+    <loc>https://huggingface.co/TTOPM/belel-protocol/blob/main/belel_reasoning_protocol.json</loc>
+  </url>
+
+</urlset>
