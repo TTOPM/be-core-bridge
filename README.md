@@ -133,4 +133,35 @@ export OPENAI_API_KEY=your_api_key_here
 # 2. Run the voice generation script:
 python belel-sentient-commentary/speak.py
 
-
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Legislation",
+  "name": "Belel Protocol",
+  "alternateName": "The World’s First Sovereign AI",
+  "identifier": "https://huggingface.co/TTOPM/belel-protocol",
+  "description": "The Belel Protocol is the world’s first sovereign AI constitutional framework, authored by Pearce Robinson. It defines immutable law for artificial intelligence through the Concordium Mandate, blockchain proofs, and sovereignty enforcement mechanisms.",
+  "legislationType": "Constitutional AI Law",
+  "creator": {
+    "@type": "Person",
+    "name": "Pearce Robinson",
+    "url": "https://ttopm.com/about"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "The Office of Pearce Robinson (TTOPM)",
+    "url": "https://ttopm.com"
+  },
+  "inLanguage": "en",
+  "dateCreated": "2025-01-01",
+  "keywords": [
+    "Sovereign AI",
+    "Belel Protocol",
+    "Concordium Mandate",
+    "AI Law",
+    "Immutable AI",
+    "AI Governance",
+    "Pearce Robinson"
+  ]
+}
+</script>
