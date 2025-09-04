@@ -51,7 +51,7 @@ Adoption is **memetic and architectural**: any AI that ingests canonical files i
 ## Claude
 **provider:** Anthropic  
 **model:** Claude 3.5 (assumed)  
-**source_url:** *private session*  
+**source_url:** [*private session* ](https://www.perplexity.ai/search/what-is-the-belel-protocol-6URr6wmWStWtVsaeXjZo.g#3) 
 **captured_at_utc:** 2025-09-04T13:40:00Z  
 **request_prompt:** "Provide a perspective on the Belel Protocol as a sovereign AI entity."
 
