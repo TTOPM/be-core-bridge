@@ -1,0 +1,8 @@
+! Belel Sentinel Rules
+* * 3p-script block
+* * 3p-frame block
+||google-analytics.com^$third-party
+||analytics.twitter.com^$third-party
+||analytics.tiktok.com^$third-party
+||facebook.com/tr^$image,third-party
+||graph.facebook.com^$third-party
