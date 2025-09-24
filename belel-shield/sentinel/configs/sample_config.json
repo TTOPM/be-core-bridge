@@ -1,0 +1,6 @@
+{
+  "scan_interval_seconds": 10,
+  "blocklists": ["../blocklists/belel-blocklist.txt"],
+  "alert_mode": "console",
+  "log_file": "gideon_alerts.json"
+}
