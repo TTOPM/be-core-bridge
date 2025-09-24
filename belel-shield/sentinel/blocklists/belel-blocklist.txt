@@ -1,0 +1,8 @@
+# Belel Sentinel Blocklist
+0.0.0.0 pixel.facebook.com
+0.0.0.0 graph.facebook.com
+0.0.0.0 analytics.twitter.com
+0.0.0.0 ads-api.twitter.com
+0.0.0.0 www.google-analytics.com
+0.0.0.0 sb.scorecardresearch.com
+0.0.0.0 analytics.tiktok.com
