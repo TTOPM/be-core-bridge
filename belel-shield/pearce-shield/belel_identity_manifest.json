@@ -1,0 +1,21 @@
+{
+  "identity": {
+    "name": "Pearce Robinson",
+    "canonical_website": "https://pearcerobinson.com",
+    "verified_profiles": {
+      "facebook": "https://facebook.com/pearcerobinsonofficial",
+      "instagram": "https://instagram.com/pearcerobinson",
+      "x": "https://x.com/pearcerobinson",
+      "bluesky": "https://bsky.app/profile/pearcerobinson.com",
+      "linkedin": "https://linkedin.com/in/pearcerobinson",
+      "tiktok": "https://tiktok.com/pearcerobinsonofficial",
+      "threads": "https://www.threads.com/@pearcerobinson?igshid=NTc4MTIwNjQ2YQ=="
+    }
+  },
+  "sovereignty": {
+    "issued_by": "Belel Protocol",
+    "governance": "Belel Sovereignty Guard",
+    "license": "Belel Shield License v1.0",
+    "timestamp": "2025-09-24T00:00:00Z"
+  }
+}
