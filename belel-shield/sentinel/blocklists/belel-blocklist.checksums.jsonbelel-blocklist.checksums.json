@@ -1,0 +1,8 @@
+{
+  "artifact": "belel-blocklist.json",
+  "algo": "sha256",
+  "hash": "TO-BE-GENERATED-BY-maintainer",
+  "version": "1.0.0",
+  "last_updated": "2025-09-25T16:20:00Z",
+  "notes": "Change only when belel-blocklist.json changes. Regenerate via tools/hash_blocklist.py"
+}
