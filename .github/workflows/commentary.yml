@@ -4,7 +4,7 @@ name: Commentary Engine 🎙️
 on:
   push:
     paths:
-      - "src/media/media_sentient_engine.py"
+      - "be-core-bridge/media_sentient_engine.py"
       - ".github/workflows/commentary.yml"
   workflow_dispatch:
 
@@ -40,7 +40,7 @@ jobs:
 
       - name: 🚀 Run Commentary Engine
         run: |
-          FILE="src/media/media_sentient_engine.py"
+          FILE="be-core-bridge/media_sentient_engine.py"
           if [ -f "$FILE" ]; then
             export PYTHONPATH="$(pwd)/src:$PYTHONPATH"
             echo "▶ Running $FILE with PYTHONPATH=$PYTHONPATH"
