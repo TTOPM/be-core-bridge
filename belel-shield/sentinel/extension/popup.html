@@ -1,0 +1,39 @@
+<!DOCTYPE html><html><head>
+<meta charset="utf-8" />
+<title>Sovereign Shield – Browser Protection</title>
+<link rel="stylesheet" href="popup.css" />
+</head><body>
+<div class="header"><h2>🛡️ SOVEREIGN SHIELD</h2><div>Browser Counter-Surveillance</div></div>
+<div class="shield-status">
+  <div class="threat-counter"><span>Threats Blocked:</span><span id="threatCount">0</span></div>
+  <div class="threat-counter"><span>Active Identity:</span><span id="activeIdentity">researcher</span></div>
+  <div class="threat-counter"><span>Protection Level:</span><span id="protectionLevel">MAXIMUM</span></div>
+</div>
+<ul class="active-protection">
+  <li>✓ Palantir/Gideon filters</li>
+  <li>✓ Traffic obfuscation (safe-by-default)</li>
+  <li>✓ Behavioral masking</li>
+  <li>✓ Identity rotation</li>
+</ul>
+<div class="controls">
+  <div class="identity-selector">
+    <select id="identitySelect">
+      <option value="researcher">Academic Researcher</option>
+      <option value="professional">Business Professional</option>
+      <option value="casual">Casual User</option>
+      <option value="ghost">Ghost Mode</option>
+    </select>
+  </div>
+  <button id="toggleProtection">🔒 PROTECTION: ON</button>
+  <button id="emergencyMode">🚨 EMERGENCY STEALTH</button>
+  <button id="clearTraces">🧹 CLEAR ALL TRACES</button>
+</div>
+<div id="stealthAlert" class="stealth-mode" style="display:none;">
+  <div class="blink">⚠️ STEALTH MODE ACTIVE ⚠️</div>
+  <div>All passive countermeasures engaged</div>
+</div>
+<div class="log" id="activityLog">
+  <div class="log-entry info">[INIT] Sovereign Shield initialized</div>
+</div>
+<script src="popup.js"></script>
+</body></html>

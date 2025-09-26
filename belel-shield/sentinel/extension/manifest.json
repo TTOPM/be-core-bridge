@@ -1,15 +1,13 @@
 {
-  "manifest_version": 3,
+  "manifest_version": 2,
   "name": "Belel Sentinel",
-  "version": "0.1.0",
-  "action": { "default_title": "Belel Sentinel" },
-  "permissions": ["declarativeNetRequest", "declarativeNetRequestWithHostAccess", "storage"],
-  "host_permissions": ["<all_urls>"],
-  "declarative_net_request": {
-    "rule_resources": [{
-      "id": "base_rules",
-      "enabled": true,
-      "path": "rules/base_rules.json"
-    }]
-  }
+  "version": "0.2",
+  "description": "Citizen-first extension for blocking trackers and reducing fingerprinting.",
+  "permissions": ["storage", "webRequest", "webRequestBlocking", "<all_urls>", "notifications"],
+  "background": { "scripts": ["background.js"], "persistent": false },
+  "browser_action": { "default_title": "Belel Sentinel", "default_popup": "popup.html" },
+  "content_scripts": [
+    { "matches": ["<all_urls>"], "js": ["csp_injector.js","fingerprint_spoofer.js","noise_injector.js"], "run_at": "document_start" }
+  ],
+  "content_security_policy": "script-src 'self'; object-src 'self'"
 }
