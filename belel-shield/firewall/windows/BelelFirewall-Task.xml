@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-16"?>
+<Task version="1.4" xmlns="http://schemas.microsoft.com/windows/2004/02/mit/task">
+  <Triggers><CalendarTrigger><StartBoundary>2025-09-26T08:15:00</StartBoundary><ScheduleByDay><DaysInterval>1</DaysInterval></ScheduleByDay></CalendarTrigger></Triggers>
+  <Principals><Principal id="Author"><RunLevel>HighestAvailable</RunLevel></Principal></Principals>
+  <Actions Context="Author">
+    <Exec><Command>powershell.exe</Command><Arguments>-ExecutionPolicy Bypass -File %USERPROFILE%\belel-shield\firewall\windows\BelelFirewall.ps1</Arguments></Exec>
+  </Actions>
+  <Settings><StartWhenAvailable>true</StartWhenAvailable></Settings>
+</Task>
