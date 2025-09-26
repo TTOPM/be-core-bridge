@@ -1,0 +1,29 @@
+name: Docker Firewall (GHCR)
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'belel-shield/packaging/Dockerfile.firewall'
+      - 'belel-shield/firewall/linux/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: belel-shield/packaging/Dockerfile.firewall
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/belel-firewall:latest
