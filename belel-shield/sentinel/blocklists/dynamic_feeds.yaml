@@ -1,0 +1,10 @@
+feeds:
+  - name: abuse_ch
+    url: "https://rules.emergingthreats.net/blockrules/compromised-ips.txt"
+    format: "text"
+  - name: firehol_level1
+    url: "https://raw.githubusercontent.com/firehol/blocklist-ipsets/master/firehol_level1.netset"
+    format: "text"
+  - name: community
+    url: "https://raw.githubusercontent.com/TTOPM/be-core-bridge/main/belel-shield/sentinel/blocklists/belel-blocklist.json"
+    format: "json"

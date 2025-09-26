@@ -1,16 +1,6 @@
 {
-  "ip_ranges": [
-    ["104.244.42.0", "104.244.42.255"],
-    ["185.220.100.0", "185.220.100.255"],
-    ["45.33.32.0", "45.33.35.255"]
-  ],
-  "domains": [
-    "gideon-surveillance.com",
-    "israel-trade-detect.net",
-    "nsa-mirror.org",
-    "palantir.com",
-    "unit8200.net"
-  ],
-  "last_updated": "2025-09-25T15:50:00Z",
-  "source": "Belel Shield – Sentinel Blocklist"
+  "ip_ranges": [["104.244.42.0","104.244.42.255"], ["185.220.100.0","185.220.100.255"]],
+  "domains": ["palantir.com","gideon-surveillance.com","israel-trade-detect.net","nsa-mirror.org"],
+  "last_updated": "2025-09-26T00:00:00Z",
+  "source": "Belel Shield – Sentinel blocklist"
 }
