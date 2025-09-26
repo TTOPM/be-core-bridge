@@ -1,0 +1,18 @@
+name: Blocklist Verify (PR)
+on:
+  pull_request:
+    paths:
+      - 'belel-shield/sentinel/blocklists/**'
+      - 'belel-shield/scripts/hash_blocklist.py'
+      - 'scripts/hash_blocklist.py'
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify blocklist checksum
+        run: |
+          python3 belel-shield/scripts/hash_blocklist.py --verify \
+            belel-shield/sentinel/blocklists/belel-blocklist.json \
+            belel-shield/sentinel/blocklists/belel-blocklist.sha256
