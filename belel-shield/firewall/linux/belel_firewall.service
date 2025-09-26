@@ -1,0 +1,12 @@
+[Unit]
+Description=Belel Shield Firewall Apply
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/bash -lc '%h/belel-shield/firewall/linux/belel_firewall.sh'
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

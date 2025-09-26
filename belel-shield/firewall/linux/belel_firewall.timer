@@ -1,0 +1,10 @@
+[Unit]
+Description=Belel Shield Firewall Daily Refresh
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=24h
+Persistent=true
+
+[Install]
+WantedBy=timers.target
