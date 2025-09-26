@@ -1,0 +1,20 @@
+scan_interval_sec: 10
+require_blocklist_checksum: true
+enable_anomaly_detection: true
+anomaly:
+  window: 20
+  min_samples: 6
+  sigma: 3
+plugins:
+  firewall: false
+  tor: false
+  notify: false
+  noise: false
+noise:
+  enable_http: false
+  domains: ["example.com","wikipedia.org","github.com","stackoverflow.com"]
+  interval_sec: [30, 90]
+identities:
+  - {id: researcher,  activity: moderate}
+  - {id: professional, activity: high}
+  - {id: casual,      activity: low}
