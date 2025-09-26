@@ -1,0 +1,40 @@
+name: Release (Sign)
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  sign:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup GPG
+        run: |
+          echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+          gpg --list-secret-keys
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+
+      - name: Build checksums
+        run: |
+          shasum -a 256 belel-shield/sentinel/blocklists/belel-blocklist.json > belel-shield/sentinel/blocklists/belel-blocklist.sha256
+
+      - name: Sign artifacts
+        run: |
+          gpg --batch --yes --passphrase "$GPG_PASSPHRASE" --armor --detach-sign belel-shield/sentinel/blocklists/belel-blocklist.json
+          gpg --batch --yes --passphrase "$GPG_PASSPHRASE" --armor --detach-sign belel-shield/sentinel/blocklists/belel-blocklist.sha256
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            belel-shield/sentinel/blocklists/belel-blocklist.json
+            belel-shield/sentinel/blocklists/belel-blocklist.sha256
+            belel-shield/sentinel/blocklists/belel-blocklist.json.asc
+            belel-shield/sentinel/blocklists/belel-blocklist.sha256.asc
