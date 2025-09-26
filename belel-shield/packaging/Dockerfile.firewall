@@ -1,0 +1,6 @@
+FROM debian:stable-slim
+RUN apt-get update && apt-get install -y nftables jq curl ca-certificates && rm -rf /var/lib/apt/lists/*
+WORKDIR /app
+COPY firewall/linux/belel_firewall.sh /app/belel_firewall.sh
+RUN chmod +x /app/belel_firewall.sh
+CMD ["/bin/bash","-lc","/app/belel_firewall.sh && tail -f /dev/null"]

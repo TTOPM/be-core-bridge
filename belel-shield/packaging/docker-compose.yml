@@ -1,0 +1,12 @@
+services:
+  belel-firewall:
+    build:
+      context: ..
+      dockerfile: packaging/Dockerfile.firewall
+    network_mode: host
+    volumes:
+      - ~/.belel:/root/.belel:ro
+      - ../firewall/linux:/app/firewall:ro
+    cap_add:
+      - NET_ADMIN
+    restart: unless-stopped
