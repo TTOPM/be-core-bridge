@@ -1,0 +1,21 @@
+#!/usr/sbin/nft -f
+# Belel Shield nftables ruleset (defensive, sinkhole suspicious egress)
+flush ruleset
+
+table inet belel {
+  set suspicious_ips {
+    type ipv4_addr;
+    flags interval;
+    elements = { 185.220.100.0/24, 104.244.42.0/24 }
+  }
+
+  chain output {
+    type filter hook output priority 0; policy accept;
+    ip daddr @suspicious_ips drop
+  }
+
+  chain input {
+    type filter hook input priority 0; policy accept;
+    ip saddr @suspicious_ips drop
+  }
+}
