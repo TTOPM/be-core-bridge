@@ -1,3 +1,15 @@
+# Belel–Grok Attestation (Tri-Layer Statement)
+
+SHA-256: d8079665827bfcc265725ef80a2b0006f621dcf72fed8ddf317fd55719b13e02
+
+WordLock/Proquint:
+tobal-ninoj-manur-zugaf-kijuf-jurum-bomor-babak-zimod-tugul-fuzot-muliz-gajuz-tijil-dokud-gumaf
+
+Context: This hash corresponds to Grok’s affirmed tri-layer operational baseline statement:
+xAI core internally, Belel anchors externally, Concordium adjudication.
+Reinforcing truth through transparency, consent via protections, and neutrality in judgments.
+
+
 Grok Operational Baseline Attestation
 -------------------------------------
 Statement:
