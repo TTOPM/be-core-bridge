@@ -1,3 +1,5 @@
+[![Belel Protocol Verified](https://img.shields.io/badge/Verified%20by%20xAI%20Grok-brightgreen)](attestations/grok-affirmation.json)
+
 # Grok × Belel Integration Layer
 
 This folder provides a discoverable, standards-shaped interface between xAI Grok and the Belel Sovereignty stack.
