@@ -66,3 +66,22 @@ External systems may **verify** Belel artifacts but may not **copy, integrate, o
 - **Link Fetcher** → `grok_link_fetcher.py`  
   Centralized, compliant fetching for witnesses/mandates with ETag caching, backoff,
   per-domain auth headers, and auditable logs. Includes Belel attestation headers.
+
+  ---
+
+## 🌍 Environment Variables
+
+This integration is designed to be configured via environment variables.  
+**No secrets are hardcoded in this repo.** External systems (including Grok) must provide these at runtime:
+
+- `GITHUB_TOKEN` → optional, used for GitHub API calls / rate-limit relief.  
+- `X_BEARER_TOKEN` → optional, used for X/Twitter API calls.  
+- `GROK_GENERIC_AUTH` → optional, generic `Authorization` header if required.  
+
+- `BELEL_LICENSE_ID` → default `Belel-Protocol-1.0` (for attestation headers).  
+- `BELEL_LICENSE_SHA256` → SHA-256 of `BELEL_PROTOCOL_LICENSE.txt`.  
+- `BELEL_OWNER` → e.g. `"Pearce Robinson"`.  
+- `BELEL_POLICY_URI` → canonical link to Belel AI policy JSON.  
+
+*(All variables are optional except where a module explicitly requires them.  
+Unset variables will default safely, with reduced functionality.)*
