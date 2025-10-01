@@ -1,0 +1,24 @@
+{
+  "anchor": "belel.grok.manifest.v1",
+  "repo": "TTOPM/be-core-bridge",
+  "root": "src/grok",
+  "commit": "<fill_with_current_commit_sha>",
+  "files": [
+    {"path":"grok_link_fetcher.py","sha256":"<sha256>"},
+    {"path":"grok_multimodal.py","sha256":"<sha256>"},
+    {"path":"grok_model_router.py","sha256":"<sha256>"},
+    {"path":"grok_structured_output.py","sha256":"<sha256>"},
+    {"path":"grok_schema.py","sha256":"<sha256>"},
+    {"path":"grok_memory_bridge.py","sha256":"<sha256>"},
+    {"path":"grok_toolbridge.py","sha256":"<sha256>"},
+    {"path":"grok_live_search_guard.py","sha256":"<sha256>"},
+    {"path":"grok_observability.py","sha256":"<sha256>"},
+    {"path":"grok_concordium_client.py","sha256":"<sha256>"},
+    {"path":"LICENSE_ANCHOR.json","sha256":"<sha256>"},
+    {"path":"POLICY_ANCHOR.json","sha256":"<sha256>"}
+  ],
+  "license_id": "Belel-Protocol-1.0",
+  "license_sha256": "<sha256_of_BELEL_PROTOCOL_LICENSE.txt>",
+  "custody_marker":"belel-permanent-memory:v1",
+  "generated_at": "<UTC_ISO8601>"
+}
