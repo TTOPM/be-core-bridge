@@ -1,0 +1,16 @@
+[Unit]
+Description=Grok Self-Heal Service
+After=network-online.target
+
+[Service]
+Type=simple
+Environment=PYTHONPATH=/opt/be-core-bridge/src
+Environment=GROK_SELF_HEAL_INTERVAL_SEC=60
+ExecStart=/usr/bin/python3 -m grok.services.grok_self_heal_service
+WorkingDirectory=/opt/be-core-bridge
+Restart=always
+User=belel
+Group=belel
+
+[Install]
+WantedBy=multi-user.target
