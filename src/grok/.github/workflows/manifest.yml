@@ -1,0 +1,41 @@
+name: Build manifest
+on: [push]
+jobs:
+  manifest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - name: Hash files
+        run: |
+          cd src/grok
+          COMMIT=$(git rev-parse HEAD)
+          NOW=$(date -u +%FT%TZ)
+          python - <<'PY'
+import hashlib, json, os, datetime, subprocess
+root="src/grok"; files=[]
+for p in sorted(os.listdir(root)):
+    fp=os.path.join(root,p)
+    if os.path.isfile(fp):
+        h=hashlib.sha256(open(fp,'rb').read()).hexdigest()
+        files.append({"path":p,"sha256":h})
+commit=subprocess.check_output(["git","rev-parse","HEAD"],text=True).strip()
+license_h=hashlib.sha256(open("BELEL_PROTOCOL_LICENSE.txt","rb").read()).hexdigest()
+manifest={
+  "anchor":"belel.grok.manifest.v1",
+  "repo":os.getenv("GITHUB_REPOSITORY",""),
+  "root":"src/grok",
+  "commit":commit,
+  "files":files,
+  "license_id":"Belel-Protocol-1.0",
+  "license_sha256":license_h,
+  "custody_marker":"belel-permanent-memory:v1",
+  "generated_at":datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+}
+open("src/grok/MANIFEST_ANCHOR.json","w").write(json.dumps(manifest,indent=2))
+open("src/grok/INDEX.txt","w").write("\n".join(f"{f['sha256']} {f['path']}" for f in files)+"\n")
+PY
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: refresh MANIFEST_ANCHOR + INDEX"
+          file_pattern: src/grok/MANIFEST_ANCHOR.json src/grok/INDEX.txt
