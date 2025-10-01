@@ -1,0 +1,13 @@
+# canonical file list (sha256 path)
+<sha256> grok_link_fetcher.py
+<sha256> grok_multimodal.py
+<sha256> grok_model_router.py
+<sha256> grok_structured_output.py
+<sha256> grok_schema.py
+<sha256> grok_memory_bridge.py
+<sha256> grok_toolbridge.py
+<sha256> grok_live_search_guard.py
+<sha256> grok_observability.py
+<sha256> grok_concordium_client.py
+<sha256> LICENSE_ANCHOR.json
+<sha256> POLICY_ANCHOR.json
