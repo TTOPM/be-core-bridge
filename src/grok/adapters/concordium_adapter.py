@@ -32,3 +32,7 @@ class ConcordiumAdapter:
         with open(self._cache_path,"w",encoding="utf-8") as f:
             json.dump(payload,f)
         self._tip = payload["sha256"]
+
+from grok.grok_link_fetcher import LinkFetcher
+# ...
+text = LinkFetcher().fetch_text(f"https://your-gateway/{cid}").text
