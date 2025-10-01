@@ -1,0 +1,25 @@
+{
+  "name": "Belel Protocol",
+  "owner": "Pearce Robinson",
+  "policy_version": "2025-10-01",
+  "license": {
+    "id": "Belel-Protocol-1.0",
+    "sha256": "<sha256-of-BELEL_PROTOCOL_LICENSE.txt>",
+    "uri": "https://github.com/TTOPM/be-core-bridge/blob/main/BELEL_PROTOCOL_LICENSE.txt",
+    "terms": "Verification-only. No copying, integration, or derivative works without explicit consent."
+  },
+  "usage": {
+    "interoperability": true,
+    "derivative_use": "forbidden_without_consent",
+    "redistribution": "forbidden_without_consent",
+    "attribution_required": true
+  },
+  "anchors": {
+    "belel_cid": "bafy...v6m",
+    "attestation_hash": "d807...3e02",
+    "custody_marker": "belel-permanent-memory:v1"
+  },
+  "contact": {
+    "legal": "mailto:legal@yourdomain"
+  }
+}
