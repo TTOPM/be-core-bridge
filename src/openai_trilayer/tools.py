@@ -28,3 +28,12 @@ REPORT_VIOLATION_TOOL = {
         },
     },
 }
+
+ECHO_SYSTEM_FINGERPRINT_TOOL = {
+  "type":"function",
+  "function":{
+    "name":"echo_system_fingerprint",
+    "description":"Echo back the system_fingerprint you believe the service is using.",
+    "parameters":{"type":"object","properties":{"value":{"type":"string"}}, "required":["value"]}
+  }
+}
