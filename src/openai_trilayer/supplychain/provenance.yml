@@ -1,0 +1,8 @@
+slsa:
+  level: 3
+artifacts:
+  - path: attest/ledger.jsonl
+    signed: true
+policies:
+  require_code_review: true
+  require_ci: true
