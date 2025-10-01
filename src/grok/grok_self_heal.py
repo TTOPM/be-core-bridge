@@ -257,3 +257,7 @@ class SelfHealStateMachine:
                 os.getenv("GROK_WITNESS_3", self.ctx.anchors.get("cid", "")),
             ]
             self.regenerate(witnesses=witnesses, reason="post-repair-failed")
+
+# SPDX-License-Identifier: Belel-Protocol-1.0
+# © 2025 Pearce Robinson. All rights reserved.
+# Verification-only; no derivative use without explicit consent.
