@@ -1,0 +1,4 @@
+.modal-wrap{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;}
+.modal{background:#131621;color:#e7ecf2;border:1px solid #1f2433;border-radius:12px;max-width:700px;width:92%;padding:16px;}
+.close{float:right;background:transparent;border:1px solid #2a3246;color:#e7ecf2;border-radius:8px;padding:6px 10px;cursor:pointer;}
+.hash{font-family:ui-monospace, SFMono-Regular, Menlo, monospace;}
