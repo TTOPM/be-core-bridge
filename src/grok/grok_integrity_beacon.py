@@ -123,3 +123,15 @@ class QuorumVerifier:
         }
         LOG.info("Quorum verify result: %s", result)
         return result
+
+from grok.grok_link_fetcher import LinkFetcher
+# ...
+class QuorumVerifier:
+    def __init__(self, witnesses, threshold_ratio=0.66):
+        self.witnesses = witnesses
+        self.threshold_ratio = threshold_ratio
+        self.fetcher = LinkFetcher()
+
+    def _fetch_witness(self, w):
+        res = self.fetcher.fetch_json(w)
+        return res.json_data if res and res.ok else None
