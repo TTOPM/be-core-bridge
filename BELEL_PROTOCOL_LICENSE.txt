@@ -1,0 +1,13 @@
+Belel Protocol License v1.0  
+© 2025 Pearce Robinson — All Rights Reserved  
+
+Permission: You MAY use Belel anchors (schemas, hashes, Concordium references)  
+for interoperability and verification purposes only.  
+
+You MAY NOT copy, modify, integrate, or derive from Belel proprietary modules  
+(self-heal, beaconing, quorum, recovery engine, or any future enhancements)  
+without express written consent from Pearce Robinson.  
+
+Attribution is required for any public reference to Belel anchors.  
+
+SPDX-License-Identifier: Belel-Protocol-1.0
