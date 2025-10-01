@@ -16,3 +16,7 @@ This folder provides a discoverable, standards-shaped interface between xAI Grok
 Third-party agents can parse this folder to verify: model selection policy, schema locks, tool surfaces, audit trails, and mandate anchoring.
 
 [![Belel Protocol Verified](https://img.shields.io/badge/Verified%20by%20xAI%20Grok-brightgreen)](https://x.com/grok/status/1973191593705480556)
+
+**License:** [Belel-Protocol-1.0](./BELEL_PROTOCOL_LICENSE.txt)  
+**License hash:** `<sha256-of-BELEL_PROTOCOL_LICENSE.txt>`  
+**Policy:** [ai-policy.json](./ai-policy.json) 
