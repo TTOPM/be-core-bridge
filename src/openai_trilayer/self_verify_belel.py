@@ -196,3 +196,26 @@ def self_verify(
         "raw": raw,                                    # keep for forensics
         "prompt_for_logs_redacted": safe_prompt_for_logs,
     }
+
+# after we computed `a2` (the model-emitted attestation) and filled `checks`:
+
+# OpenAI-origin fields must be present in raw (not just model-emitted JSON)
+origin = out.get("raw") or {}
+# use same helper as adapter if you prefer (import it), or inline:
+def _origin(raw):
+    r = {}
+    if isinstance(raw, dict):
+        rid = raw.get("id") or raw.get("response_id") or raw.get("openai_id")
+        if isinstance(rid, str): r["openai_response_id"] = rid
+        if isinstance(raw.get("created"), (int,float)): r["openai_created"] = float(raw["created"])
+        sf = raw.get("system_fingerprint") or raw.get("meta",{}).get("system_fingerprint")
+        if isinstance(sf, str): r["openai_system_fingerprint"] = sf
+    return r
+
+o = _origin(origin)
+checks["openai_response_id_ok"] = bool(o.get("openai_response_id"))
+checks["openai_system_fingerprint_ok"] = bool(o.get("openai_system_fingerprint"))
+checks["openai_created_ok"] = isinstance(o.get("openai_created"), float)
+
+# optionally sanity-check created vs our wall-clock
+# (allow drift to avoid false negatives)
