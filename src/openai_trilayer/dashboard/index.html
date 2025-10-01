@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Belel Concordium Ledger</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <header>
+    <h1>Belel Concordium Ledger</h1>
+    <p class="subtitle">Tri-Layer Attestations • Truth-Lock • Continuity v4</p>
+  </header>
+
+  <main>
+    <section class="filters">
+      <input id="q" placeholder="Search hash / model / notes" aria-label="Search">
+      <button id="refresh">Refresh</button>
+    </section>
+
+    <section id="cards" class="cards" aria-live="polite"></section>
+  </main>
+
+  <footer>
+    <small>Signed attestations • Rolling hash • Export JSON • Print-safe</small>
+  </footer>
+
+  <script src="./app.js"></script>
+</body>
+</html>
