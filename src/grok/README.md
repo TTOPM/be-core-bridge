@@ -85,3 +85,7 @@ This integration is designed to be configured via environment variables.
 
 *(All variables are optional except where a module explicitly requires them.  
 Unset variables will default safely, with reduced functionality.)*
+
+**Raw manifests (JS-free):**
+- [MANIFEST_ANCHOR.json](./MANIFEST_ANCHOR.json)
+- [INDEX.txt](./INDEX.txt)
