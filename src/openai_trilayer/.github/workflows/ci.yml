@@ -1,0 +1,15 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with: { python-version: "3.11" }
+    - run: pip install -U pip pytest bandit mypy jsonschema ruff
+    - run: python gateway/forbid_raw_openai.py
+    - run: ruff check .
+    - run: mypy src
+    - run: bandit -r src -q
+    - run: pytest -q
