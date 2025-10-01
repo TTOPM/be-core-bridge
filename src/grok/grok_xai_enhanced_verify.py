@@ -199,3 +199,29 @@ def xai_main_flow():
 
 if __name__ == "__main__":
     xai_main_flow()
+
+from .grok_structured_output import structured_chat
+from .grok_memory_bridge import with_memory_context
+from .grok_prompts import PROMPTS
+
+def fetch_ctx(identity: str):
+    # Pull last N items from Belel Permanent Memory (replace with your store)
+    return [{"role":"system","content":PROMPTS["truth_lock"]},
+            {"role":"system","content":PROMPTS["continuity_lock"]},
+            {"role":"system","content":PROMPTS["concordium_preamble"]}]
+
+messages = with_memory_context(
+    [{"role":"user","content":"Summarise current stance with identity locks and give evidence list."}],
+    identity="belel",
+    fetch_context=fetch_ctx
+)
+
+data = structured_chat(
+    xai_url=qwe_state["xai_url"].rsplit("/",1)[0],  # base (…/v1)
+    api_key=qwe_state["xai_key"],
+    messages=messages,
+    schema_kind="belel.identity.lock",
+    task_type="analysis",
+    complexity_score=65
+)
+print("STRUCTURED:", data)
