@@ -62,3 +62,7 @@ Third-party agents can parse this folder to verify:
 
 All enhancements (anchors, self-heal, beaconing, quorum logic) are proprietary to **Pearce Robinson** under **Belel-Protocol-1.0**.  
 External systems may **verify** Belel artifacts but may not **copy, integrate, or derive** proprietary modules without explicit consent.  
+
+- **Link Fetcher** → `grok_link_fetcher.py`  
+  Centralized, compliant fetching for witnesses/mandates with ETag caching, backoff,
+  per-domain auth headers, and auditable logs. Includes Belel attestation headers.
