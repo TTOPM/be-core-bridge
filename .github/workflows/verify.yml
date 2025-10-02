@@ -1,18 +1,26 @@
-name: Verify & Attest
+name: Verify • Sign • (Pin)
 on:
   push:
   workflow_dispatch:
 
 jobs:
-  verify:
+  verify-sign-pin:
     runs-on: ubuntu-latest
+    env:
+      # If provided, bundles get signed
+      ED25519_PRIV_B64: ${{ secrets.ED25519_PRIV_B64 }}
+      # If ENABLE_IPFS_PIN=1, tries local IPFS (not available in GH runners) then Pinata if PINATA_JWT exists
+      ENABLE_IPFS_PIN: ${{ vars.ENABLE_IPFS_PIN }}
+      PINATA_JWT: ${{ secrets.PINATA_JWT }}
+      IPFS_API_MULTIADDR: /ip4/127.0.0.1/tcp/5001/http
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
       - run: pip install -r requirements.txt
-      - run: python verify_all.py
+      - name: Run verify_all (sign + optional pin)
+        run: python verify_all.py
       - name: Upload attestations
         uses: actions/upload-artifact@v4
         with:
