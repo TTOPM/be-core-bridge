@@ -1,0 +1,20 @@
+name: Verify & Attest
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -r requirements.txt
+      - run: python verify_all.py
+      - name: Upload attestations
+        uses: actions/upload-artifact@v4
+        with:
+          name: attestations
+          path: attestations/*.json
