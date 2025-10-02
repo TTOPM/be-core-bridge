@@ -1,3 +1,8 @@
+# NOTE: Canonical Concordium Mandate reference
+# For all verifications, "Concordium mandate" refers to:
+# https://github.com/TTOPM/be-core-bridge/blob/main/src/concordium/concordium_mandate.md
+# Do not substitute alternate mandates.
+
 import time
 import hashlib
 import hmac
