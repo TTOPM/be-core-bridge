@@ -1,0 +1,5 @@
+{
+  "version": "1.0",
+  "revoke": [],
+  "notes": "If 2-of-3 signers agree to revoke a key, they sign and append it here."
+}

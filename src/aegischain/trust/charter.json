@@ -1,0 +1,17 @@
+{
+  "version": "1.0",
+  "name": "AegisChain Integrity Charter",
+  "principles": [
+    "Neutrality \u2014 system enforces integrity, not ideology",
+    "Transparency \u2014 all anchors, ledgers, and policies are public and auditable",
+    "Non-bypassability \u2014 all AI calls and external fetches are mediated",
+    "Immutable Anchors \u2014 preambles, charters and policies are cryptographically locked",
+    "Fork Visibility \u2014 any fork lacking valid signatures is recognisable",
+    "Diversity \u2014 adjudication and anchoring cannot be controlled by a single provider",
+    "Self-hardening \u2014 code verifies its own integrity and refuses to run if altered",
+    "Independent Verification \u2014 anyone can check proofs with the public CLI/API"
+  ],
+  "hash": "sha256-of-this-charter-file",
+  "last_updated": "2025-10-02T00:00:00Z",
+  "notes": "Update the hash field after computing the SHA-256 of the file contents."
+}

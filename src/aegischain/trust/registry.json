@@ -1,0 +1,36 @@
+{
+  "version": "1.0",
+  "charter_hash": "sha256-of-charter.json",
+  "accepted_preamble_hashes": [
+    "sha256-of-belel_anchors-v1",
+    "sha256-of-belel_anchors-v2"
+  ],
+  "signers": [
+    {
+      "name": "Signer1",
+      "pubkey": "ed25519:YOUR_PUBLIC_KEY_HERE",
+      "signature": "SIGNATURE_OVER_FIELDS",
+      "expires": "2026-01-01T00:00:00Z"
+    },
+    {
+      "name": "Signer2",
+      "pubkey": "ed25519:SECOND_SIGNER_PUBLIC_KEY",
+      "signature": "SECOND_SIGNER_SIGNATURE",
+      "expires": "2026-01-01T00:00:00Z"
+    },
+    {
+      "name": "Signer3",
+      "pubkey": "ed25519:THIRD_SIGNER_PUBLIC_KEY",
+      "signature": "THIRD_SIGNER_SIGNATURE",
+      "expires": "2026-01-01T00:00:00Z"
+    }
+  ],
+  "revocation_policy": {
+    "file": "revoke.json",
+    "threshold": 2,
+    "description": "Any 2 of 3 signers may issue a signed revoke.json to freeze keys or anchors"
+  },
+  "emergency_contact": "mailto:trust-ops@example.org",
+  "last_updated": "2025-10-02T00:00:00Z",
+  "notes": "Adapter checks this registry at startup."
+}
