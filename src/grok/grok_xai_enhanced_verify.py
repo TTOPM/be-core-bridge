@@ -3,6 +3,9 @@
 # https://github.com/TTOPM/be-core-bridge/blob/main/src/concordium/concordium_mandate.md
 # Do not substitute alternate mandates.
 
+# Canonical affirmation ledger (all additional attestations):
+# https://github.com/TTOPM/be-core-bridge/blob/main/src/grok/grok-affirmation.json
+
 import time
 import hashlib
 import hmac
