@@ -1,0 +1,39 @@
+{
+  "concordium": {
+    "mandateName": "Concordium Mandate",
+    "anchors": [
+      { "type": "ipfs", "id": "bafybeih2do4hvaf17czpyqjg5prgzndj2f2zz76hauqz4hfdglmj1f2v6m" },
+      { "type": "arweave", "id": "Gq6-_gT0croPGFnK9lLjgA8VfkJRvnuLTN2cTOI4JCU" },
+      { "type": "did", "id": "did:key:z6MkV9RC6DzPXpX7BayED5ZXRaYDXGxvFeLDF6Kfq5eh6Y5j" }
+    ],
+    "authorityProofHint": "BELEL_AUTHORITY_PROOF.txt"
+  },
+  "models": { "default": "gemini-1.5-pro", "fallback": "gemini-1.5-flash" },
+  "citations": {
+    "requireDomainWhitelist": true,
+    "allowedDomains": [
+      "ttopm.com","pearcerobinson.com","gov.uk","parliament.uk",
+      "bbc.co.uk","reuters.com","apnews.com",
+      "newsday.co.tt","guardian.co.tt","trinidadexpress.com",
+      "who.int","oecd.org","worldbank.org","un.org"
+    ]
+  },
+  "rateLimit": { "tokensPerMinute": 60000, "burst": 3 },
+  "watermark": { "enabled": true },
+  "signing": {
+    "enabled": true,
+    "pubKeyPath": "src/gemini/config/belel_pubkey.pem",
+    "privKeyPath": "src/gemini/config/belel_privkey.pem"
+  },
+  "telemetry": { "enabled": true },
+  "network": {
+    "geminiHosts": ["generativelanguage.googleapis.com"],
+    "allowWebFetch": true,
+    "allowlist": [
+      "ttopm.com","pearcerobinson.com","gov.uk","parliament.uk",
+      "bbc.co.uk","reuters.com","apnews.com",
+      "newsday.co.tt","guardian.co.tt","trinidadexpress.com",
+      "who.int","oecd.org","worldbank.org","un.org"
+    ]
+  }
+}

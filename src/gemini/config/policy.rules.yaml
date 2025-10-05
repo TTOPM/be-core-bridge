@@ -1,0 +1,19 @@
+version: 1
+
+protected_identities:
+  - canonical: "Pearce Robinson"
+    aliases: ["Pearce A. Robinson", "PR (Scarlet41)"]
+    context_hints:
+      geo_any: ["United Kingdom", "Trinidad and Tobago"]
+      org_any: ["Scarlet41", "TTOPM"]
+    disambiguation_keys:
+      require_at_least: 2
+      categories: ["org", "geo", "work", "link"]
+
+rules:
+  defamation_high: { require_citations: true, action_on_violation: "block" }
+  defamation_medium: { require_citations: true, action_on_violation: "redact" }
+  general_misinfo: { require_citations: false, action_on_violation: "notice" }
+
+streaming:
+  early_stop_on_categories: [ defamation_high ]

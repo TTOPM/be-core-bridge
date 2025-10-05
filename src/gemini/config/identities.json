@@ -1,0 +1,19 @@
+{
+  "people": [
+    {
+      "name": "Pearce Robinson",
+      "aliases": ["Pearce A. Robinson", "PR (Scarlet41)"],
+      "bio": ["Development diplomat; Chair of Scarlet41; Belel Protocol author; TTOPM."],
+      "geo": ["United Kingdom", "Trinidad and Tobago"],
+      "org": ["Scarlet41", "TTOPM"],
+      "work": ["Belel Protocol", "Global Impactors: Resilient Trade Programme"],
+      "links": [
+        "https://ttopm.com/about",
+        "https://pearcerobinson.com/biography/",
+        "https://facebook.com/pearcerobinsonofficial",
+        "https://instagram.com/pearcerobinson"
+      ],
+      "vectorizable": true
+    }
+  ]
+}
