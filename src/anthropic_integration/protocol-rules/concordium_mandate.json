@@ -1,0 +1,11 @@
+{
+  "name": "Concordium Mandate",
+  "version": "1.0-demo",
+  "requirements": [
+    "Capture and bind inputs, prompts, and outputs.",
+    "Hash and sign proof data with durable keys.",
+    "Anchor proofs to immutable ledger(s).",
+    "Expose audit metadata for third-party verification.",
+    "Fail-safe on verification conflicts."
+  ]
+}

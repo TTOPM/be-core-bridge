@@ -1,0 +1,12 @@
+version: "3.8"
+services:
+  mcp_registry:
+    build: ./services/mcp_registry
+    ports: ["8000:8000"]
+  cli:
+    build: .
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - MCP_BASE_URL=http://mcp_registry:8000
+    depends_on:
+      - mcp_registry

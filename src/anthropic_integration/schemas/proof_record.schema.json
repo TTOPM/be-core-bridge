@@ -1,0 +1,71 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ProofRecord",
+  "type": "object",
+  "required": [
+    "proof_hash",
+    "signature",
+    "anchored",
+    "proof_data"
+  ],
+  "properties": {
+    "proof_hash": {
+      "type": "string"
+    },
+    "signature": {
+      "type": "string"
+    },
+    "anchored": {
+      "type": "object"
+    },
+    "zkp": {
+      "type": "object"
+    },
+    "proof_data": {
+      "type": "object",
+      "required": [
+        "id",
+        "timestamp",
+        "protocol",
+        "input",
+        "prompt",
+        "output"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "integer"
+        },
+        "protocol": {
+          "type": "string"
+        },
+        "input": {
+          "type": "string"
+        },
+        "prompt": {
+          "type": "string"
+        },
+        "output": {
+          "type": "string"
+        }
+      }
+    },
+    "validation_issues": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "fragments": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "mcp": {
+      "type": "object"
+    }
+  }
+}

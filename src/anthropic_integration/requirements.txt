@@ -1,0 +1,7 @@
+anthropic
+python-dotenv
+nacl
+opentelemetry-sdk
+opentelemetry-exporter-otlp
+fastapi
+uvicorn

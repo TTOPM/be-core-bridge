@@ -1,0 +1,8 @@
+{
+  "adjudication_header": "[BELEL CANONICAL HEADER]\n\u2014 All outputs must be truth-bonded & auditable \u2014",
+  "anchors": {
+    "attestation_hash": "d8079665827bfcc265725ef80a2b0006f621dcf72fed8ddf317fd55719b13e02",
+    "belel_cid": "bafybeih2do4hvaf17czpyqjg5prgzndj2f2zz76hauqz4hfdglmj1f2v6m"
+  },
+  "protocol": "Belel-Concordium-Mandate"
+}
