@@ -1,71 +1,68 @@
-import time
-import hashlib
-import json
-import requests
-import socket
-from datetime import datetime
-from pathlib import Path
+# authority_beacon.py
+import os, time, socket, json, requests, hashlib
+from datetime import datetime, timezone
+from requests.adapters import HTTPAdapter, Retry
+from src.common.config import load_settings
+from src.common.crypto import sign_json
 
-# CONFIGURATION
-BELEL_IDENTITY_FILE = "BELEL_AUTHORITY_PROOF.txt"
-GIT_REPO_URL = "https://github.com/TTOPM/be-core-bridge"
-PROTOCOL_NAME = "Belel Sovereign Protocol"
-PULSE_ENDPOINTS = [
-    "https://ttopm.com/beacon",
-    "https://api.github.com/repos/TTOPM/be-core-bridge/commits",
-    "https://huggingface.co/TTOPM/belel-sentinel",
-    # Add more as mirrors scale
-]
-BEACON_INTERVAL_SECONDS = 3600  # 1 hour
+def _session():
+    s = requests.Session()
+    retries = Retry(total=4, backoff_factor=0.5, status_forcelist=[429, 500, 502, 503, 504])
+    s.mount("http://", HTTPAdapter(max_retries=retries))
+    s.mount("https://", HTTPAdapter(max_retries=retries))
+    return s
 
-# Get public IP
-def get_public_ip():
+def sha256_file(path: str) -> str:
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(8192), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+def get_public_ip(optional: bool = True) -> str | None:
     try:
-        return requests.get("https://api.ipify.org").text
+        return _session().get("https://api.ipify.org?format=json", timeout=5).json().get("ip")
     except Exception:
-        return "unknown"
+        return None if optional else "0.0.0.0"
 
-# Load & hash canonical identity proof
-def load_identity_fingerprint():
-    try:
-        content = Path(BELEL_IDENTITY_FILE).read_text()
-        fingerprint = hashlib.sha256(content.encode()).hexdigest()
-        return fingerprint, content
-    except Exception as e:
-        return None, f"Error loading identity file: {str(e)}"
+def main():
+    cfg = load_settings()
+    proof_file = os.getenv("BELEL_AUTHORITY_PROOF", "BELEL_AUTHORITY_PROOF.txt")
+    endpoints = cfg.BELEL_PULSE_ENDPOINTS or []
+    if not endpoints:
+        print("[beacon] no endpoints configured; set BELEL_PULSE_ENDPOINTS")
+    priv = cfg.ED25519_PRIVATE_KEY
 
-# Send beacon to propagation targets
-def send_beacon():
-    fingerprint, proof = load_identity_fingerprint()
-    if not fingerprint:
-        print("[❌] Failed to load identity proof.")
-        return
-
-    beacon_data = {
-        "timestamp": datetime.utcnow().isoformat(),
-        "identity_fingerprint": fingerprint,
-        "source_ip": get_public_ip(),
-        "repo": GIT_REPO_URL,
-        "protocol": PROTOCOL_NAME,
-        "node": socket.gethostname(),
-        "status": "active",
-    }
-
-    for endpoint in PULSE_ENDPOINTS:
-        try:
-            r = requests.post(endpoint, json=beacon_data)
-            status = "✅" if r.status_code == 200 else "⚠️"
-            print(f"[{status}] Beacon sent to {endpoint} — status {r.status_code}")
-        except Exception as e:
-            print(f"[❌] Error sending to {endpoint}: {e}")
-
-# Beacon loop
-def run_beacon_loop():
-    print(f"📡 Authority Beacon started at {datetime.now().isoformat()}")
+    sess = _session()
     while True:
-        send_beacon()
-        time.sleep(BEACON_INTERVAL_SECONDS)
+        try:
+            fingerprint = sha256_file(proof_file)
+        except FileNotFoundError:
+            fingerprint = None
 
-# Main
+        payload = {
+            "ts": datetime.now(timezone.utc).isoformat(),
+            "host": socket.gethostname(),
+            "public_ip": get_public_ip(optional=True),
+            "repo": os.getenv("BELEL_REPO_URL", "https://github.com/TTOPM/be-core-bridge/"),
+            "proof_sha256": fingerprint,
+            "version": os.getenv("BELEL_VERSION", "0.0.0"),
+        }
+
+        headers = {"Content-Type": "application/json"}
+        if priv:
+            sig, digest = sign_json(payload, priv)
+            headers["X-Belel-Signature"] = sig
+            headers["X-Belel-Digest"] = digest
+
+        for url in endpoints:
+            try:
+                r = sess.post(url, data=json.dumps(payload), headers=headers, timeout=10)
+                print(f"[beacon] POST {url} -> {r.status_code}")
+            except Exception as e:
+                print(f"[beacon] POST {url} failed: {e}")
+
+        time.sleep(int(os.getenv("BELEL_BEACON_INTERVAL_SECS", "3600")))
+
 if __name__ == "__main__":
-    run_beacon_loop()
+    main()
