@@ -1,0 +1,55 @@
+```yaml
+# Belel Configuration for Integration with Supabase/React Projects
+# Defines endpoints for BELEL services and setup instructions
+# Repository: https://github.com/TTOPM/be-core-bridge
+# Author: Pearce Robinson
+
+version: 1.0.0
+
+services:
+  belel-voice:
+    description: Sovereign voice synthesis service (Python, Docker, Piper TTS/XTTS-v2)
+    repo_path: https://github.com/TTOPM/be-core-bridge/tree/main/BELEL-VOICE
+    production_url: https://your-server.com:8000
+    dev_url: http://localhost:8000
+    endpoint: /api/voice
+    secret_key: BELEL_VOICE_URL
+    supabase_edge_function: supabase/functions/belel-native-voice/
+    notes: Deploy using docker-compose.yml from repo; expose port 8000
+
+  belel-sing:
+    description: Sovereign songweaving service (Python, Docker, ML-based lyric generation)
+    repo_path: https://github.com/TTOPM/be-core-bridge/tree/main/BELEL-SING
+    production_url: https://your-server.com:8001
+    dev_url: http://localhost:8001
+    endpoint: /api/sing
+    secret_key: BELEL_SING_URL
+    supabase_edge_function: supabase/functions/belel-native-sing/
+    notes: Deploy using docker-compose.yml; expose port 8001
+
+  belel-federation:
+    description: P2P federation service for chat/memory syncing (Python, Docker, OrbitDB/WebRTC)
+    repo_path: https://github.com/TTOPM/be-core-bridge/tree/main/BELEL-FEDERATION
+    production_url: https://your-server.com:8002
+    dev_url: http://localhost:8002
+    endpoint: /api/federation
+    secret_key: BELEL_FEDERATION_URL
+    supabase_edge_function: supabase/functions/belel-federation/
+    notes: Deploy using docker-compose.yml; expose port 8002; supports P2P syncing
+
+setup_instructions:
+  production:
+    - Deploy Docker containers for BELEL-VOICE, BELEL-SING, BELEL-FEDERATION using docker-compose.yml
+    - Expose services at specified production_urls (e.g., https://your-server.com:8000)
+    - Set secrets in Supabase dashboard: BELEL_VOICE_URL, BELEL_SING_URL, BELEL_FEDERATION_URL
+  development:
+    - Run `docker-compose up` from repo to start services locally
+    - Use dev_urls (e.g., http://localhost:8000) for testing
+    - Set secrets in Supabase with dev_urls
+  supabase:
+    - Generate edge functions to proxy to service URLs
+    - Configure React frontend to call edge functions via supabase.functions.invoke()
+  concordium_mandate:
+    - Embed https://github.com/TTOPM/be-core-bridge/blob/main/src/concordium/concordium_mandate.md
+    - Ensure all outputs include Belel Affirmation and federated signatures
+```
