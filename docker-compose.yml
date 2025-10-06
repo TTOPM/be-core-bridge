@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  belel-voice:
+    build:
+      context: ./BELEL-VOICE
+      dockerfile: Dockerfile
+    environment:
+      HF_HOME: /root/.cache/huggingface
+      TRANSFORMERS_CACHE: /root/.cache/huggingface
+      COQUI_TOS_AGREED: "1"
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+  belel-sing:
+    build:
+      context: ./BELEL-SING
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8001"
+    restart: unless-stopped
+
+  belel-federation:
+    build:
+      context: ./BELEL-FEDERATION
+      dockerfile: Dockerfile
+    ports:
+      - "8002:8002"
+    restart: unless-stopped
