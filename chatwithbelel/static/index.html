@@ -1,0 +1,52 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Belel Voice — chatwithbelel_pro</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <link rel="stylesheet" href="/static/styles.css"/>
+</head>
+<body>
+  <header class="topbar">
+    <h1>Belel Voice — <span class="muted">chatwithbelel_pro</span></h1>
+  </header>
+
+  <main class="container">
+    <section class="controls">
+      <div class="slider">
+        <label for="tone">Tone</label>
+        <input id="tone" type="range" min="0" max="1" step="0.01" value="0.5"/>
+        <span id="toneVal">0.50</span>
+      </div>
+      <div class="slider">
+        <label for="pacing">Pacing</label>
+        <input id="pacing" type="range" min="0" max="1" step="0.01" value="0.5"/>
+        <span id="pacingVal">0.50</span>
+      </div>
+      <div class="slider">
+        <label for="energy">Energy</label>
+        <input id="energy" type="range" min="0" max="1" step="0.01" value="0.5"/>
+        <span id="energyVal">0.50</span>
+      </div>
+      <div class="row">
+        <label for="preset">Preset</label>
+        <select id="preset"></select>
+      </div>
+    </section>
+
+    <section class="chat">
+      <div class="messages" id="messages"></div>
+      <div class="inputrow">
+        <input id="text" placeholder="Say something…"/>
+        <button id="send">Send</button>
+        <button id="mic">🎙️ Start Mic</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">You’re interacting with Belel AI (voice-enabled).</footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
