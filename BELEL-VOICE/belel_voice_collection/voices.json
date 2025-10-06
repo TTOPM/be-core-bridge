@@ -1,0 +1,61 @@
+{
+  "voices": {
+    "belel_flux": {
+      "path": "models/belel_flux_dynamic.onnx",
+      "tier": 1,
+      "emotion_curve": "default"
+    },
+    "belel_serene": {
+      "path": "models/belel_serene.onnx",
+      "tier": 1,
+      "emotion_curve": "default"
+    },
+    "belel_resolve": {
+      "path": "models/belel_resolve.onnx",
+      "tier": 1,
+      "emotion_curve": "default",
+      "style": {
+        "swing": 0.2
+      }
+    },
+    "belel_vivid": {
+      "path": "models/belel_vivid.onnx",
+      "tier": 1,
+      "emotion_curve": "default"
+    },
+    "belel_sage": {
+      "path": "models/belel_sage.onnx",
+      "tier": 1,
+      "emotion_curve": "default"
+    },
+    "belel_radiant": {
+      "path": "models/belel_radiant.onnx",
+      "tier": 1,
+      "emotion_curve": "default"
+    },
+    "belel_whisper": {
+      "path": "models/belel_whisper.onnx",
+      "tier": 1,
+      "emotion_curve": "default"
+    },
+    "belel_aeon": {
+      "path": "models/belel_aeon.onnx",
+      "tier": 1,
+      "emotion_curve": "default"
+    }
+  },
+  "singing_capable": [
+    "belel_resolve",
+    "belel_serene",
+    "belel_vivid",
+    "belel_aeon"
+  ],
+  "prosody_controls": [
+    "tone",
+    "pacing",
+    "energy",
+    "vibrato",
+    "melody_sensitivity",
+    "swing"
+  ]
+}
