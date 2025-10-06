@@ -1,0 +1,6 @@
+cff-version: 1.2.0
+title: "BELEL-VOICE — Sovereign Speech Stack"
+message: "Please cite this work if you use it."
+authors: [{family-names: Robinson, given-names: Pearce}]
+version: 0.1.0
+date-released: 2025-10-06

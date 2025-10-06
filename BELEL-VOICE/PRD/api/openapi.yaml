@@ -1,0 +1,43 @@
+openapi: 3.0.3
+info:
+  title: BELEL-VOICE API
+  version: 0.1.0
+paths:
+  /v1/asr/stream:
+    get:
+      summary: WebSocket endpoint for streaming ASR (JSON frames)
+  /v1/asr/transcribe:
+    post:
+      summary: Batch transcription
+  /v1/tts/synthesize:
+    post:
+      summary: TTS synthesis (with optional cloning if consent on file)
+  /v1/diarize:
+    post:
+      summary: Speaker diarization for audio
+  /v1/policy/check:
+    post:
+      summary: Check EU AI Act disclosure/watermarking/consent compliance
+  /v1/watchers/run:
+    post:
+      summary: Run model/corpus watcher and produce changelog
+components:
+  schemas:
+    TranscribeRequest:
+      type: object
+      properties: { audio_url: { type: string }, language: { type: string }, domain: { type: string } }
+    TTSRequest:
+      type: object
+      properties:
+        text: { type: string }
+        voice: { type: string }
+        engine: { type: string, enum: [piper, xtts, riva] }
+        clone_ref: { type: string }
+        require_disclosure: { type: boolean }
+    PolicyCheckRequest:
+      type: object
+      properties:
+        mode: { type: string, enum: [record, playback, publish] }
+        jurisdiction: { type: string }
+        requires_disclosure: { type: boolean }
+        watermark_present: { type: boolean }

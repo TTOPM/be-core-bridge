@@ -1,0 +1,6 @@
+region: EU
+require_disclosure: true
+allow_cloning_with_consent: true
+anti_spoof_required: true
+refs:
+  - EU AI Act transparency on synthetic media

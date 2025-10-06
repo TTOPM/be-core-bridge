@@ -1,0 +1,9 @@
+{
+  "name": "BELEL-VOICE Sovereign Speech Stack",
+  "version": "0.1.0",
+  "generated": "2025-10-06T11:52:15.321875Z",
+  "hashes_sha256": "7354a3eff6bf99c4522f55689a662035b06324921204367269ee7fa1fa7f579e",
+  "hashes_file": "HASHES.json",
+  "license": "BPSL v1.0",
+  "integrity_note": "Replace with minisign/sigstore for real signing"
+}

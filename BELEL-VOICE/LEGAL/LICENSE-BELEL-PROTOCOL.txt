@@ -1,0 +1,5 @@
+BELEL Protocol Sovereign License (BPSL) v1.0
+- Mandatory attribution: "BELEL-VOICE — Sovereign Speech Stack (TTOPM)"
+- Preserve provenance & watermarking hooks
+- Voice cloning only with explicit consent and lawful purpose
+- Derivatives must keep these terms

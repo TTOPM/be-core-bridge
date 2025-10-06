@@ -1,0 +1,14 @@
+engine_defaults:
+  tts: piper           # piper | xtts | riva
+  asr: faster-whisper  # faster-whisper | mms | riva
+voices:
+  primary: en_GB-sean-medium.onnx
+  backup: en_US-amy-medium.onnx
+xtts:
+  clone_ref: ./models/voices/sample_voice.wav
+  enable: false
+bigvgan:
+  enable: false
+paths:
+  piper_voices: /models/piper
+  whisper_models: /models/whisper

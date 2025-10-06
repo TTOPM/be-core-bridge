@@ -1,0 +1,5 @@
+region: US
+require_disclosure: true
+allow_cloning_with_consent: true
+anti_spoof_required: true
+notes: "State-level deepfake/voice laws vary; override as needed."

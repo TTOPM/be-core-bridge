@@ -1,0 +1,59 @@
+version: "3.9"
+
+networks:
+  internal_net:
+    internal: true
+
+x-common-env: &common_env
+  BELEL_ENV: "prod"
+
+services:
+  # Local iptables egress-deny sidecar for the voice container
+  # The script will drop outbound traffic except to 127.0.0.1 and the internal network.
+  belel-voice:
+    build: ./BELEL-VOICE
+    container_name: belel-voice
+    command: bash -lc "apt-get update && apt-get install -y iptables && ./scripts/net/deny_egress.sh && gunicorn -k uvicorn.workers.UvicornWorker belelvoice.server.app:app --bind 0.0.0.0:8000"
+    environment:
+      <<: *common_env
+      VOICE_ENGINE_DEFAULT: "piper"
+      ASR_ENGINE_DEFAULT: "faster-whisper"
+      PIPER_VOICES_DIR: "/models/piper"
+      WHISPER_MODELS_DIR: "/models/whisper"
+    volumes:
+      - ./models/piper:/models/piper
+      - ./models/whisper:/models/whisper
+    networks: ["internal_net"]
+    cap_add: ["NET_ADMIN"]
+    expose: ["8000"]
+    profiles: ["voice-egress-denied", "federation-egress-denied"]
+
+  belel-med:
+    build: ./BELEL-MED
+    container_name: belel-med
+    command: bash -lc "apt-get update && apt-get install -y iptables && ./scripts/net/deny_egress.sh && gunicorn -k uvicorn.workers.UvicornWorker src.server.app:app --bind 0.0.0.0:8001"
+    environment:
+      <<: *common_env
+      VOICE_GATEWAY_URL: "http://belel-voice:8000"
+    depends_on: ["belel-voice"]
+    networks: ["internal_net"]
+    cap_add: ["NET_ADMIN"]
+    expose: ["8001"]
+    profiles: ["federation-egress-denied"]
+
+  belel-lex:
+    build: ./BELEL-LEX
+    container_name: belel-lex
+    command: bash -lc "apt-get update && apt-get install -y iptables && ./scripts/net/deny_egress.sh && gunicorn -k uvicorn.workers.UvicornWorker belellex.server.app:app --bind 0.0.0.0:8002"
+    environment:
+      <<: *common_env
+      VOICE_GATEWAY_URL: "http://belel-voice:8000"
+    depends_on: ["belel-voice"]
+    networks: ["internal_net"]
+    cap_add: ["NET_ADMIN"]
+    expose: ["8002"]
+    profiles: ["federation-egress-denied"]
+
+# Usage:
+#   docker compose -f docker-compose.egress-denied.yml --profile voice-egress-denied up -d
+#   docker compose -f docker-compose.egress-denied.yml --profile federation-egress-denied up -d

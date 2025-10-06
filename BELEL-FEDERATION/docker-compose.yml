@@ -1,0 +1,69 @@
+version: "3.9"
+
+x-common-env: &common_env
+  BELEL_ENV: "prod"
+  UVICORN_WORKERS: "2"
+
+services:
+  belel-voice:
+    build: ./BELEL-VOICE
+    container_name: belel-voice
+    command: bash -lc "python -m venv .venv && . .venv/bin/activate && pip install -U pip && pip install fastapi uvicorn pydantic httpx rich pyyaml && gunicorn -k uvicorn.workers.UvicornWorker belelvoice.server.app:app --bind 0.0.0.0:8000"
+    ports: ["8000:8000"]
+    environment:
+      <<: *common_env
+      VOICE_ENGINE_DEFAULT: "piper"
+      ASR_ENGINE_DEFAULT: "faster-whisper"
+      PIPER_VOICES_DIR: "/models/piper"
+      WHISPER_MODELS_DIR: "/models/whisper"
+    volumes:
+      - ./models/piper:/models/piper
+      - ./models/whisper:/models/whisper
+    profiles: ["voice", "federation", "riva"]
+
+  # Optional NVIDIA Riva speech microservices (GPU)
+  # Requires: nvidia-docker2 & GPUs available.
+  riva-speech:
+    image: nvcr.io/nvidia/riva/riva-speech:2.14.0-server
+    container_name: riva-speech
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    ports: ["50051:50051"]
+    volumes:
+      - ./riva/models:/data
+    profiles: ["riva"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+
+  # BELEL-MED (optional federation)
+  belel-med:
+    build: ./BELEL-MED
+    container_name: belel-med
+    command: bash -lc "python -m venv .venv && . .venv/bin/activate && pip install -U pip && pip install fastapi uvicorn pydantic httpx rich && gunicorn -k uvicorn.workers.UvicornWorker src.server.app:app --bind 0.0.0.0:8001"
+    ports: ["8001:8001"]
+    environment:
+      <<: *common_env
+      VOICE_GATEWAY_URL: "http://belel-voice:8000"
+    depends_on: ["belel-voice"]
+    profiles: ["federation"]
+
+  # BELEL-LEX (optional federation)
+  belel-lex:
+    build: ./BELEL-LEX
+    container_name: belel-lex
+    command: bash -lc "python -m venv .venv && . .venv/bin/activate && pip install -U pip && pip install fastapi uvicorn pydantic httpx rich && gunicorn -k uvicorn.workers.UvicornWorker belellex.server.app:app --bind 0.0.0.0:8002"
+    ports: ["8002:8002"]
+    environment:
+      <<: *common_env
+      VOICE_GATEWAY_URL: "http://belel-voice:8000"
+    depends_on: ["belel-voice"]
+    profiles: ["federation"]
+
+# Usage:
+#   docker compose --profile voice up -d
+#   docker compose --profile riva --profile voice up -d
+#   docker compose --profile federation up -d   (starts voice + med + lex)

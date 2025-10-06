@@ -1,0 +1,117 @@
+{
+  "generated": "2025-10-06T11:52:15.243876Z",
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "ac5dea9ce8913e53ede877c8f313380f065f941901664b5c6ab383a8187a3898"
+    },
+    {
+      "path": "ONE_PAGER.md",
+      "sha256": "b60004909798cd8cc1d355d6281872d299a662e66061917ce74fee647419d454"
+    },
+    {
+      "path": "Makefile",
+      "sha256": "cdd9ee9ec5f43702dc1ff1ceea4a283a8e24ddaffa2a0a8673f84dcc05b93ae6"
+    },
+    {
+      "path": "CITATION.cff",
+      "sha256": "653b1b8f6023ad4b2cec8523c52bf2001873cb57f9decddc59d9e245a8e3b2cf"
+    },
+    {
+      "path": "docs/BLUEPRINT.md",
+      "sha256": "3b67eecceeaf7eae0a3b80f682f9f319aed941ab25f587230fc287c0947d634c"
+    },
+    {
+      "path": "PRD/PRD_BELEL_VOICE.md",
+      "sha256": "f4883805cc3f0ac7523475efe36819c65a0b589063b4c7855eb8cdfb0de12e33"
+    },
+    {
+      "path": "PRD/api/openapi.yaml",
+      "sha256": "39bc816fa5b81ed226a83a1321eaeb9b5698eb19136c82928a7575fc2da1162c"
+    },
+    {
+      "path": "COMPLIANCE/DPIA.md",
+      "sha256": "23d0325714f78e7daabc127b7d9fe6b29fb2bdf3f558845de9efcf63550f8f52"
+    },
+    {
+      "path": "COMPLIANCE/EU_AI_ACT_ALIGNMENT.md",
+      "sha256": "13a52b479b740a8c21e4640385cd759bc7705998157ed1347c6da772ac08b9c9"
+    },
+    {
+      "path": "COMPLIANCE/WATERMARKING_AND_DISCLOSURE.md",
+      "sha256": "a953eff3b1a2b9c8a5292c8bf97e954e44f97f3e5f5b584c73da968ac475b19e"
+    },
+    {
+      "path": "GOVERNANCE/CONSENT_REGISTRY.md",
+      "sha256": "5f54bf7ba253ea7065b9d01621032e6bfff05bb7f8494d341716468b8c465ce7"
+    },
+    {
+      "path": "belelvoice/server/app.py",
+      "sha256": "da726d5502c3b9ca0affaf88e5e685daaf3b03db7f6a7b8f9ae2c6607fc73407"
+    },
+    {
+      "path": "belelvoice/server/routers/asr.py",
+      "sha256": "28d1a1da1fad0cffb445fd2c77f5446bbe789e0c2369e49e78423a269b209717"
+    },
+    {
+      "path": "belelvoice/server/routers/tts.py",
+      "sha256": "f67bde16e8b8e1c905ee723dae032eed3cedbaa2c47576201c89ca89507ad02b"
+    },
+    {
+      "path": "belelvoice/server/routers/diar.py",
+      "sha256": "a5503e8ba751b85a44f817103c5b62c2f74976f4acb367eb5e995525baeb3243"
+    },
+    {
+      "path": "belelvoice/server/routers/policy.py",
+      "sha256": "af8633a882b1f0df6f27a779eea003c3401b14a66e0c13c45f428ca0cd839c52"
+    },
+    {
+      "path": "belelvoice/server/routers/watchers.py",
+      "sha256": "52bab10599ffeb36b9564897321da32e2819c3c9a7f9f51ac2bf4576f5ac55ae"
+    },
+    {
+      "path": "belelvoice/trust/audit.py",
+      "sha256": "fda3439c08b3360da4a103dc9ad6eca637414d686974daf47acb4797283a55f6"
+    },
+    {
+      "path": "belelvoice/policy/load.py",
+      "sha256": "126d8074bf39196a96c6b38470f87c7127a529c200805bb66a96c8f593e71293"
+    },
+    {
+      "path": "belelvoice/policy/profiles/DEFAULT.yaml",
+      "sha256": "8523ce5ed7c07d56dacb3b737f1b520376a03f41565157c69d1c25af9becc240"
+    },
+    {
+      "path": "belelvoice/policy/profiles/EU.yaml",
+      "sha256": "b409f7c3eda3192cbdb6427f9ce7622fc873d9b0b91d0dde48bd1d25922f3e32"
+    },
+    {
+      "path": "belelvoice/policy/profiles/US.yaml",
+      "sha256": "6e8024f886c081dcb13ef9f150f477b4c55f1d01fe66a99b786ccca3d019c6df"
+    },
+    {
+      "path": "belelvoice/policy/profiles/JM.yaml",
+      "sha256": "0dc02957251c6c2f701550bb479e1c5bbb3942943d6f4ac353b606850e4b178b"
+    },
+    {
+      "path": "scripts/release/hash_all.py",
+      "sha256": "0f3b15f1d70d549c0d306216b4e05b808fb286fee68ad9bfc3255798e125a664"
+    },
+    {
+      "path": "scripts/release/build_manifest.py",
+      "sha256": "c2daf00dca0d1a17f44ff8423da725d1643bebb292bc431100bc998a7969ecbf"
+    },
+    {
+      "path": "LEGAL/LICENSE-BELEL-PROTOCOL.txt",
+      "sha256": "802dc5d5034728bfdb089f85c3db7340128e67836f964320c20fc29f6291a4e8"
+    },
+    {
+      "path": "LEGAL/ATTRIBUTION_AND_CITATION.md",
+      "sha256": "cb1870ebb33385835914cfb1728268e123102a72ba0a6f6820c842061229360b"
+    },
+    {
+      "path": "LEGAL/PROVENANCE_POLICY.md",
+      "sha256": "07c83c8cac688abd45d27f88314760fd1cc881f41bcce4a879ff69c497b23fc8"
+    }
+  ]
+}

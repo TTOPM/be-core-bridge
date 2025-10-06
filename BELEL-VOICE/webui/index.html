@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Belel Voice — Local Live</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; }
+    #transcript { font-size: 1.1rem; padding: 1rem; border: 1px solid #ccc; min-height: 4rem; }
+    button { padding: .6rem 1rem; margin-right: .6rem; }
+  </style>
+</head>
+<body>
+  <h1>Belel Voice — Local Live (No Internet)</h1>
+  <p>Press <b>Start</b> to stream mic audio to local ASR and hear local TTS replies.</p>
+  <div>
+    <button id="startBtn">Start</button>
+    <button id="stopBtn" disabled>Stop</button>
+  </div>
+  <h3>Transcript</h3>
+  <div id="transcript"></div>
+  <audio id="player" controls></audio>
+  <script src="app.js"></script>
+</body>
+</html>

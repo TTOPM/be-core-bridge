@@ -1,0 +1,5 @@
+region: GLOBAL
+require_disclosure: true
+allow_cloning_with_consent: true
+anti_spoof_required: true
+notes: "Conservative defaults aligned with EU AI Act transparency."

@@ -1,0 +1,5 @@
+region: JM
+require_disclosure: true
+allow_cloning_with_consent: true
+anti_spoof_required: true
+notes: "Aligns with government transparency guidance; update when PDs publish."
