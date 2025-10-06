@@ -1,0 +1,5 @@
+region: CA-Federal-Court
+require_disclosure: true
+ban_ai_in_evidence: false
+refs:
+  - Federal Court Notice (May 7, 2024); Interim Principles (Dec 20, 2023)

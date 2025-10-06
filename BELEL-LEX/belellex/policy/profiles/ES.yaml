@@ -1,0 +1,4 @@
+region: ES
+require_disclosure: true
+ban_ai_in_evidence: false
+notes: "AI transparency enforcement; EU AI Act alignment"

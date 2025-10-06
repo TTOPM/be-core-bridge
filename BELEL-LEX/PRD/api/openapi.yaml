@@ -1,0 +1,183 @@
+openapi: 3.0.3
+info:
+  title: BELEL-LEX API
+  version: 0.1.0
+paths:
+  /v1/legal/qa:
+    post:
+      summary: Legal Q&A with authorities and Legal Evidence Contract
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LegalQARequest'
+      responses:
+        '200':
+          description: Answer with authorities and policy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LegalQAResponse'
+  /v1/citation/validate:
+    post:
+      summary: Validate legal citations and return normalized table + status
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CitationValidateRequest'
+      responses:
+        '200':
+          description: Validation result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CitationValidateResponse'
+  /v1/filings/draft:
+    post:
+      summary: Draft filings/skeletons/forms with embedded disclosure placeholder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FilingsDraftRequest'
+      responses:
+        '200':
+          description: Drafted document (for sign-off) with provenance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilingsDraftResponse'
+  /v1/policy/check:
+    post:
+      summary: Check document for jurisdiction-specific AI/PD compliance
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PolicyCheckRequest'
+      responses:
+        '200':
+          description: Compliance report
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolicyCheckResponse'
+  /v1/practice-direction/watch:
+    post:
+      summary: Trigger practice-direction watchers for configured jurisdictions
+      responses:
+        '200':
+          description: Watch report with diffs and policy updates
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  updated:
+                    type: array
+                    items: { type: string }
+components:
+  schemas:
+    LegalQARequest:
+      type: object
+      properties:
+        question: { type: string }
+        jurisdiction: { type: string }
+        scope:
+          type: object
+          properties:
+            courts: { type: array, items: { type: string } }
+            last_years: { type: integer }
+    AuthorityItem:
+      type: object
+      properties:
+        cite: { type: string }
+        court: { type: string }
+        year: { type: integer }
+        weight: { type: string, enum: [binding, persuasive, commentary] }
+        url: { type: string }
+    LegalQAResponse:
+      type: object
+      properties:
+        summary: { type: string }
+        authorities:
+          type: array
+          items: { $ref: '#/components/schemas/AuthorityItem' }
+        policy_profile: { type: string }
+        uncertainty:
+          type: object
+          properties:
+            reasoning: { type: number }
+            source_gap: { type: number }
+        disclosure:
+          type: object
+          properties:
+            genai_used: { type: boolean }
+            certificate: { type: string }
+        audit:
+          type: object
+          properties:
+            sha256: { type: string }
+            kg_version: { type: string }
+    CitationValidateRequest:
+      type: object
+      properties:
+        citations:
+          type: array
+          items: { type: string }
+        jurisdiction: { type: string }
+    CitationRow:
+      type: object
+      properties:
+        input: { type: string }
+        normalized: { type: string }
+        exists: { type: boolean }
+        court: { type: string }
+        year: { type: integer }
+        precedential_status: { type: string }
+    CitationValidateResponse:
+      type: object
+      properties:
+        table:
+          type: array
+          items: { $ref: '#/components/schemas/CitationRow' }
+        bad_citations:
+          type: array
+          items: { type: string }
+    FilingsDraftRequest:
+      type: object
+      properties:
+        doc_type: { type: string, enum: [skeleton, claim_form, defence, factum, affidavit, bundle_index] }
+        facts: { type: string }
+        issues: { type: array, items: { type: string } }
+        jurisdiction: { type: string }
+        require_disclosure: { type: boolean }
+    FilingsDraftResponse:
+      type: object
+      properties:
+        draft: { type: string }
+        disclosure_placeholder: { type: string }
+        authorities:
+          type: array
+          items: { $ref: '#/components/schemas/AuthorityItem' }
+        audit_sha256: { type: string }
+    PolicyCheckRequest:
+      type: object
+      properties:
+        text: { type: string }
+        jurisdiction: { type: string }
+    PolicyCheckResponse:
+      type: object
+      properties:
+        compliant: { type: boolean }
+        reasons:
+          type: array
+          items: { type: string }
+        required_actions:
+          type: array
+          items: { type: string }

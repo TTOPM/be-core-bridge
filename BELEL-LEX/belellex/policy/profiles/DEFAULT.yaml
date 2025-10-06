@@ -1,0 +1,4 @@
+region: GLOBAL
+require_disclosure: true
+ban_ai_in_evidence: true
+notes: "Default conservative policy; override per jurisdiction."

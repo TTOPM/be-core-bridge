@@ -1,0 +1,5 @@
+BELEL Protocol Sovereign License (BPSL) v1.0
+- Mandatory attribution to "BELEL-LEX — Sovereign Court & Legal AI (TTOPM)"
+- Preserve provenance and evidence contracts
+- No harmful/unauthorised practice of law; drafts require qualified review
+- Derivatives must keep these terms

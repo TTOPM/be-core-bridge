@@ -1,0 +1,177 @@
+{
+  "generated": "2025-10-06T11:38:11.679273Z",
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "ebde17dbbe4ef45cf015ddef717f28eb11a3e7c6d9ffdce1a044e868022658da"
+    },
+    {
+      "path": "ONE_PAGER.md",
+      "sha256": "8bb0db4d6b0e56b1ac3938ee2108c459a5fe3c09bb821f9f4341ced79f0b1cac"
+    },
+    {
+      "path": "CITATION.cff",
+      "sha256": "9adaab2eaa8cf6806480e79d1df0ba32a739ea0d782b06f720b6876c2c4646f9"
+    },
+    {
+      "path": "Makefile",
+      "sha256": "ede415b78f23dcc445e8a3122b68312c21d62f6ad19d4fb8ae71dacc7f82bc83"
+    },
+    {
+      "path": "docs/BLUEPRINT.md",
+      "sha256": "2fc4f94cb8ef27c0c709132dc7c4545c43d4e0d735d64c6c5efa8c309d39bfe4"
+    },
+    {
+      "path": "docs/JURISDICTION_PROFILES.md",
+      "sha256": "dcd9dffbf3194dbcca697b8f3a1b32abb443577c38a9f2ad361e58b31e95be8c"
+    },
+    {
+      "path": "docs/BEST_PRACTICE_COMPENDIUM.md",
+      "sha256": "24f1b990c751f15b4a1210486bcff67d49c54de942262428d80948dd51161a9e"
+    },
+    {
+      "path": "PRD/PRD_BELEL_LEX.md",
+      "sha256": "2aa28f3e9ac70550f414037268c33f0662b64eaa772a937d89d040dd718a132d"
+    },
+    {
+      "path": "PRD/api/openapi.yaml",
+      "sha256": "16c11c7e259d85217dd8ffca82ce3b218557831c5a9b1af117268f6aa9211e29"
+    },
+    {
+      "path": "COMPLIANCE/DPIA.md",
+      "sha256": "af2e37669eecc8db664bc110e9fd9bcb8c54608839cc68c928fdcb3c72d60f6d"
+    },
+    {
+      "path": "COMPLIANCE/EU_AI_ACT_ALIGNMENT.md",
+      "sha256": "15ffe11e950764bd22465b1476f156987d753f602d0758e2d3785243213737ab"
+    },
+    {
+      "path": "COMPLIANCE/CEPEJ_MAPPING.md",
+      "sha256": "eefd45ab726ec5d7ae12ff572c9fa114f569bf95053ee6c1ca13c50707012c82"
+    },
+    {
+      "path": "COMPLIANCE/VALIDATION_PLAN.md",
+      "sha256": "973e7ae332741231d40ad06aa4e951d12287996bd76201c2c2e6314f89fcfa1a"
+    },
+    {
+      "path": "COMPLIANCE/PMS_PLAN.md",
+      "sha256": "146a77a8f7be150e750de9797487d3c80ead92eaea78d0cb4e3927bd82e5fc00"
+    },
+    {
+      "path": "COMPLIANCE/RISK_REGISTER.md",
+      "sha256": "d7308b358e735c006fd278a45c1e9109b6f485cff32a1134c56c4c193c1f6417"
+    },
+    {
+      "path": "COMPLIANCE/MODEL_CARDS/overview.md",
+      "sha256": "3cc148b1c80547400342e728c9f1bbf34684bb96a229de68af07d25823dd9a81"
+    },
+    {
+      "path": "GOVERNANCE/LEGAL_EVIDENCE_CONTRACT.md",
+      "sha256": "e26567679f15b343e9579c9a122e8e8a9aaf49b57540d2f81c5ebe3f8b3bd6dd"
+    },
+    {
+      "path": "GOVERNANCE/AUDIT_LEDGER_SPEC.md",
+      "sha256": "fcbc71806e862b9a88c068a8dd87664373ac7a74322501a4934d4f68ba7244ff"
+    },
+    {
+      "path": "GOVERNANCE/AI_DISCLOSURE_ENFORCEMENT.md",
+      "sha256": "7a9086b4fd95120cc65f09bc5cc72d25021c99cfcb3da95e99c90528ba26f4dd"
+    },
+    {
+      "path": "GOVERNANCE/POLICY_ENGINE/opa_policies.rego",
+      "sha256": "27e166c419c0c8470cc69d4d8ed011be285c70e631c3b464bb4fb7030d73aa53"
+    },
+    {
+      "path": "LEGAL/LICENSE-BELEL-PROTOCOL.txt",
+      "sha256": "c21c4a4431d426f902ad8464284692e2c87fd7de7bc96f1a3beaece3771cbb9c"
+    },
+    {
+      "path": "LEGAL/ATTRIBUTION_AND_CITATION.md",
+      "sha256": "12da8c4d51a7dceb830a9f587f69090ed8ef38a31df9b867c7a5b8f494d30731"
+    },
+    {
+      "path": "LEGAL/PROVENANCE_POLICY.md",
+      "sha256": "d5eb1b578f8d1c1d4f7810f0f91943f5158ccafca08d774dfd2782903dad36cb"
+    },
+    {
+      "path": "belellex/server/app.py",
+      "sha256": "20759194f5b555fb7381dd8c5c90c07d6a90859b84a1ec04fd9ed0600ef9d6dd"
+    },
+    {
+      "path": "belellex/server/routers/legal.py",
+      "sha256": "2ee97d14464db61bacaf55f82d7c8fbcc10261c36f094d3b72f2148a36df59a9"
+    },
+    {
+      "path": "belellex/server/routers/citation.py",
+      "sha256": "2a3ae79d0e89f9f32d13086fb8b8c428d977bba6b80e6e2e114cb3bce70717b0"
+    },
+    {
+      "path": "belellex/server/routers/filings.py",
+      "sha256": "ca076c70113d1bad19a5bd21356319c3e481f78df8f71e2b35885c5daa150cc5"
+    },
+    {
+      "path": "belellex/server/routers/policy.py",
+      "sha256": "8c74a319bef9f129fb0c8f8e2c37dd7bb43268ec609683f422fca8f4022dbd37"
+    },
+    {
+      "path": "belellex/server/routers/watcher.py",
+      "sha256": "1fa28dfbab4c21c6e527be2bb67996cb95594d294a865b3f041107365e28f14f"
+    },
+    {
+      "path": "belellex/trust/audit.py",
+      "sha256": "dc9faae2deb5a55ed174e90e0fcea38966d95c3e389523bd2b9cd507d9886edb"
+    },
+    {
+      "path": "belellex/policy/load.py",
+      "sha256": "d60f1d528fe677394af3945c677edefc4c743952c9376ffeda092f6ebf23580d"
+    },
+    {
+      "path": "belellex/policy/profiles/DEFAULT.yaml",
+      "sha256": "533b60e0d316154a41512713f36ff3d868c2df1a5d55cbfea2039c05de4a83cc"
+    },
+    {
+      "path": "belellex/policy/profiles/UK.yaml",
+      "sha256": "83734e3222431683857e1ce894de9195735ba5a2366c07bdcd929c8a0238e7e8"
+    },
+    {
+      "path": "belellex/policy/profiles/CCJ.yaml",
+      "sha256": "113aca8693f9463bd293eef424c57fc0e184c727deb2c8b32ee067f5e383ceb2"
+    },
+    {
+      "path": "belellex/policy/profiles/CA-Federal-Court.yaml",
+      "sha256": "e1d4f09c135b90a333d4232d86a4512ebf8e8537a5e986e9d03f4960ac4dd105"
+    },
+    {
+      "path": "belellex/policy/profiles/SG-Supreme-Court.yaml",
+      "sha256": "2ba5221082d87b0c26bab7f968065bf110ee9001a10a09d090988123dfe2e036"
+    },
+    {
+      "path": "belellex/policy/profiles/FR.yaml",
+      "sha256": "f029ef2e46160c4897bae9d634879d41c6185f6ece59891bb021f6e76a2bc707"
+    },
+    {
+      "path": "belellex/policy/profiles/ES.yaml",
+      "sha256": "e73c9e982240f273db02b4b8127328ac67003b1acbb5055493bc7ad393d04f37"
+    },
+    {
+      "path": "belellex/policy/profiles/BB.yaml",
+      "sha256": "36da9b4a78347a2f3add9334520c2694d2c7d80616baa19720d4271336ee9441"
+    },
+    {
+      "path": "belellex/policy/profiles/JM.yaml",
+      "sha256": "fe9c7e8dd7b58dd7cf7254fde4e44789bd7ab3bbd6c0ed305711ce2c55df1e7c"
+    },
+    {
+      "path": "belellex/policy/profiles/ON-Tribunals.yaml",
+      "sha256": "0be7e8a2c244cdcbc7be4164e344b0006e3fa70072c76f329eeaff7692092798"
+    },
+    {
+      "path": "scripts/release/hash_all.py",
+      "sha256": "fd9ec8646e580d7f063bec791a97a5187f6065e393d122dff99f8638138b2af7"
+    },
+    {
+      "path": "scripts/release/build_manifest.py",
+      "sha256": "38318d68256289f731bcb685c447d54b879b62c886d4a448de827dc3eeceabe6"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "name": "BELEL-LEX Gold Standard Stack",
+  "version": "0.1.0",
+  "generated": "2025-10-06T11:38:11.734408Z",
+  "hashes_sha256": "7025a622184d4b7f80db78ef80b2c377283d5f063997809b6fb06bb0971d46ef",
+  "hashes_file": "HASHES.json",
+  "license": "BPSL v1.0",
+  "integrity_note": "Replace with real signing (minisign/sigstore) for prod"
+}

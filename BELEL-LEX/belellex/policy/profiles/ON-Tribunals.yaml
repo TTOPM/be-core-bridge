@@ -1,0 +1,5 @@
+region: ON-Tribunals
+require_disclosure: true
+ban_ai_in_evidence: false
+refs:
+  - Tribunals Ontario PD on AI

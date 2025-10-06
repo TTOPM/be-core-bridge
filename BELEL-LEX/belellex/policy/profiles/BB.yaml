@@ -1,0 +1,4 @@
+region: BB
+require_disclosure: false
+ban_ai_in_evidence: false
+notes: "E-filing rules; no specific AI PD publicly identified"

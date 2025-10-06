@@ -1,0 +1,6 @@
+region: FR
+require_disclosure: false
+ban_ai_in_evidence: false
+ban_judge_analytics: true
+refs:
+  - Justice Reform Act Article 33 (2019): ban on judge analytics
