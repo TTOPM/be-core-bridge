@@ -1,0 +1,13 @@
+
+model:
+  d_model: 512
+  num_layers: 12
+  diffusion_steps: 50
+  sample_rate: 24000
+  hop_length: 256
+dataset:
+  processed_dir: processed_data
+trainer:
+  batch_size: 4
+  max_epochs: 20
+  lr: 1.0e-4

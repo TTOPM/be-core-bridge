@@ -1,0 +1,55 @@
+
+version: "3.9"
+services:
+  belel-sing:
+    build: ..
+    ports: ["8610:8610"]
+    environment:
+      - USE_SIDECARS=true
+      - SVS_URL=http://diffsinger:8611
+      - VOCODER_URL=http://hifigan:8612
+      - RVC_URL=http://rvc:8613
+      - PROVENANCE_HMAC_SECRET=${PROVENANCE_HMAC_SECRET:-change-me}
+      - WATERMARK_KEY=${WATERMARK_KEY:-12345}
+      - ALLOWED_EMAIL_DOMAINS=${ALLOWED_EMAIL_DOMAINS:-pearcerobinson.com,ttopm.com,scarlet41.org,prfdn.org,belel.ai}
+    depends_on: [diffsinger, hifigan]
+    command: uvicorn api.server:app --host 0.0.0.0 --port 8610
+    volumes:
+      - ../:/app
+
+  diffsinger:
+    build: ./images/diffsinger
+    ports: ["8611:8611"]
+    volumes:
+      - ./weights/diffsinger:/weights
+      - ./plugins:/plugins
+
+  hifigan:
+    build: ./images/hifigan
+    ports: ["8612:8612"]
+    volumes:
+      - ./weights/hifigan:/weights
+      - ./plugins:/plugins
+
+  rvc:
+    build: ./images/rvc
+    ports: ["8613:8613"]
+    volumes:
+      - ./weights/rvc:/weights
+      - ./plugins:/plugins
+
+  voice-gateway:
+    image: ${VOICE_GATEWAY_IMAGE:-belel/voice-gateway:latest}
+    ports: ["8000:8000"]
+    environment:
+      - VOICES_REGISTRY=/app/voices.json
+    volumes:
+      - ${VOICE_COLLECTION_PATH:-../belel_voice_collection}/voices.json:/app/voices.json:ro
+      - ${VOICE_COLLECTION_PATH:-../belel_voice_collection}/models:/app/models:ro
+
+  moonshot:
+    image: ${MOONSHOT_IMAGE:-belel/moonshot:latest}
+    ports: ["8282:8282"]
+    environment:
+      - VOICE_GATEWAY_URL=http://voice-gateway:8000
+    depends_on: [voice-gateway]
