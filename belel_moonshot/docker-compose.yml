@@ -1,0 +1,44 @@
+
+version: "3.9"
+services:
+  api:
+    build: ./cloud/api
+    environment:
+      - VOICE_GATEWAY_URL=http://voice-gateway:8000
+      - BELEL_PRESETS_PATH=/app/config_presets.json
+    ports:
+      - "8282:8282"
+    depends_on:
+      - voice-gateway
+      - qdrant
+  voice-gateway:
+    image: ${VOICE_GATEWAY_IMAGE:-belel/voice-gateway:latest}
+    ports:
+      - "8000:8000"
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+volumes:
+  qdrant_data: {}
+
+  federated:
+    build: ./training/federated_service
+    ports:
+      - "8383:8383"
+    command: uvicorn server:app --host 0.0.0.0 --port 8383
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./ops/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana-oss:latest
+    ports:
+      - "3000:3000"
