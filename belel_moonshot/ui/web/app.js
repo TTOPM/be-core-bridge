@@ -104,3 +104,44 @@ document.getElementById("send").onclick = async ()=>{
   await sendText(text, false);
 };
 
+
+
+async function loadVoices(){
+  const r = await fetch(API+"/api/presets");
+  const data = await r.json();
+  const v = document.getElementById("voiceSel");
+  v.innerHTML = "";
+  (data.available_voices||[]).forEach(name=>{
+    const o=document.createElement("option"); o.value=name; o.textContent=name; v.appendChild(o);
+  });
+  if(v.options.length){ v.value = "belel_resolve"; }
+}
+loadVoices();
+
+const _oldSendText = sendText;
+sendText = async function(text, live=false){
+  const body={ message:text,
+    preset: document.getElementById("preset").value,
+    persona: document.getElementById("persona").value || "Belel",
+    tone:+document.getElementById("tone").value,
+    pacing:+document.getElementById("pacing").value,
+    energy:+document.getElementById("energy").value,
+    voice_name: document.getElementById("voiceSel").value || null,
+    mode: document.getElementById("mode").value,
+    melody: (document.getElementById("melody").value||"").split(",").map(s=>parseInt(s.trim())).filter(n=>!isNaN(n)),
+    tempo: parseInt(document.getElementById("tempo").value||"90")
+  };
+  const r = await fetch(API+"/api/chat", {
+    method:"POST",
+    headers:{ "content-type":"application/json", "X-Session-Id": session(), "X-Disclosed":"true" },
+    body: JSON.stringify(body)
+  });
+  const data = await r.json();
+  msg("assistant", data.response);
+  if (data.voice_stream_url){
+    try{ new Audio(data.voice_stream_url).play().catch(()=>{}); }catch{}
+  } else if (data.voice_base64){
+    new Audio("data:"+data.mimetype+";base64,"+data.voice_base64).play().catch(()=>{});
+  }
+  if(!live) document.getElementById("text").value="";
+};

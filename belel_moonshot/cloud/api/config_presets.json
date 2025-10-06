@@ -44,5 +44,50 @@
     "happy": "playful",
     "excited": "playful",
     "neutral": "neutral"
+  },
+  "available_voices": [
+    "belel_flux",
+    "belel_serene",
+    "belel_resolve",
+    "belel_vivid",
+    "belel_sage",
+    "belel_radiant",
+    "belel_whisper",
+    "belel_aeon"
+  ],
+  "singing_capable": [
+    "belel_resolve",
+    "belel_serene",
+    "belel_vivid",
+    "belel_aeon"
+  ],
+  "emotion_curves": {
+    "default": {
+      "sad": {
+        "tone": 0.35,
+        "pacing": 0.4,
+        "energy": 0.3
+      },
+      "calm": {
+        "tone": 0.5,
+        "pacing": 0.45,
+        "energy": 0.4
+      },
+      "happy": {
+        "tone": 0.75,
+        "pacing": 0.55,
+        "energy": 0.7
+      },
+      "excited": {
+        "tone": 0.85,
+        "pacing": 0.6,
+        "energy": 0.8
+      },
+      "angry": {
+        "tone": 0.45,
+        "pacing": 0.7,
+        "energy": 0.9
+      }
+    }
   }
 }

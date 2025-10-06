@@ -60,7 +60,11 @@ def chat(body:ChatBody, x_session_id:str=Header(default="session-default"), x_di
     if blocked:
         memory.append(x_session_id, "assistant", guarded)
         return {"response":guarded, "blocked":True}
-    audio=tts.synthesize(guarded, tone, pacing, energy)
+    voice_name = body.voice_name
+        if body.mode == "sing":
+            audio = tts.synthesize_sing(guarded, voice_name or "belel_resolve", body.melody or [], body.tempo or 90, label, tone, pacing, energy)
+        else:
+            audio = tts.synthesize(guarded, tone, pacing, energy, voice_name=voice_name)
     voice_b64=base64.b64encode(audio).decode("utf-8")
     memory.append(x_session_id, "assistant", guarded)
     return {"response":guarded,"voice_base64":voice_b64, "voice_stream_url": null,"mimetype":"audio/wav",
