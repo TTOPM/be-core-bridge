@@ -2,6 +2,8 @@
 requests==2.31.0
 python-dotenv==1.0.1
 PyJWT==2.10.1            # tokens/webhooks; also pinned to avoid transitive drift
+pynacl>=1.5
+filelock>=3.14
 
 # 🧬 IPFS Client Integration
 ipfshttpclient==0.8.0a2
