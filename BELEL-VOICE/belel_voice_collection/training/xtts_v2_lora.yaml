@@ -1,0 +1,60 @@
+
+# XTTS v2 LoRA Finetuning Config (template)
+# Save as: training/xtts_v2_lora.yaml
+# Usage:   tts train --config_path training/xtts_v2_lora.yaml
+# Requires: pip install TTS==0.22.* (or recent), torch, datasets, soundfile, librosa
+
+output_path: training/outputs/xtts_v2_lora
+run_name: belel_xtts_v2_lora
+seed: 1337
+
+# ===== Model =====
+model:
+  name: xtts_v2
+  # Enable LoRA for lightweight finetuning
+  use_lora: true
+  lora_r: 16
+  lora_alpha: 32
+  lora_dropout: 0.05
+  # multilingual and cloning support is built-in to XTTS v2
+
+# ===== Data =====
+# Expect a JSONL manifest with fields: audio_path, text, speaker_id, language
+datasets:
+  - name: belel_manifest
+    meta_file_train: data/belel_manifest.jsonl
+    # Optional held-out eval split size (fraction)
+    eval_split_size: 0.02
+
+# ===== Audio/Text =====
+audio:
+  sample_rate: 22050
+  # XTTS handles feature extraction internally
+
+text_cleaner: basic_cleaners
+phoneme_cache_path: training/phoneme_cache
+
+# ===== Training =====
+trainer:
+  epochs: 15
+  batch_size: 8
+  grad_accum_steps: 2
+  num_loader_workers: 4
+  eval_interval: 1
+  save_interval: 1
+  mixed_precision: "fp16"
+
+optimizer:
+  name: adamw
+  lr: 0.0001
+  betas: [0.9, 0.999]
+  weight_decay: 0.01
+
+scheduler:
+  name: cosine_with_warmup
+  warmup_steps: 500
+
+# ===== Logging =====
+logger:
+  dashboard: tensorboard
+  log_interval: 50

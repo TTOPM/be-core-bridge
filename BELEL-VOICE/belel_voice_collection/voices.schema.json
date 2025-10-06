@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Belel Voices Schema",
+  "type": "object",
+  "properties": {
+    "meta": {
+      "type": "object"
+    },
+    "backends": {
+      "type": "object"
+    },
+    "voices": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "backend",
+          "tier",
+          "style_text",
+          "prosody_defaults"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "backend": {
+            "type": "string"
+          },
+          "tier": {
+            "type": "integer"
+          },
+          "style_text": {
+            "type": "string"
+          },
+          "prosody_defaults": {
+            "type": "object"
+          },
+          "speaker_samples": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "stt_model": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "backends",
+    "voices"
+  ]
+}

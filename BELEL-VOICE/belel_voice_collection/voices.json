@@ -1,61 +1,222 @@
 {
-  "voices": {
-    "belel_flux": {
-      "path": "models/belel_flux_dynamic.onnx",
-      "tier": 1,
-      "emotion_curve": "default"
+  "meta": {
+    "updated_utc": "2025-10-06T19:07:46.228416Z",
+    "notes": "Cleaned to rely on widely-available, actively-maintained checkpoints. Each voice maps to a primary TTS backend and optional STT model id."
+  },
+  "backends": {
+    "parler_tts": {
+      "model_id": "parler-tts/parler-tts-mini-v1",
+      "type": "transformers",
+      "supports_style_text_prompt": true,
+      "supports_cloning": false
     },
-    "belel_serene": {
-      "path": "models/belel_serene.onnx",
-      "tier": 1,
-      "emotion_curve": "default"
+    "xtts_v2": {
+      "model_id": "tts_models/multilingual/multi-dataset/xtts_v2",
+      "type": "coqui_tts",
+      "supports_style_text_prompt": false,
+      "supports_cloning": true
     },
-    "belel_resolve": {
-      "path": "models/belel_resolve.onnx",
-      "tier": 1,
-      "emotion_curve": "default",
-      "style": {
-        "swing": 0.2
-      }
+    "bark_small": {
+      "model_id": "suno/bark-small",
+      "type": "transformers",
+      "supports_style_text_prompt": true,
+      "supports_cloning": false
     },
-    "belel_vivid": {
-      "path": "models/belel_vivid.onnx",
-      "tier": 1,
-      "emotion_curve": "default"
-    },
-    "belel_sage": {
-      "path": "models/belel_sage.onnx",
-      "tier": 1,
-      "emotion_curve": "default"
-    },
-    "belel_radiant": {
-      "path": "models/belel_radiant.onnx",
-      "tier": 1,
-      "emotion_curve": "default"
-    },
-    "belel_whisper": {
-      "path": "models/belel_whisper.onnx",
-      "tier": 1,
-      "emotion_curve": "default"
-    },
-    "belel_aeon": {
-      "path": "models/belel_aeon.onnx",
-      "tier": 1,
-      "emotion_curve": "default"
+    "stt_whisper": {
+      "model_id": "openai/whisper-large-v3",
+      "type": "transformers_asr"
     }
   },
-  "singing_capable": [
-    "belel_resolve",
-    "belel_serene",
-    "belel_vivid",
-    "belel_aeon"
-  ],
-  "prosody_controls": [
-    "tone",
-    "pacing",
-    "energy",
-    "vibrato",
-    "melody_sensitivity",
-    "swing"
+  "voices": [
+    {
+      "name": "belel_flux",
+      "backend": "parler_tts",
+      "tier": 1,
+      "style_text": "modern, bright, engaging product-demo voice with crisp articulation",
+      "prosody_defaults": {
+        "pacing": 1.05,
+        "energy": 1.1,
+        "pitch_shift": 1
+      },
+      "stt_model": "stt_whisper"
+    },
+    {
+      "name": "belel_serene",
+      "backend": "xtts_v2",
+      "tier": 1,
+      "style_text": "warm, empathetic, soothing narration with gentle pacing",
+      "prosody_defaults": {
+        "pacing": 0.9,
+        "energy": 0.8,
+        "pitch_shift": -1
+      },
+      "speaker_samples": [
+        "samples/serene_ref_1.wav",
+        "samples/serene_ref_2.wav"
+      ],
+      "stt_model": "stt_whisper"
+    },
+    {
+      "name": "belel_resolve",
+      "backend": "parler_tts",
+      "tier": 1,
+      "style_text": "confident, rhythmic delivery with bold tone and natural micro-pauses",
+      "prosody_defaults": {
+        "pacing": 1.05,
+        "energy": 1.1,
+        "pitch_shift": 0
+      },
+      "stt_model": "stt_whisper"
+    },
+    {
+      "name": "belel_vivid",
+      "backend": "parler_tts",
+      "tier": 1,
+      "style_text": "expressive, energetic, vibrant presenter style with lively transitions",
+      "prosody_defaults": {
+        "pacing": 1.1,
+        "energy": 1.2,
+        "pitch_shift": 1
+      },
+      "stt_model": "stt_whisper"
+    },
+    {
+      "name": "belel_sage",
+      "backend": "xtts_v2",
+      "tier": 1,
+      "style_text": "measured, wise, narrative tone with calm authority",
+      "prosody_defaults": {
+        "pacing": 0.85,
+        "energy": 0.85,
+        "pitch_shift": -1
+      },
+      "speaker_samples": [
+        "samples/sage_ref_1.wav"
+      ],
+      "stt_model": "stt_whisper"
+    },
+    {
+      "name": "belel_radiant",
+      "backend": "parler_tts",
+      "tier": 1,
+      "style_text": "uplifting, bright, motivational keynote style",
+      "prosody_defaults": {
+        "pacing": 1.08,
+        "energy": 1.15,
+        "pitch_shift": 2
+      },
+      "stt_model": "stt_whisper"
+    },
+    {
+      "name": "belel_whisper",
+      "backend": "bark_small",
+      "tier": 1,
+      "style_text": "soft, intimate, near-field whisper with close-mic presence",
+      "prosody_defaults": {
+        "pacing": 0.85,
+        "energy": 0.65,
+        "pitch_shift": -2
+      },
+      "stt_model": "stt_whisper"
+    },
+    {
+      "name": "belel_aeon",
+      "backend": "xtts_v2",
+      "tier": 1,
+      "style_text": "epic, cinematic narrator with steady pacing and weighty tone",
+      "prosody_defaults": {
+        "pacing": 0.95,
+        "energy": 1.05,
+        "pitch_shift": -1
+      },
+      "speaker_samples": [
+        "samples/aeon_ref_1.wav"
+      ],
+      "stt_model": "stt_whisper"
+    },
+    {
+      "name": "belel_multilingual",
+      "backend": "xtts_v2",
+      "tier": 1,
+      "style_text": "clear, neutral newsreader; robust multilingual delivery and accent blending",
+      "prosody_defaults": {
+        "pacing": 1.0,
+        "energy": 1.0,
+        "pitch_shift": 0
+      },
+      "speaker_samples": [
+        "samples/multi_ref_1.wav"
+      ],
+      "stt_model": "stt_whisper"
+    },
+    {
+      "name": "belel_narrator",
+      "backend": "parler_tts",
+      "tier": 1,
+      "style_text": "storytelling, engaging, with gentle suspense and expressive cadence",
+      "prosody_defaults": {
+        "pacing": 0.9,
+        "energy": 1.0,
+        "pitch_shift": 0
+      },
+      "stt_model": "stt_whisper"
+    },
+    {
+      "name": "belel_techie",
+      "backend": "xtts_v2",
+      "tier": 1,
+      "style_text": "crisp, professional explainer; concise and precise technical tone",
+      "prosody_defaults": {
+        "pacing": 1.15,
+        "energy": 1.0,
+        "pitch_shift": 0
+      },
+      "speaker_samples": [
+        "samples/techie_ref_1.wav"
+      ],
+      "stt_model": "stt_whisper"
+    },
+    {
+      "name": "belel_warmheart",
+      "backend": "xtts_v2",
+      "tier": 1,
+      "style_text": "caring, supportive guidance; friendly community manager vibe",
+      "prosody_defaults": {
+        "pacing": 0.95,
+        "energy": 0.9,
+        "pitch_shift": 0
+      },
+      "speaker_samples": [
+        "samples/warmheart_ref_1.wav"
+      ],
+      "stt_model": "stt_whisper"
+    },
+    {
+      "name": "belel_bold",
+      "backend": "parler_tts",
+      "tier": 1,
+      "style_text": "assertive, dynamic, confident pitch with high presence",
+      "prosody_defaults": {
+        "pacing": 1.1,
+        "energy": 1.25,
+        "pitch_shift": 1
+      },
+      "stt_model": "stt_whisper"
+    },
+    {
+      "name": "belel_whimsical",
+      "backend": "xtts_v2",
+      "tier": 1,
+      "style_text": "playful, lighthearted with tasteful pitch inflections and bounce",
+      "prosody_defaults": {
+        "pacing": 1.1,
+        "energy": 1.1,
+        "pitch_shift": 2
+      },
+      "speaker_samples": [
+        "samples/whimsical_ref_1.wav"
+      ],
+      "stt_model": "stt_whisper"
+    }
   ]
 }
