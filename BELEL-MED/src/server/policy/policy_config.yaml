@@ -1,0 +1,7 @@
+region: UK
+evidence_thresholds:
+  high_risk: A
+  medium_risk: B
+  low_risk: C
+actions:
+  allow_autonomous_orders: false

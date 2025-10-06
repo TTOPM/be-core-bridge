@@ -1,0 +1,149 @@
+openapi: 3.0.3
+info:
+  title: BELEL-MED API
+  version: 0.1.0
+paths:
+  /v1/clinical/qa:
+    post:
+      summary: FHIR-aware whole-chart Q&A with evidence contracts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClinicalQARequest'
+      responses:
+        '200':
+          description: Evidence-locked answer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClinicalQAResponse'
+  /v1/triage:
+    post:
+      summary: Patient triage (non-diagnostic) with safety thresholds
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TriageRequest'
+      responses:
+        '200':
+          description: Triage result with escalation rules
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TriageResponse'
+  /v1/radiology/analyze:
+    post:
+      summary: Radiology pre-read (assistive) with explainability
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RadAnalyzeRequest'
+      responses:
+        '200':
+          description: Findings + structured impression
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RadAnalyzeResponse'
+components:
+  schemas:
+    ClinicalQARequest:
+      type: object
+      properties:
+        patient_id: { type: string }
+        question: { type: string }
+        scope:
+          type: object
+          properties:
+            last_days: { type: integer }
+            modalities:
+              type: array
+              items: { type: string }
+        region: { type: string }
+    EvidenceItem:
+      type: object
+      properties:
+        id: { type: string }
+        type: { type: string, enum: [guideline, meta-analysis, rct, observational, textbook, historical] }
+        year: { type: integer }
+        strength: { type: string, enum: [A, B, C, D] }
+        url: { type: string }
+    ClinicalQAResponse:
+      type: object
+      properties:
+        summary: { type: string }
+        ddx_ranked:
+          type: array
+          items:
+            type: object
+            properties:
+              condition: { type: string }
+              p: { type: number }
+        recommendations:
+          type: array
+          items: { type: string }
+        contraindications_checked: { type: boolean }
+        uncertainty:
+          type: object
+          properties:
+            aleatoric: { type: number }
+            epistemic: { type: number }
+        evidence:
+          type: array
+          items: { $ref: '#/components/schemas/EvidenceItem' }
+        patient_fit:
+          type: array
+          items: { type: string }
+        audit:
+          type: object
+          properties:
+            data_hash: { type: string }
+            model_version: { type: string }
+            kg_version: { type: string }
+    TriageRequest:
+      type: object
+      properties:
+        symptoms:
+          type: array
+          items: { type: string }
+        age: { type: integer }
+        comorbid:
+          type: array
+          items: { type: string }
+    TriageResponse:
+      type: object
+      properties:
+        acuity: { type: string, enum: [self-care, gp, urgent, emergency] }
+        next_step: { type: string }
+        safety_advice:
+          type: array
+          items: { type: string }
+        escalation_triggers:
+          type: array
+          items: { type: string }
+    RadAnalyzeRequest:
+      type: object
+      properties:
+        study_uid: { type: string }
+        body_part: { type: string }
+        indication: { type: string }
+    RadAnalyzeResponse:
+      type: object
+      properties:
+        findings:
+          type: array
+          items: { type: string }
+        impression: { type: string }
+        explainability:
+          type: object
+          properties:
+            heatmap_ref: { type: string }
+            feature_importance:
+              type: array
+              items: { type: string }

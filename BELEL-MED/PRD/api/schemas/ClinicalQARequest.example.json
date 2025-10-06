@@ -1,0 +1,13 @@
+{
+  "patient_id": "12345",
+  "question": "Given current meds and eGFR 52, is SGLT2 appropriate?",
+  "scope": {
+    "last_days": 365,
+    "modalities": [
+      "notes",
+      "labs",
+      "meds"
+    ]
+  },
+  "region": "UK"
+}

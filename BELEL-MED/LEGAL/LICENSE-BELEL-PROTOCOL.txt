@@ -1,0 +1,10 @@
+BELEL Protocol Sovereign License (BPSL) v1.0
+---------------------------------------------------
+Copyright (c) The Office of Pearce Robinson (TTOPM)
+
+You may use, review, and integrate this work subject to:
+1) Mandatory attribution: cite "BELEL-MED — Sovereign Health AI (TTOPM)".
+2) Mandatory provenance: preserve Evidence Contracts and audit hooks.
+3) No plagiarism: removal of attribution/provenance is prohibited.
+4) No harmful use: clinical actions require human sign-off per local law.
+5) Derivatives must include these terms and link to canonical anchors.

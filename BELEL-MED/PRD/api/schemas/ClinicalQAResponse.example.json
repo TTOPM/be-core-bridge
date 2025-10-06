@@ -1,0 +1,35 @@
+{
+  "summary": "SGLT2 is appropriate per NICE NG28 for T2DM with CKD; monitor volume status.",
+  "ddx_ranked": [
+    {
+      "condition": "T2DM with CKD",
+      "p": 0.71
+    }
+  ],
+  "recommendations": [
+    "Initiate empagliflozin 10 mg if no contraindications."
+  ],
+  "contraindications_checked": true,
+  "uncertainty": {
+    "aleatoric": 0.12,
+    "epistemic": 0.21
+  },
+  "evidence": [
+    {
+      "id": "NICE NG28",
+      "type": "guideline",
+      "year": 2024,
+      "strength": "A",
+      "url": "https://www.nice.org.uk/"
+    }
+  ],
+  "patient_fit": [
+    "HbA1c 8.2%",
+    "eGFR 52 mL/min/1.73m2"
+  ],
+  "audit": {
+    "data_hash": "<hash>",
+    "model_version": "v0.1",
+    "kg_version": "kg-2025-10"
+  }
+}

@@ -1,0 +1,169 @@
+{
+  "generated": "2025-10-06T11:18:36.512296Z",
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "062efca4193f81f73b1bf795ef60fa8ec1403ad00254a1862463c8bb22480626"
+    },
+    {
+      "path": "ONE_PAGER.md",
+      "sha256": "7c831e4a11a1e9e2f8200bfc5a6d1b8141125d4c49111c9c1119fa76e9404dce"
+    },
+    {
+      "path": "SECURITY.md",
+      "sha256": "d152a6e8b9645a243f037ee342a2019acd42c6343328ef94d6dd4f9337390451"
+    },
+    {
+      "path": "CITATION.cff",
+      "sha256": "68990dc5257d2172a3fbccb228ad065ef882af6943f3219856d44c846007d478"
+    },
+    {
+      "path": "Makefile",
+      "sha256": "b58bcd05acb052004a81393cd2e8b12f4bdc1d3103239a652e72b14a1b38edda"
+    },
+    {
+      "path": "PRD/PRD_BELEL_MED.md",
+      "sha256": "03a7c9987f270bce0b6ca765182daebd61db0b41c44304ec511e8e741f6ccfaf"
+    },
+    {
+      "path": "PRD/api/endpoints.yaml",
+      "sha256": "b464cd4f17f8a79e6ff82e7a543e0075d6e525a948728c61399956d7c37df6ab"
+    },
+    {
+      "path": "PRD/api/schemas/ClinicalQARequest.example.json",
+      "sha256": "51c2907e4d0cc451cbc5dbd2f565defd4e2ef60022b523eb51e550c67229f507"
+    },
+    {
+      "path": "PRD/api/schemas/ClinicalQAResponse.example.json",
+      "sha256": "a60ece61cc37b9b6b76eb38ac4d7f84345ef8042305a6f5cb2978b49e15442e9"
+    },
+    {
+      "path": "COMPLIANCE/DPIA.md",
+      "sha256": "8fae645ebc4d06da29ccc150328fbf49515d88fcc0bf2ec1cb852fc32315c576"
+    },
+    {
+      "path": "COMPLIANCE/VALIDATION_PLAN.md",
+      "sha256": "f3733eae2604d49e2ace4c508e43952309c2661237399c8ecbe5499acd9f01d3"
+    },
+    {
+      "path": "COMPLIANCE/PMS_PLAN.md",
+      "sha256": "2952857cb391f697ed6e6fd874c95bbf427ed4bff2e1b0669a812259a103c7c9"
+    },
+    {
+      "path": "COMPLIANCE/RISK_REGISTER.md",
+      "sha256": "1c1c8d2310ebb228004900c251e423abffba1135570c19564b3a3294c964520e"
+    },
+    {
+      "path": "COMPLIANCE/CHANGELOG.md",
+      "sha256": "6f2768eb557e3eabfcdb1cefada0895f1d174a5cb6d9f4bd9bda3fbb1f083baf"
+    },
+    {
+      "path": "COMPLIANCE/MODEL_CARDS/overview.md",
+      "sha256": "7ed59c1ffb5e7d2c91fa78103802ced09d375e2e8c848f903722f4779c328456"
+    },
+    {
+      "path": "COMPLIANCE/DATA_CARDS/datasets.md",
+      "sha256": "484e6f1e2f546e88304338f6b62fddd13efa1a9e6ab17edc4c3675230102f0b0"
+    },
+    {
+      "path": "GOVERNANCE/EVIDENCE_CONTRACT_SPEC.md",
+      "sha256": "0f6008006e670f453d95e9368761dede9d88085dbdd78af933d83abee6c25682"
+    },
+    {
+      "path": "GOVERNANCE/AUDIT_LEDGER_SPEC.md",
+      "sha256": "eec92be26bc4655a674e486bb9b9d0c7f061c122780279f889fe3e443db99326"
+    },
+    {
+      "path": "GOVERNANCE/RETRACTION_WATCH.md",
+      "sha256": "a80d9b515e2b2612cec16cb06abde7f9bddc513d63d4e92947b9b9a4e79f8e82"
+    },
+    {
+      "path": "GOVERNANCE/POLICY_ENGINE/opa_policies.rego",
+      "sha256": "cc1f8f61c311d88c5470162c6d07b4e8175cbc58ce2d500738e2896d992218c3"
+    },
+    {
+      "path": "LEGAL/LICENSE-BELEL-PROTOCOL.txt",
+      "sha256": "2c0e30044d3ce76334e21292f677093d580bc9ae71e7041e1f27c2b42ef18ae5"
+    },
+    {
+      "path": "LEGAL/ATTRIBUTION_AND_CITATION.md",
+      "sha256": "23c2835862a5cc92fc485155f9071a6522ff81875d64b82b894fe901b665bb72"
+    },
+    {
+      "path": "LEGAL/PROVENANCE_POLICY.md",
+      "sha256": "ee206faaf6850bc22f0a3a8097c1bc752ce0c52fc60eb276b26a08e847e811d6"
+    },
+    {
+      "path": "LEGAL/TERMS_OF_USE.md",
+      "sha256": "473410ea0761f0dfee282753c1117045742dde4eb9f1b26484b47813ad36195f"
+    },
+    {
+      "path": "src/server/app.py",
+      "sha256": "bb75478cd04060b88f39131e0cbc738472c9f121be4001066e8fb627161831c0"
+    },
+    {
+      "path": "src/server/routers/clinical.py",
+      "sha256": "d017e0592a9a1d07e009738eb4e0420356d5f8dd7c9c2172190a7c07b2d6dd03"
+    },
+    {
+      "path": "src/server/routers/triage.py",
+      "sha256": "5924c657b4fdf64e93302312bca1f283e7b4969534a40b33d22aa46f699eb30f"
+    },
+    {
+      "path": "src/server/routers/radiology.py",
+      "sha256": "cfe397f5379d9844346d431d3d94b6267fb6039b511a7820a5a0a22c758c1df9"
+    },
+    {
+      "path": "src/server/policy/policy_config.yaml",
+      "sha256": "ffb34fb8f1100acb687344bc4dc12e577ac835f35b3897ea065526d220936e44"
+    },
+    {
+      "path": "src/trust/audit.py",
+      "sha256": "422e279cd27dbe97893a1453363eb56971c11e56905de3b5a5e78638ccac98db"
+    },
+    {
+      "path": "src/privacy/deid.py",
+      "sha256": "516e62e07ea39f418bba203ccd20722811fc95a5f84217a3e7aaee58f26491d3"
+    },
+    {
+      "path": "src/orchestrator/orchestrator.py",
+      "sha256": "a493af3f83c4abfa6d3af6740025715f29f4e5dec861e955b4ac29ab4348329c"
+    },
+    {
+      "path": "src/orchestrator/retrieval.py",
+      "sha256": "e7c00754051b125dfbcb53b97e4a34e8cdabdcd8db1b7085f0eac05a13904a5d"
+    },
+    {
+      "path": "src/orchestrator/evidence_contract.py",
+      "sha256": "13fe0e2290f27150cbb2298c2d80cda52babfb908a8f85d0a836c502341c7bc3"
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "sha256": "9f63077c6b51777234d4f7fa191b401ef9907d174662b43ef3a04ae3cb774f61"
+    },
+    {
+      "path": "docs/ROLLOUT_PLAN_90DAYS.md",
+      "sha256": "07b6c41af3c0ba920b5cf7b6eb29599f2fb06a38041241fe06f7934e182ae884"
+    },
+    {
+      "path": "docs/METRICS.md",
+      "sha256": "d4f810f19765fd1efa4011a1d6e9f48802988bfea4e3f42406972cd6837de4da"
+    },
+    {
+      "path": "docs/ROADMAP.md",
+      "sha256": "2c0bd314817cd726cc3435006c51971bafdd2c6ee57d0781973b73ebc5700fb3"
+    },
+    {
+      "path": "docs/BLUEPRINT.md",
+      "sha256": "335852ae7030147d7c629b5a54fffa13341ec877f8a29a1f30847001345a9f88"
+    },
+    {
+      "path": "scripts/release/hash_all.py",
+      "sha256": "3d021858659a1192bba0d6739d799e7f8ea2bbaeb29a2e7c236c8a1ad44ee22f"
+    },
+    {
+      "path": "scripts/release/build_manifest.py",
+      "sha256": "efe6ebdc0e4a08a0ca506628640f46d9d5a2960aa244244d7d630acdb2e28260"
+    }
+  ]
+}

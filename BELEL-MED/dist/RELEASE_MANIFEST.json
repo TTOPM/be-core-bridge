@@ -1,0 +1,10 @@
+{
+  "name": "BELEL-MED Gold Standard Stack",
+  "version": "0.1.0",
+  "generated": "2025-10-06T11:18:36.603015Z",
+  "hashes_sha256": "ebbc5499cfcdb93850815626783fe97c909175f9262ab69e4a84bd362c809dc5",
+  "hashes_file": "HASHES.json",
+  "license": "BPSL v1.0",
+  "canonical_anchor": "TTOPM/be-core-bridge",
+  "integrity_note": "Replace with real signing (e.g., minisign/sigstore) for production"
+}
