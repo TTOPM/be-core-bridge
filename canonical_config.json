@@ -1,0 +1,18 @@
+{
+  "watchlist": [
+    "BELEL_PROTOCOL_OVERVIEW.md",
+    "belel_guardian.py",
+    "media_sentient_engine.py",
+    "mutation_watcher.py",
+    "claim_review_publisher.py",
+    "concordium_enforcer.py"
+  ],
+  "hash_manifest": "checksums.txt",
+  "policy": {
+    "license_required": "legal/BELEL-SOVEREIGN-LICENSE-v1.0.md",
+    "security_doc": "SECURITY.md",
+    "contributing_doc": "CONTRIBUTING.md"
+  },
+  "fail_on_missing": true,
+  "notify_on_change": false
+}
