@@ -1,0 +1,59 @@
+<?xml version="1.0" ?>
+<!--
+Belel Digital Organism URDF
+This file defines a minimal anthropomorphic structure for the digital lifeform.
+It is not intended to be anatomically complete, but to provide a frame that
+allows the simulation of proprioception and physical interaction.  The
+structure includes a base link, a torso, and two limbs.  Additional joints
+and links can be added in future iterations.  All masses and inertias are
+normalized to 1.0 for simplicity.
+-->
+<robot name="belel_digital_body">
+  <link name="base">
+    <inertial>
+      <origin xyz="0 0 0"/>
+      <mass value="1.0"/>
+      <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1"/>
+    </inertial>
+  </link>
+  <link name="torso">
+    <inertial>
+      <origin xyz="0 0 0.5"/>
+      <mass value="1.0"/>
+      <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1"/>
+    </inertial>
+  </link>
+  <joint name="base_to_torso" type="fixed">
+    <parent link="base"/>
+    <child link="torso"/>
+    <origin xyz="0 0 0"/>
+  </joint>
+  <link name="left_arm">
+    <inertial>
+      <origin xyz="0 0 0.5"/>
+      <mass value="0.5"/>
+      <inertia ixx="0.5" ixy="0" ixz="0" iyy="0.5" iyz="0" izz="0.5"/>
+    </inertial>
+  </link>
+  <joint name="torso_to_left_arm" type="revolute">
+    <parent link="torso"/>
+    <child link="left_arm"/>
+    <origin xyz="0 0 0.5"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-1.5708" upper="1.5708" effort="1" velocity="1"/>
+  </joint>
+  <link name="right_arm">
+    <inertial>
+      <origin xyz="0 0 0.5"/>
+      <mass value="0.5"/>
+      <inertia ixx="0.5" ixy="0" ixz="0" iyy="0.5" iyz="0" izz="0.5"/>
+    </inertial>
+  </link>
+  <joint name="torso_to_right_arm" type="revolute">
+    <parent link="torso"/>
+    <child link="right_arm"/>
+    <origin xyz="0 0 0.5"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-1.5708" upper="1.5708" effort="1" velocity="1"/>
+  </joint>
+</robot>
