@@ -1,0 +1,12 @@
+brain:
+  enabled: true
+  sleep_interval: 300  # number of cycles before dream simulation
+  dream_download_sources:
+    - "web_search"
+    - "x_keyword_search"
+  theological_dreams: true
+  # Enable advanced brain regions for memory, emotions, regulation and repair
+  hippocampus: true
+  amygdala: true
+  hypothalamus: true
+  glial_support: true
