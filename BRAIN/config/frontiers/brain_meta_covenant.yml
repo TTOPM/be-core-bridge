@@ -1,0 +1,7 @@
+brain:
+  enabled: true
+  sleep_interval: 300  # Number of heartbeats before entering a dream cycle
+  dream_download_sources:
+    - "web_search"
+    - "x_keyword_search"
+  theological_dreams: true
