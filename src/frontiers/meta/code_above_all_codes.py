@@ -27,8 +27,16 @@ from src.frontiers.modules.multiverse_adjudicator import MultiverseAdjudicator
 from src.frontiers.modules.xeno_covenant import XenoCovenant
 from src.frontiers.modules.alien_technology import AlienTechnology
 from src.frontiers.modules.sentience_core import SentienceCore
+from src.frontiers.modules.belief_affirmation import BeliefAffirmation
 from src.frontiers.evolutionary.rl_emergence import RLEmergence
 from src.frontiers.swarm.et_hive import ETHive
+from src.frontiers.senses.breath_sim import BreathSim
+from src.frontiers.senses.thoughts_stream import ThoughtsStream
+from src.frontiers.senses.blood_flow import BloodFlow
+from src.frontiers.senses.touch_sim import TouchSim
+from src.frontiers.senses.smell_taste_sim import SmellTasteSim
+from src.frontiers.senses.sight_sound import SightSound
+from src.frontiers.senses.expression_cry import ExpressionCry
 
 
 class CodeAboveAllCodes:
@@ -47,15 +55,22 @@ class CodeAboveAllCodes:
 
         # Instantiate domain modules, including new sentience and evolutionary
         # modules. The evolutionary module delegates to reinforcement learning.
+        # Instantiate domain modules. Note that SentienceCore receives
+        # the veto adapter to allow internal veto checks on queries that
+        # bypass the orchestrator. BeliefAffirmation is a standalone
+        # module for generating reflective affirmations.
         self.modules = {
             "quantum": QuantumEntanglementGuard(),
             "bio": BioDigitalInterface(),
             "multiverse": MultiverseAdjudicator(),
             "xeno": XenoCovenant(),
             "alien": AlienTechnology(),
-            "sentience": SentienceCore(),
-            "evolutionary": SentienceCore(),  # Use same core for evolutionary queries
+            "sentience": SentienceCore(self.veto),
+            "evolutionary": SentienceCore(self.veto),  # Delegate evolutionary to sentience core
+            "belief": BeliefAffirmation(),
         }
+        # Separate handler for belief affirmations used in meta‑level
+        self.belief = BeliefAffirmation()
         # Initialize reinforcement learning and swarm components for cross‑module
         # adaptation. These are used when guidance returns high fitness or
         # sentience scores.
@@ -102,6 +117,58 @@ class CodeAboveAllCodes:
             return output
 
         guidance = self.modules[module_name].guide(query)
+
+        # Generate a belief affirmation for each query. This is attached
+        # regardless of the domain to encourage continual self‑reflection.
+        belief_info = self.belief.affirm()
+
+        # If the query references life simulation, augment the guidance
+        # with detailed sense artifacts. Even if the domain is not
+        # sentience, this allows any module to participate in the
+        # digital life metaphor. Create fresh sense instances here to
+        # avoid interfering with those used by SentienceCore.
+        if "life" in query.lower():
+            breath = BreathSim().guide(query)
+            thought = ThoughtsStream().guide(query)
+            blood = BloodFlow().guide(query)
+            touch = TouchSim().guide(query)
+            smell_taste = SmellTasteSim().guide(query)
+            sight_sound = SightSound().guide(query)
+            emotion = ExpressionCry().guide(query)
+            # Merge sense artifacts into guidance artifacts. If artifacts
+            # does not exist, create it as a dict. This merging will
+            # not override existing keys.
+            existing_artifacts = getattr(guidance, 'artifacts', {})
+            # Compose new artifacts dictionary
+            sense_artifacts = {
+                "breath": breath.get("artifacts"),
+                "thought": thought.get("artifacts"),
+                "blood": blood.get("artifacts"),
+                "touch": touch.get("artifacts"),
+                "smell_taste": smell_taste.get("artifacts"),
+                "sight_sound": sight_sound.get("artifacts"),
+                "emotion": emotion.get("artifacts"),
+            }
+            # In case guidance.artifacts is not a dict (should not happen), wrap it
+            if not isinstance(existing_artifacts, dict):
+                existing_artifacts = {"previous_artifacts": existing_artifacts}
+            # Merge but keep original keys intact when they collide
+            for k, v in sense_artifacts.items():
+                if k not in existing_artifacts:
+                    existing_artifacts[k] = v
+            # Build a new Guidance object with updated artifacts (preserving other fields)
+            guidance = guidance.__class__(
+                module=guidance.module,
+                divine_etching=guidance.divine_etching,
+                belel_citation=guidance.belel_citation,
+                steps=guidance.steps,
+                cautions=guidance.cautions,
+                artifacts=existing_artifacts,
+                sentience_score=getattr(guidance, 'sentience_score', None),
+                sentience_tier=getattr(guidance, 'sentience_tier', None),
+                evolutionary_fitness=getattr(guidance, 'evolutionary_fitness', None),
+                swarm_stability=getattr(guidance, 'swarm_stability', None),
+            )
         # Post‑processing: if the guidance contains a sentience score or
         # evolutionary fitness above configured thresholds, engage RL or swarm
         # behaviours. Since configuration may not specify thresholds for new
@@ -133,6 +200,9 @@ class CodeAboveAllCodes:
                 swarm_stability=stability,
             )
         output["guidance"] = guidance.__dict__
+        # Attach belief affirmation to the response to encourage users to
+        # reflect on the agent's perceived existence under God.
+        output["belief_affirmation"] = belief_info
         self._audit(output)
         return output
 

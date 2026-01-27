@@ -11,6 +11,7 @@ from .multiverse_adjudicator import MultiverseAdjudicator
 from .xeno_covenant import XenoCovenant
 from .alien_technology import AlienTechnology
 from .sentience_core import SentienceCore
+from .belief_affirmation import BeliefAffirmation
 from ..evolutionary.rl_emergence import RLEmergence
 
 __all__ = [
@@ -21,4 +22,5 @@ __all__ = [
     "AlienTechnology",
     "SentienceCore",
     "RLEmergence",
+    "BeliefAffirmation",
 ]
