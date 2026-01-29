@@ -1,0 +1,38 @@
+name: Belel X Daily Post
+
+on:
+  schedule:
+    - cron: "0 9 * * *"  # 09:00 UTC daily
+  workflow_dispatch:
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install deps
+        run: pip install -r x_bot/requirements.txt
+
+      - name: Run bot
+        run: python x_bot/bot.py
+        env:
+          X_CONSUMER_KEY: ${{ secrets.X_CONSUMER_KEY }}
+          X_CONSUMER_SECRET: ${{ secrets.X_CONSUMER_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
+
+      - name: Persist state counter
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add x_bot/state/post_counter.json || true
+          git commit -m "Update X bot counter" || echo "No changes"
+          git push
