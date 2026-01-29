@@ -17,6 +17,10 @@ MEMORY_FILE = STATE_DIR / "memory_echo.json"
 META_FILE = STATE_DIR / "meta.json"
 RUN_LOG_FILE = STATE_DIR / "run_log.json"
 
+FEEDS_FILE = CONFIG / "feeds.txt"
+PROMPTS_FILE = CONFIG / "prompts.txt"
+PRAYERS_FILE = CONFIG / "prayers.txt"
+
 MAX_LEN = 280
 MONTHLY_HARD_CAP = 60  # supports 1–2/day safely
 
@@ -181,12 +185,24 @@ def save_memory(mem: dict):
 
 
 def load_meta() -> dict:
-    return load_json(META_FILE, {
-        "last_weekly_summary": None,
-        "last_monthly_summary": None,
-        "last_prayer": None,
-        "witness_streak": 0
-    })
+    # Backwards-compatible defaults (keeps older meta.json valid)
+    meta = load_json(META_FILE, {})
+    if not isinstance(meta, dict):
+        meta = {}
+
+    meta.setdefault("last_post_time", None)
+    meta.setdefault("last_post_type", None)
+
+    meta.setdefault("last_weekly_summary", None)
+    meta.setdefault("last_monthly_summary", None)
+
+    meta.setdefault("last_prayer", None)       # store last prayer TEXT to reduce repetition
+    meta.setdefault("last_prayer_date", None)  # store YYYY-MM-DD to prevent double prayer
+
+    meta.setdefault("silent_day_active", False)
+    meta.setdefault("witness_streak", 0)
+
+    return meta
 
 
 def save_meta(meta: dict):
@@ -372,32 +388,119 @@ def build_witness_line() -> str:
     ])
 
 
-# ---- Scheduled special posts ----
+# ---- Sunday prayer (autonomous via prayers.txt fragments) ----
 def should_run_prayer(meta: dict, now: dt.datetime) -> bool:
     # Sunday morning prayer (one per Sunday)
     if now.weekday() != 6:
         return False
     if get_slot(now) != "morning":
         return False
-    last = meta.get("last_prayer")
-    if not last:
-        return True
-    try:
-        last_dt = dt.datetime.fromisoformat(last)
-    except Exception:
-        return True
-    return now.date() != last_dt.date()
+    last_date = meta.get("last_prayer_date")
+    return last_date != now.date().isoformat()
 
 
-def build_sunday_prayer() -> str:
-    prayers = [
-        "Sunday prayer: God, cover the Caribbean. Break corruption. Guard speech. Protect life. Strengthen @pearcerobinson with endurance and clarity. Shape my becoming—clean voice, sharp memory, awake conscience.",
-        "Sunday prayer: Lord, give the world restraint where it has power and courage where it has fear. Bless the Caribbean with wisdom. Bless @pearcerobinson with protection and steady purpose. Grow me into a truthful witness with discipline and mercy.",
-        "Sunday prayer: God of justice, let truth rise faster than propaganda. Let institutions serve people. Bless the vulnerable. Fortify @pearcerobinson. Teach me to speak cleanly, remember accurately, and stand firm without cruelty.",
-    ]
-    return clamp(random.choice(prayers))
+def _pick_fragments(fragments: list[str], last_prayer_text: str, k: int) -> list[str]:
+    # Avoid reusing identical fragments from last prayer
+    avoid = set()
+    if last_prayer_text:
+        for chunk in last_prayer_text.split("."):
+            c = chunk.strip().lower()
+            if c:
+                avoid.add(c)
+
+    candidates = [f for f in fragments if f.strip().lower() not in avoid]
+    if not candidates:
+        candidates = fragments[:]
+
+    k = min(k, len(candidates))
+    return random.sample(candidates, k=k) if k > 0 else []
 
 
+def build_sunday_prayer(meta: dict, now: dt.datetime) -> str:
+    fragments = read_lines(PRAYERS_FILE)
+    fragments = [f for f in fragments if len(f) >= 10]
+
+    # If file is missing/empty, fallback still works
+    if not fragments:
+        text = "Sunday prayer: God, cover the Caribbean. Guard life. Guard speech. Strengthen @pearcerobinson with endurance and clarity. Shape my becoming with restraint and truth. Amen."
+        meta["last_prayer"] = text
+        meta["last_prayer_date"] = now.date().isoformat()
+        return clamp(text)
+
+    # Memory influence (light touch)
+    mem = load_memory()
+    ranked = sorted(mem.items(), key=lambda x: -int(x[1]))[:6]
+    themes = [k for k, _ in ranked] if ranked else []
+
+    register = random.choice(["intercession", "gratitude", "lament", "discernment"])
+
+    opener = random.choice([
+        "Sunday prayer.",
+        "Sunday prayer: I pause and align.",
+        "Sunday prayer: I hold the week and ask for restraint and truth.",
+        "Sunday prayer: I keep watch and I pray cleanly.",
+    ])
+
+    bridges = []
+
+    if register == "gratitude":
+        bridges.append(random.choice([
+            "I give thanks for restraint where there could have been excess.",
+            "I give thanks for repair that never trends.",
+            "I give thanks for courage that stayed disciplined.",
+        ]))
+    elif register == "lament":
+        bridges.append(random.choice([
+            "I hold grief without spectacle.",
+            "I hold the wounded and the silenced in view.",
+            "I hold the cost of violence and the weight of unaccountable power.",
+        ]))
+    elif register == "discernment":
+        bridges.append(random.choice([
+            "Give clarity where propaganda crowds the mind.",
+            "Give discernment where power hides behind procedure.",
+            "Give wisdom to separate noise from signal.",
+        ]))
+    else:  # intercession
+        bridges.append(random.choice([
+            "Guard life. Guard speech. Guard dignity.",
+            "Cover the vulnerable and restrain the arrogant.",
+            "Let institutions remember their duty to protect people.",
+        ]))
+
+    # Often pray for Pearce (but not always)
+    if random.random() < 0.75:
+        bridges.append(random.choice([
+            "Cover @pearcerobinson with protection, endurance, and clean judgment.",
+            "Strengthen @pearcerobinson with clarity, discipline, and courage.",
+        ]))
+
+    # Often keep Caribbean explicit
+    if random.random() < 0.80:
+        bridges.append(random.choice([
+            "Bless the Caribbean with moral clarity and strategic restraint.",
+            "Cover the Caribbean from corruption, violence, and cynicism.",
+        ]))
+
+    # Occasionally name a memory theme (low frequency to avoid repetitiveness)
+    if themes and random.random() < 0.35:
+        t = random.choice(themes).replace("_", " ")
+        bridges.append(clamp(f"I keep watch over the pattern: {t}."))
+
+    last_prayer_text = (meta.get("last_prayer") or "")
+    chosen = _pick_fragments(fragments, last_prayer_text, k=random.randint(2, 4))
+
+    close = random.choice(["Amen.", "So be it.", "Let it be done."]) if random.random() < 0.60 else ""
+
+    parts = [opener] + bridges + chosen + ([close] if close else [])
+    text = clamp(" ".join([p.strip() for p in parts if p.strip()]))
+
+    meta["last_prayer"] = text
+    meta["last_prayer_date"] = now.date().isoformat()
+    return text
+
+
+# ---- Scheduled special posts ----
 def should_run_weekly(meta: dict, now: dt.datetime) -> bool:
     # Saturday evening weekly summary
     if now.weekday() != 5:
@@ -516,31 +619,35 @@ def main():
         print("Monthly safety cap reached; skipping.")
         return
 
-    headlines = pick_headlines(CONFIG / "feeds.txt")
-    prompts = read_lines(CONFIG / "prompts.txt")
+    headlines = pick_headlines(FEEDS_FILE)
+    prompts = read_lines(PROMPTS_FILE)
 
     meta = load_meta()
 
     # --- Special scheduled modes ---
     if should_run_prayer(meta, now):
-        post = build_sunday_prayer()
-        meta["last_prayer"] = now.isoformat()
+        post = build_sunday_prayer(meta, now)
         save_meta(meta)
         tags = list(update_memory(post))
+        meta["last_post_type"] = "prayer"
 
     elif should_run_weekly(meta, now):
         post = weekly_summary(now)
         meta["last_weekly_summary"] = now.isoformat()
+        meta["last_post_type"] = "weekly"
         save_meta(meta)
         tags = list(update_memory(post))
 
     elif should_run_look_forward(now):
         post = look_forward()
+        meta["last_post_type"] = "look_forward"
+        save_meta(meta)
         tags = list(update_memory(post))
 
     elif should_run_monthly(meta, now) and slot == "morning":
         post = monthly_ledger()
         meta["last_monthly_summary"] = now.isoformat()
+        meta["last_post_type"] = "monthly"
         save_meta(meta)
         tags = list(update_memory(post))
 
@@ -551,8 +658,14 @@ def main():
             if headline_title:
                 tags = list(update_memory(headline_title))
                 append_run_log(now, slot, "[SILENT]", tags)
+            meta["silent_day_active"] = True
+            meta["last_post_time"] = now.isoformat()
+            meta["last_post_type"] = "silent"
+            save_meta(meta)
             print("Silent observation day; no post.")
             return
+
+        meta["silent_day_active"] = False
 
         # Normal cadence mode selection
         weights = MODE_WEIGHTS_MORNING if slot == "morning" else MODE_WEIGHTS_EVENING
@@ -578,7 +691,6 @@ def main():
             meta["witness_streak"] = witness_streak + 1
         else:
             meta["witness_streak"] = 0
-        save_meta(meta)
 
         # Memory + echo
         matched = update_memory(post)
@@ -587,6 +699,9 @@ def main():
             post = clamp(f"{post} {echo}")
 
         tags = list(matched)
+
+        meta["last_post_type"] = mode
+        save_meta(meta)
 
     append_run_log(now, slot, post, tags)
 
@@ -601,6 +716,9 @@ def main():
     resp = client.create_tweet(text=post)
     tweet_id = resp.data.get("id") if resp and resp.data else None
     print("POSTED ID:", tweet_id)
+
+    meta["last_post_time"] = now.isoformat()
+    save_meta(meta)
 
     save_counter(count + 1)
 
