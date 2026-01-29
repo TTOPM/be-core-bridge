@@ -1,6 +1,13 @@
 {
+  "last_post_time": null,
+  "last_post_type": null,
+
   "last_weekly_summary": null,
   "last_monthly_summary": null,
-  "last_prayer": null,
+
+  "last_prayer_date": null,
+
+  "silent_day_active": false,
+
   "witness_streak": 0
 }
