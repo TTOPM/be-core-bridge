@@ -88,6 +88,7 @@ def clamp(text: str, max_len=MAX_LEN) -> str:
 def build_post(headlines, prompts, style_rules):
     roll = random.random()
 
+    # 60%: headline reflection
     if headlines and roll < 0.60:
         h = random.choice(headlines)
         lens = random.choice(prompts) if prompts else "public duty"
@@ -109,6 +110,7 @@ def build_post(headlines, prompts, style_rules):
         ])
         return clamp(f"{line} {tail}")
 
+    # 18%: discipline
     if roll < 0.78:
         msg = random.choice([
             "Discipline beats noise. Build the day like it matters.",
@@ -119,6 +121,7 @@ def build_post(headlines, prompts, style_rules):
         ])
         return clamp(msg)
 
+    # 12%: evergreen fact
     if roll < 0.90:
         fact = random.choice([
             "Random fact: A day on Venus is longer than a year on Venus.",
@@ -128,6 +131,7 @@ def build_post(headlines, prompts, style_rules):
         ])
         return clamp(fact)
 
+    # 10%: doctrine reflection
     rule = random.choice(style_rules) if style_rules else "Keep it factual. Keep it calm. Keep it documented."
     frame = random.choice([
         "Operating doctrine:",
@@ -145,20 +149,42 @@ def require_env(name: str) -> str:
     return v
 
 
-def create_api():
+def create_v2_client() -> tweepy.Client:
+    # OAuth 1.0a user context, used for v2 tweet creation
     consumer_key = require_env("X_CONSUMER_KEY")
     consumer_secret = require_env("X_CONSUMER_SECRET")
     access_token = require_env("X_ACCESS_TOKEN")
     access_secret = require_env("X_ACCESS_SECRET")
 
-    auth = tweepy.OAuth1UserHandler(
-        consumer_key,
-        consumer_secret,
-        access_token,
-        access_secret,
+    # Bearer token is OPTIONAL here. If you have it, you can add as X_BEARER_TOKEN.
+    bearer = os.environ.get("X_BEARER_TOKEN", "").strip() or None
+
+    return tweepy.Client(
+        bearer_token=bearer,
+        consumer_key=consumer_key,
+        consumer_secret=consumer_secret,
+        access_token=access_token,
+        access_token_secret=access_secret,
+        wait_on_rate_limit=True,
     )
-    api = tweepy.API(auth, wait_on_rate_limit=True)
-    return api
+
+
+def verify_user(api_v1: tweepy.API) -> str:
+    me = api_v1.verify_credentials()
+    if not me or not getattr(me, "screen_name", None):
+        raise RuntimeError("Auth verify failed (no screen_name returned).")
+    return me.screen_name
+
+
+def create_v1_api_for_verify() -> tweepy.API:
+    # v1.1 verify_credentials is allowed on your plan (you just can’t post with v1.1)
+    consumer_key = require_env("X_CONSUMER_KEY")
+    consumer_secret = require_env("X_CONSUMER_SECRET")
+    access_token = require_env("X_ACCESS_TOKEN")
+    access_secret = require_env("X_ACCESS_SECRET")
+
+    auth = tweepy.OAuth1UserHandler(consumer_key, consumer_secret, access_token, access_secret)
+    return tweepy.API(auth, wait_on_rate_limit=True)
 
 
 def main():
@@ -174,17 +200,16 @@ def main():
     post = build_post(headlines, prompts, style_rules)
     print("POST:", post)
 
-    api = create_api()
+    # Auth check (v1.1 verify only)
+    api_v1 = create_v1_api_for_verify()
+    screen_name = verify_user(api_v1)
+    print("AUTH OK AS:", screen_name)
 
-    # AUTH CHECK (prints who you are authenticated as)
-    try:
-        me = api.verify_credentials()
-        print("AUTH OK AS:", getattr(me, "screen_name", None))
-    except tweepy.TweepyException as e:
-        raise RuntimeError(f"Auth failed at verify_credentials(): {e}")
-
-    status = api.update_status(status=post)
-    print("POSTED ID:", getattr(status, "id", None))
+    # Post using v2 (allowed endpoint set on your plan)
+    client = create_v2_client()
+    resp = client.create_tweet(text=post)
+    tweet_id = resp.data.get("id") if resp and resp.data else None
+    print("POSTED ID:", tweet_id)
 
     save_counter(count + 1)
 
