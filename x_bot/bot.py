@@ -13,7 +13,7 @@ STATE_DIR = ROOT / "state"
 STATE_DIR.mkdir(exist_ok=True)
 
 COUNTER_FILE = STATE_DIR / "post_counter.json"
-MONTHLY_HARD_CAP = 25      # safe buffer under Free tier posting caps
+MONTHLY_HARD_CAP = 25
 MAX_LEN = 280
 
 
@@ -88,7 +88,6 @@ def clamp(text: str, max_len=MAX_LEN) -> str:
 def build_post(headlines, prompts, style_rules):
     roll = random.random()
 
-    # 60%: headline reflection (events of the day)
     if headlines and roll < 0.60:
         h = random.choice(headlines)
         lens = random.choice(prompts) if prompts else "public duty"
@@ -100,7 +99,6 @@ def build_post(headlines, prompts, style_rules):
             "One headline, one lesson:",
         ])
         line = f"{opener} {h['title']}"
-        # link only sometimes to reduce spam patterns
         if random.random() < 0.35 and h["link"]:
             line += f" {h['link']}"
         tail = random.choice([
@@ -111,7 +109,6 @@ def build_post(headlines, prompts, style_rules):
         ])
         return clamp(f"{line} {tail}")
 
-    # 18%: motivational / discipline
     if roll < 0.78:
         msg = random.choice([
             "Discipline beats noise. Build the day like it matters.",
@@ -122,7 +119,6 @@ def build_post(headlines, prompts, style_rules):
         ])
         return clamp(msg)
 
-    # 12%: random fact (evergreen)
     if roll < 0.90:
         fact = random.choice([
             "Random fact: A day on Venus is longer than a year on Venus.",
@@ -132,7 +128,6 @@ def build_post(headlines, prompts, style_rules):
         ])
         return clamp(fact)
 
-    # 10%: doctrine reflection (repo-fed style constraints)
     rule = random.choice(style_rules) if style_rules else "Keep it factual. Keep it calm. Keep it documented."
     frame = random.choice([
         "Operating doctrine:",
@@ -143,14 +138,15 @@ def build_post(headlines, prompts, style_rules):
     return clamp(f"{frame} {rule}")
 
 
-def create_client():
-    # OAuth 1.0a user context (headless posting)
-    return tweepy.Client(
-        consumer_key=os.environ["X_CONSUMER_KEY"],
-        consumer_secret=os.environ["X_CONSUMER_SECRET"],
-        access_token=os.environ["X_ACCESS_TOKEN"],
-        access_token_secret=os.environ["X_ACCESS_SECRET"],
+def create_api():
+    # OAuth 1.0a user context (posts as @belel54837) using v1.1 endpoint
+    auth = tweepy.OAuth1UserHandler(
+        os.environ["X_CONSUMER_KEY"],
+        os.environ["X_CONSUMER_SECRET"],
+        os.environ["X_ACCESS_TOKEN"],
+        os.environ["X_ACCESS_SECRET"],
     )
+    return tweepy.API(auth, wait_on_rate_limit=True)
 
 
 def main():
@@ -166,10 +162,9 @@ def main():
     post = build_post(headlines, prompts, style_rules)
     print("POST:", post)
 
-    client = create_client()
-    resp = client.create_tweet(text=post)
-    tweet_id = resp.data.get("id") if resp and resp.data else None
-    print("Tweet ID:", tweet_id)
+    api = create_api()
+    status = api.update_status(status=post)
+    print("Tweet ID:", getattr(status, "id", None))
 
     save_counter(count + 1)
 
