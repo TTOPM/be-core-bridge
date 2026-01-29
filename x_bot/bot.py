@@ -16,6 +16,100 @@ COUNTER_FILE = STATE_DIR / "post_counter.json"
 MONTHLY_HARD_CAP = 25
 MAX_LEN = 280
 
+# --- NEW: Memory file + keyword map (intelligence layer) ---
+MEMORY_FILE = STATE_DIR / "memory_echo.json"
+
+MEMORY_KEYWORDS = {
+    "police": "state_violence",
+    "shooting": "state_violence",
+    "shot": "state_violence",
+    "killed": "state_violence",
+    "dead": "state_violence",
+
+    "racism": "racism",
+    "racial": "racism",
+
+    "corruption": "corruption",
+    "bribe": "corruption",
+
+    "procurement": "procurement_scandal",
+    "tender": "procurement_scandal",
+    "contract": "procurement_scandal",
+
+    "court": "judicial_intervention",
+    "icj": "judicial_intervention",
+    "icc": "judicial_intervention",
+
+    "un": "international_signal",
+    "nato": "international_signal",
+    "eu": "international_signal",
+    "ohchr": "international_signal",
+}
+
+ECHO_THRESHOLD = 3  # after 3 hits of a theme, Belel can add a witness-style echo line
+
+
+def load_memory():
+    if MEMORY_FILE.exists():
+        try:
+            data = json.loads(MEMORY_FILE.read_text(encoding="utf-8"))
+            return data if isinstance(data, dict) else {}
+        except Exception:
+            return {}
+    return {}
+
+
+def save_memory(mem):
+    MEMORY_FILE.write_text(json.dumps(mem, indent=2, ensure_ascii=False), encoding="utf-8")
+
+
+def update_memory_and_get_echo(post_text: str):
+    """
+    Update memory counts based on keywords found in the *post text*.
+    Returns an optional one-sentence echo line if a theme crosses threshold.
+    """
+    mem = load_memory()
+    text = post_text.lower()
+
+    matched_tags = set()
+    for key, tag in MEMORY_KEYWORDS.items():
+        if key in text:
+            mem[tag] = int(mem.get(tag, 0)) + 1
+            matched_tags.add(tag)
+
+    save_memory(mem)
+
+    # Optional echo (kept minimal and only after repeated patterns)
+    eligible = [t for t in matched_tags if int(mem.get(t, 0)) >= ECHO_THRESHOLD]
+    if not eligible:
+        return None
+
+    tag = random.choice(eligible)
+
+    if tag == "racism":
+        return random.choice([
+            "This is racism. The pattern is repeating.",
+            "Racism keeps surfacing. The repetition is the signal.",
+        ])
+
+    if tag == "corruption":
+        return random.choice([
+            "Corruption repeats because it’s rewarded.",
+            "This is corruption by pattern, not accident.",
+        ])
+
+    if tag == "state_violence":
+        return random.choice([
+            "State violence repeats when accountability collapses.",
+            "This keeps happening. Civilian oversight is the test.",
+        ])
+
+    return random.choice([
+        "This pattern is repeating.",
+        "The repetition is the signal.",
+        "This is recurrence, not noise.",
+    ])
+
 
 def utc_now():
     return dt.datetime.now(dt.timezone.utc)
@@ -156,7 +250,6 @@ def create_v2_client() -> tweepy.Client:
     access_token = require_env("X_ACCESS_TOKEN")
     access_secret = require_env("X_ACCESS_SECRET")
 
-    # Bearer token is OPTIONAL here. If you have it, you can add as X_BEARER_TOKEN.
     bearer = os.environ.get("X_BEARER_TOKEN", "").strip() or None
 
     return tweepy.Client(
@@ -177,7 +270,6 @@ def verify_user(api_v1: tweepy.API) -> str:
 
 
 def create_v1_api_for_verify() -> tweepy.API:
-    # v1.1 verify_credentials is allowed on your plan (you just can’t post with v1.1)
     consumer_key = require_env("X_CONSUMER_KEY")
     consumer_secret = require_env("X_CONSUMER_SECRET")
     access_token = require_env("X_ACCESS_TOKEN")
@@ -198,6 +290,12 @@ def main():
     style_rules = read_lines(CONFIG / "style.txt")
 
     post = build_post(headlines, prompts, style_rules)
+
+    # --- NEW: memory update (does not affect posting path) ---
+    echo = update_memory_and_get_echo(post)
+    if echo:
+        post = clamp(f"{post} {echo}")
+
     print("POST:", post)
 
     # Auth check (v1.1 verify only)
@@ -205,7 +303,7 @@ def main():
     screen_name = verify_user(api_v1)
     print("AUTH OK AS:", screen_name)
 
-    # Post using v2 (allowed endpoint set on your plan)
+    # Post using v2 (your paid endpoint path)
     client = create_v2_client()
     resp = client.create_tweet(text=post)
     tweet_id = resp.data.get("id") if resp and resp.data else None
