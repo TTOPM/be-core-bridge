@@ -2,7 +2,8 @@ name: Belel X Daily Post
 
 on:
   schedule:
-    - cron: "0 9 * * *"  # 09:00 UTC daily
+    - cron: "0 9 * * *"    # 09:00 UTC (morning)
+    - cron: "0 21 * * *"   # 21:00 UTC (evening)
   workflow_dispatch:
 
 jobs:
@@ -30,10 +31,10 @@ jobs:
           X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
           X_BEARER_TOKEN: ${{ secrets.X_BEARER_TOKEN }}
 
-      - name: Persist state counter
+      - name: Persist state
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add x_bot/state/post_counter.json || true
-          git commit -m "Update X bot counter" || echo "No changes"
+          git add x_bot/state/*.json || true
+          git commit -m "Update Belel bot state" || echo "No changes"
           git push
