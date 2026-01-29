@@ -1,13 +1,10 @@
 {
-  "last_post_time": null,
-  "last_post_type": null,
-
+  "last_post_time": "2026-01-29T21:36:49.450895+00:00",
+  "last_post_type": "market",
   "last_weekly_summary": null,
   "last_monthly_summary": null,
-
   "last_prayer_date": null,
-
   "silent_day_active": false,
-
-  "witness_streak": 0
+  "witness_streak": 0,
+  "last_prayer": null
 }
