@@ -3,6 +3,8 @@ import json
 import random
 import datetime as dt
 from pathlib import Path
+import re
+from urllib.parse import urlparse
 
 import tweepy
 import feedparser
@@ -103,6 +105,185 @@ def clamp(text: str, max_len=MAX_LEN) -> str:
     return text[: max_len - 1].rstrip() + "…"
 
 
+# =========================
+# HUMAN-LIKE COMPREHENSION LAYER
+# =========================
+
+def source_host(url: str) -> str:
+    try:
+        host = urlparse(url).netloc.lower()
+        host = host.replace("www.", "")
+        return host or "source"
+    except Exception:
+        return "source"
+
+
+def clean_headline(title: str) -> str:
+    """
+    Converts RSS headline noise into readable English.
+    Produces a single clean line that can be analysed coherently.
+    """
+    t = (title or "").strip()
+    if not t:
+        return ""
+
+    t = re.sub(r"\s+", " ", t)
+
+    # Remove trailing source tags like " - Reuters" / " — Reuters" / "| Reuters"
+    t = re.sub(r"\s*[-—|]\s*[A-Za-z0-9 .&/()]+$", "", t)
+
+    # Compress excessive colon chains: keep last 2 segments as meaning-bearing
+    parts = [p.strip() for p in t.split(":") if p.strip()]
+    if len(parts) >= 3:
+        t = f"{parts[-2]}: {parts[-1]}"
+    elif len(parts) == 2:
+        t = f"{parts[0]}: {parts[1]}"
+
+    # Normalise dash usage inside headline (keeps it readable)
+    t = re.sub(r"\s*[-—]\s*", " — ", t)
+
+    if t and t[-1] not in ".!?":
+        t += "."
+    return t
+
+
+def frame_from_item(item: dict, lens: str) -> dict:
+    title = clean_headline(item.get("title", ""))
+    link = (item.get("link") or "").strip()
+    return {
+        "headline": title,
+        "link": link,
+        "source": source_host(link) if link else "source",
+        "lens": lens
+    }
+
+
+def stake_bucket(headline: str) -> str:
+    """
+    Maps a headline into a single dominant stake bucket.
+    This is where coherence is enforced.
+    """
+    t = (headline or "").lower()
+
+    if any(k in t for k in ["killed", "shot", "shooting", "murder", "execution", "police", "detention", "torture"]):
+        return "rights_and_force"
+
+    if any(k in t for k in ["racism", "racial", "xenophobia", "discrimination", "hate"]):
+        return "racism"
+
+    if any(k in t for k in ["court", "judge", "ruling", "appeal", "trial", "icj", "icc", "tribunal"]):
+        return "rule_of_law"
+
+    if any(k in t for k in ["corruption", "bribe", "kickback", "procurement", "tender", "contract", "audit", "fraud"]):
+        return "integrity_and_procurement"
+
+    if any(k in t for k in ["election", "parliament", "senate", "bill", "law", "constitutional", "freedom of speech", "censorship", "surveillance"]):
+        return "civic_liberties"
+
+    if any(k in t for k in ["inflation", "interest rate", "bond", "debt", "gdp", "recession", "market", "currency", "trade", "tariff", "oil", "gas", "investment"]):
+        return "economy_and_trust"
+
+    if any(k in t for k in ["cyber", "security", "hack", "infrastructure", "rail", "telecom", "grid", "ai", "technology", "supply chain"]):
+        return "strategic_dependency"
+
+    if any(k in t for k in ["un", "united nations", "eu", "nato", "ohchr", "human rights council", "sanction", "treaty", "international"]):
+        return "international_order"
+
+    return "governance_and_consequence"
+
+
+def stake_line(bucket: str) -> str:
+    """
+    Produces the middle sentence: meaning/stake.
+    This is always aligned to the bucket.
+    """
+    if bucket == "rights_and_force":
+        return random.choice([
+            "State force is a contract with the public. Accountability is the price of legitimacy.",
+            "Rights restrain power. Oversight holds the line between order and abuse.",
+            "A life carries weight. Institutions carry duty. The record carries consequence."
+        ])
+
+    if bucket == "racism":
+        return random.choice([
+            "Racism is an operating pattern inside institutions and culture. Naming it is clarity.",
+            "Racism moves through policy, practice, and silence. The repetition is the signal.",
+            "Racism is harm with a history and a structure. Accountability is required."
+        ])
+
+    if bucket == "rule_of_law":
+        return random.choice([
+            "Courts measure legitimacy when politics strains the law. The standard is due process.",
+            "Rule of law is enforcement with restraint and equal application. Procedure is protection.",
+            "Judicial action is a brake on power. The brake must hold under pressure."
+        ])
+
+    if bucket == "integrity_and_procurement":
+        return random.choice([
+            "Procurement is where public money becomes private benefit. Transparency is the safeguard.",
+            "Corruption is governance turned into extraction. Clean records and consequences end the loop.",
+            "Conflict of interest is a structural failure. Institutions either correct it or collapse trust."
+        ])
+
+    if bucket == "civic_liberties":
+        return random.choice([
+            "Freedom of expression is a civic sensor. Silencing it protects power, not people.",
+            "Civil liberties define the boundary of authority. The boundary must be enforced.",
+            "Democratic consent requires open speech and lawful restraint. That standard is measurable."
+        ])
+
+    if bucket == "economy_and_trust":
+        return random.choice([
+            "Credibility moves markets and households. When trust breaks, costs land on citizens first.",
+            "Economic reality obeys incentives and confidence. Policy choices price themselves into daily life.",
+            "Institutions spend trust like currency. Rebuilding trust requires discipline and receipts."
+        ])
+
+    if bucket == "strategic_dependency":
+        return random.choice([
+            "Critical infrastructure becomes a sovereignty question when dependency and security intersect.",
+            "Supply chains are policy in disguise. When systems depend on outsiders, vulnerability rises.",
+            "Technology decisions become national decisions when security, standards, and control align."
+        ])
+
+    if bucket == "international_order":
+        return random.choice([
+            "International bodies function as restraints when states overreach. The record is leverage.",
+            "Global standards measure domestic behaviour. Governments resist measurement when exposure hurts.",
+            "International law is a credibility test. Compliance shapes standing, investment, and alliances."
+        ])
+
+    return random.choice([
+        "Power produces consequences. Institutions earn legitimacy through restraint and clean records.",
+        "Governance is measurable: who benefits, who pays, who gets protected, who gets sacrificed.",
+        "The public carries the cost of institutional failure. Accountability restores balance."
+    ])
+
+
+def render_analysis_post(frame: dict, slot: str) -> str:
+    """
+    Coherent 3-part post:
+      1) event (clean headline)
+      2) stake (aligned to headline)
+      3) lens (judgment/standard)
+    """
+    h = frame["headline"]
+    link = frame["link"]
+    lens = frame["lens"]
+
+    opener = "Morning signal:" if slot == "morning" else "Evening signal:"
+    s1 = f"{opener} {h}"
+
+    bucket = stake_bucket(h)
+    s2 = stake_line(bucket)
+
+    s3 = f"Measure it against {lens}."
+
+    if link and random.random() < 0.30:
+        return clamp(f"{s1} {s2} {s3} {link}")
+    return clamp(f"{s1} {s2} {s3}")
+
+
 def month_key(d: dt.datetime) -> str:
     return d.strftime("%Y-%m")
 
@@ -128,7 +309,7 @@ def pick_headlines(feeds_file: Path, limit_feeds=10, per_feed=6):
         try:
             d = feedparser.parse(url)
             for e in getattr(d, "entries", [])[:per_feed]:
-                title = getattr(e, "title", "").strip()
+                title = clean_headline(getattr(e, "title", "").strip())
                 link = getattr(e, "link", "").strip()
                 if title:
                     items.append({"title": title, "link": link})
@@ -296,29 +477,15 @@ def memory_echo_line(matched_tags: set) -> str | None:
 
 # ---- Post builders (range) ----
 def build_signal_post(headlines, prompts, slot: str) -> str:
-    h = random.choice(headlines) if headlines else None
-    lens = random.choice(prompts) if prompts else "public duty"
+    if not headlines:
+        return clamp("Signal: receipts matter. Documentation is sovereignty.")
 
-    if slot == "morning":
-        openers = ["Morning signal:", "Morning read:", "First light:", "Daybreak note:"]
-    else:
-        openers = ["Evening note:", "Night signal:", "Close of play:", "End-of-day reckoning:"]
-
-    if h:
-        line = f"{random.choice(openers)} {h['title']}"
-        if random.random() < 0.25 and h.get("link"):
-            line += f" {h['link']}"
-        tail = random.choice([
-            f"Lens: {lens}.",
-            f"Standard: {lens}.",
-            f"Measure it against {lens}.",
-        ])
-        return clamp(f"{line} {tail}")
-
-    return clamp(random.choice([
-        "Signal: protect your attention. Power competes for it every day.",
-        "Signal: receipts matter. Documentation is sovereignty.",
-    ]))
+    item = random.choice(headlines)
+    lens = random.choice(prompts) if prompts else "public accountability"
+    frame = frame_from_item(item, lens)
+    if not frame["headline"]:
+        return clamp("Signal: attention is sovereignty. Spend it with discipline.")
+    return render_analysis_post(frame, slot)
 
 
 def build_uplift_post(slot: str) -> str:
@@ -335,20 +502,36 @@ def build_uplift_post(slot: str) -> str:
     return clamp(random.choice(morning if slot == "morning" else evening))
 
 
-def build_market_post(headlines) -> str:
-    h = random.choice(headlines) if headlines else None
-    if h:
-        opener = random.choice(["Market signal:", "Economic note:", "Business lens:", "Capital behaves like this:"])
-        line = f"{opener} {h['title']}"
-        if random.random() < 0.25 and h.get("link"):
-            line += f" {h['link']}"
-        tail = random.choice([
-            "Follow incentives, not slogans.",
-            "Watch credibility. It moves markets and governments.",
-            "Liquidity hates uncertainty. So do citizens.",
+def build_market_post(headlines, prompts, slot: str) -> str:
+    if not headlines:
+        return clamp("Economic note: credibility is currency. Institutions either protect it or spend it.")
+
+    item = random.choice(headlines)
+    # market mode uses economic realism as the anchor lens when available
+    lens = "economic realism" if "economic realism" in prompts else (random.choice(prompts) if prompts else "economic realism")
+    frame = frame_from_item(item, lens)
+
+    h = frame["headline"]
+    link = frame["link"]
+
+    s1 = f"Economic note: {h}"
+
+    # stake-aligned middle sentence (market-specific)
+    bucket = stake_bucket(h)
+    if bucket in ("economy_and_trust", "strategic_dependency", "international_order"):
+        s2 = random.choice([
+            "Incentives drive behaviour. Policy sets incentives. Markets price the consequences.",
+            "Supply chains, credit, and credibility move together. Governments feel it after citizens do.",
+            "When institutions lose trust, capital gets cautious and households pay first."
         ])
-        return clamp(f"{line} {tail}")
-    return clamp("Economic note: credibility is currency. Institutions either protect it or spend it.")
+    else:
+        s2 = "Credibility is currency. Institutions either protect it or spend it."
+
+    s3 = f"Standard: {lens}."
+
+    if link and random.random() < 0.30:
+        return clamp(f"{s1} {s2} {s3} {link}")
+    return clamp(f"{s1} {s2} {s3}")
 
 
 def build_craft_post() -> str:
@@ -676,7 +859,7 @@ def main():
         elif mode == "uplift":
             post = build_uplift_post(slot)
         elif mode == "market":
-            post = build_market_post(headlines)
+            post = build_market_post(headlines, prompts, slot)
         elif mode == "craft":
             post = build_craft_post()
         elif mode == "faith":
