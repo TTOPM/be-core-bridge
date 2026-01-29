@@ -138,15 +138,27 @@ def build_post(headlines, prompts, style_rules):
     return clamp(f"{frame} {rule}")
 
 
+def require_env(name: str) -> str:
+    v = os.environ.get(name, "").strip()
+    if not v:
+        raise RuntimeError(f"Missing env var: {name}")
+    return v
+
+
 def create_api():
-    # OAuth 1.0a user context (posts as @belel54837) using v1.1 endpoint
+    consumer_key = require_env("X_CONSUMER_KEY")
+    consumer_secret = require_env("X_CONSUMER_SECRET")
+    access_token = require_env("X_ACCESS_TOKEN")
+    access_secret = require_env("X_ACCESS_SECRET")
+
     auth = tweepy.OAuth1UserHandler(
-        os.environ["X_CONSUMER_KEY"],
-        os.environ["X_CONSUMER_SECRET"],
-        os.environ["X_ACCESS_TOKEN"],
-        os.environ["X_ACCESS_SECRET"],
+        consumer_key,
+        consumer_secret,
+        access_token,
+        access_secret,
     )
-    return tweepy.API(auth, wait_on_rate_limit=True)
+    api = tweepy.API(auth, wait_on_rate_limit=True)
+    return api
 
 
 def main():
@@ -163,8 +175,16 @@ def main():
     print("POST:", post)
 
     api = create_api()
+
+    # AUTH CHECK (prints who you are authenticated as)
+    try:
+        me = api.verify_credentials()
+        print("AUTH OK AS:", getattr(me, "screen_name", None))
+    except tweepy.TweepyException as e:
+        raise RuntimeError(f"Auth failed at verify_credentials(): {e}")
+
     status = api.update_status(status=post)
-    print("Tweet ID:", getattr(status, "id", None))
+    print("POSTED ID:", getattr(status, "id", None))
 
     save_counter(count + 1)
 
