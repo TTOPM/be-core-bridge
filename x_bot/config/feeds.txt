@@ -1,0 +1,3 @@
+https://feeds.bbci.co.uk/news/world/rss.xml
+https://feeds.bbci.co.uk/news/business/rss.xml
+# Add Caribbean feeds you trust here
