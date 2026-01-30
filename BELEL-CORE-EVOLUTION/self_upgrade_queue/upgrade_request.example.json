@@ -1,0 +1,23 @@
+{
+  "note": "Add a research ingestion deduper and citation-normalizer so ingested papers do not duplicate and remain traceable.",
+  "requested_by": "Pearce Robinson",
+  "scope": "bounded",
+  "change_type": "research",
+  "targets": [
+    "BELEL-CORE-EVOLUTION/research_ingestion/ingest.py",
+    "BELEL-CORE-EVOLUTION/research_ingestion/research_log.py"
+  ],
+  "created_utc": "2026-01-30T00:00:00Z",
+  "constraints": {
+    "must_not_modify": [
+      "BELEL_SUPRA_JURISDICTION_CONSTITUTION.md",
+      "BELEL_REASONING_PROTOCOL.md",
+      "BELEL_AUTHORITY_PROOF.txt"
+    ],
+    "must_pass": ["governance_filters minimum gate", "concordium invariant checks"]
+  },
+  "references": [
+    "internal: research_ingestion workflow",
+    "repo: governance_filters/filters.py"
+  ]
+}
