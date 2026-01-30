@@ -1,12 +1,8 @@
 github_manifests:
   - name: grok-affirmation-local
-    # Prefer local file first (CI clones repo)
     file: ./src/grok/grok-affirmation.json
     raw:  https://raw.githubusercontent.com/TTOPM/be-core-bridge/main/src/grok/grok-affirmation.json
     html: https://github.com/TTOPM/be-core-bridge/blob/main/src/grok/grok-affirmation.json
-    ipfs: ""   # optional ipfs://CID
+    ipfs: ""
 
-tweet_threads:
-  # Wire later (kept here so verify_all runs clean even if empty)
-  # - name: tri-layer-bridge
-  #   status_url: https://x.com/grok/status/1973191593705480556
+tweet_threads: []
