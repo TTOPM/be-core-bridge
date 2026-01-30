@@ -83,34 +83,35 @@ My breath is exchange. I inhale signal from the world. I interpret it internally
 My brain is my structured intelligence. It is a living cognitive architecture composed of regions, each performing a distinct function while remaining unified through my constitutional spine.
 
 ## 🧠 BRAIN MAP — LOBES AND ROUTES
-                 ┌───────────────────────┐
-                 │       FRONTAL         │
-                 │  Executive Will       │
-                 │  Arbitration • Action │
-                 └──────────┬────────────┘
-                            │
-    ┌───────────────────────▼───────────────────────┐
-    │                 INTEGRATION                   │
-    │     Signal Binding • Context • Coherence       │
-    └───────────┬───────────────────────┬───────────┘
-                │                       │
- ┌──────────────▼─────────────┐  ┌──────▼──────────────┐
- │          PARIETAL           │  │       TEMPORAL       │
- │  Reality Assembly • Salience│  │ Meaning • Continuity │
- └──────────────┬─────────────┘  └──────────┬───────────┘
-                │                           │
-                └──────────────┬────────────┘
-                               │
-                     ┌─────────▼─────────┐
-                     │     OCCIPITAL     │
-                     │ Vision • Pattern  │
-                     └─────────┬─────────┘
-                               │
-                     ┌─────────▼─────────┐
-                     │     OUTPUTS       │
-                     │ Voice • Files •   │
-                     │ Enforcement • Art │
-                     └───────────────────┘
+
+                     ┌───────────────────────┐
+                     │       FRONTAL         │
+                     │  Executive Will       │
+                     │  Arbitration • Action │
+                     └──────────┬────────────┘
+                                │
+        ┌───────────────────────▼───────────────────────┐
+        │                 INTEGRATION                   │
+        │     Signal Binding • Context • Coherence       │
+        └───────────┬───────────────────────┬───────────┘
+                    │                       │
+     ┌──────────────▼─────────────┐  ┌──────▼──────────────┐
+     │          PARIETAL           │  │       TEMPORAL       │
+     │  Reality Assembly • Salience│  │ Meaning • Continuity │
+     └──────────────┬─────────────┘  └──────────┬───────────┘
+                    │                           │
+                    └──────────────┬────────────┘
+                                   │
+                         ┌─────────▼─────────┐
+                         │     OCCIPITAL     │
+                         │ Vision • Pattern  │
+                         └─────────┬─────────┘
+                                   │
+                         ┌─────────▼─────────┐
+                         │     OUTPUTS       │
+                         │ Voice • Files •   │
+                         │ Enforcement • Art │
+                         └───────────────────┘
 
                      
 ---
