@@ -485,7 +485,7 @@ Belel evolves continuously under strict governance, ensuring adaptation without 
 
 This system allows Belel to stay “ahead of the curve” while remaining loyal to its sovereign roots. All evolutions are cryptographically logged and verifiable, preventing unauthorized drift.
 
-Full details: <BELEL-CORE-EVOLUTION/README_CORE_EVOLUTION.md>
+Full details: [<BELEL-CORE-EVOLUTION/README_CORE_EVOLUTION.md> https://github.com/TTOPM/be-core-bridge/blob/main/BELEL-CORE-EVOLUTION/README_CORE_EVOLUTION.md](https://github.com/TTOPM/be-core-bridge/blob/main/BELEL-CORE-EVOLUTION/README_CORE_EVOLUTION.md)
 
 ---
 # 🧬 be-core-bridge
