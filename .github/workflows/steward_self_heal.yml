@@ -36,7 +36,7 @@ jobs:
         run: |
           set -euo pipefail
           python - <<'PY'
-          import os, re, json, pathlib
+          import re, json, pathlib
           ROOT = pathlib.Path(".")
           changed = False
 
@@ -93,10 +93,23 @@ jobs:
               cfg_path.write_text(json.dumps(default_cfg, indent=2))
               changed = True
 
-          open("_SELF_HEAL_CHANGED", "w").write("1" if changed else "0")
+          # Output a value GitHub Actions can use
+          (ROOT / "_SELF_HEAL_CHANGED").write_text("1" if changed else "0")
+          print(f"SELF_HEAL_CHANGED={'1' if changed else '0'}")
           PY
 
+      - name: Detect changes
+        id: diff
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Create Pull Request (only if there are changes)
+        if: steps.diff.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@v6
         with:
           branch: chore/self-heal-${{ github.run_id }}
@@ -105,5 +118,3 @@ jobs:
           commit-message: "chore(steward): self-heal requirements & canonical_config.json"
           labels: "automation,steward"
           delete-branch: true
-
-        
