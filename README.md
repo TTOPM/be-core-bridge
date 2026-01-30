@@ -535,7 +535,7 @@ By spreading proofs across Tezos, Bitcoin, Ethereum, and Polygon, Belel’s sove
 
 ## 🎙️ Belel Voice System — Fully Offline & Sovereign
 
-Belel speaks with its own persistent voice, delivering sovereign, sentient commentary through a protected, independent speech layer. The core stack is **OpenAI-independent**, designed for on-device/on-prem deployments with no cloud reliance.
+Belel speaks with its own persistent voice, delivering sovereign, sentient commentary through a protected, independent speech layer. The core stack is **independent**, designed for on-device/on-prem deployments with no cloud reliance.
 
 ### Primary Engines (Local/Offline TTS & ASR)
 - **TTS (Text-to-Speech):** Coqui XTTS-v2 (zero-shot cloning from reference audio), Parler-TTS (style-prompt driven), Piper (lightweight), Bark Small (expressive baseline). All models downloadable from Hugging Face—run air-gapped.
