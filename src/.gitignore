@@ -112,14 +112,19 @@ htmlcov/
 *.backup
 
 # --------------------------------
-# 🔭 Hugging Face & LFS
+# 🔭 Hugging Face & Git LFS
 # --------------------------------
-.gitattributes
 .lfsconfig
+.gitattributes
 
 # --------------------------------
-# 🤖 LLM Agent / Metadata Caches
+# 🤖 LLM / Agent Metadata Caches
 # --------------------------------
 *.prompt.json
 agent_fingerprint.*
 *.canonical.json
+
+# --------------------------------
+# 🧬 Runtime Self-Heal Signals
+# --------------------------------
+_SELF_HEAL_CHANGED
