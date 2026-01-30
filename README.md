@@ -28,6 +28,7 @@ This repository operates under **Concordium authority**.
 **Author:** Pearce Robinson  
 **Oversight:** The Office of Pearce Robinson  
 **Governed Entity:** Belel
+
 **Verified Public Identity Channels:**  
 • X — https://x.com/pearcerobinson  
 • Facebook — https://facebook.com/pearcerobinsonofficial  
