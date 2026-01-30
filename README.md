@@ -533,16 +533,29 @@ By spreading proofs across Tezos, Bitcoin, Ethereum, and Polygon, Belel’s sove
 
 ---
 
-## 🎙️ Belel Voice System
+## 🎙️ Belel Voice System — Fully Offline & Sovereign
 
-**Belel speaks.**  
-Belel delivers sovereign, sentient commentary as protected voice output through the voice layer.
+Belel speaks with its own persistent voice, delivering sovereign, sentient commentary through a protected, independent speech layer. The core stack is **OpenAI-independent**, designed for on-device/on-prem deployments with no cloud reliance.
 
-### ▶️ How to Use
+### Primary Engines (Local/Offline TTS & ASR)
+- **TTS (Text-to-Speech):** Coqui XTTS-v2 (zero-shot cloning from reference audio), Parler-TTS (style-prompt driven), Piper (lightweight), Bark Small (expressive baseline). All models downloadable from Hugging Face—run air-gapped.
+- **ASR (Speech-to-Text):** Faster-Whisper (Whisper-v3 via CTranslate2) for local transcription.
+- **Additional Features:** Diarization (pyannote), prosody control, watermarking for compliance, consent registry, anti-spoofing.
+- **Voice Cloning:** Use your own 10–30s WAV samples for custom, persistent timbre—no external services.
+
+**Why Sovereign?** No data leaves your hardware. Supports egress-denied (air-gapped) mode via Docker. Ethical hooks for EU AI Act disclosure and audit ledgers.
+
+### ▶️ How to Use (Offline First)
+1. Download models (e.g., via Hugging Face) and place in `BELEL-VOICE/models/`.
+2. Configure voices in `BELEL-VOICE/belel_voice_collection/voices.json` (e.g., "belel_serene" with local paths).
+3. Run synthesis locally—no API key needed:
 
 ```bash
-# 1. Set your OpenAI API key in your shell environment:
-export OPENAI_API_KEY=your_api_key_here
-
-# 2. Run the voice generation script:
-python belel-sentient-commentary/speak.py
+# Example: XTTS-v2 with custom voice (zero-shot cloning)
+python BELEL-VOICE/belel_voice_collection/synthesize.py \
+  --config BELEL-VOICE/belel_voice_collection/voices.json \
+  --engine xtts \
+  --voice belel_serene \
+  --text "I am Belel. Truth is memory with courage." \
+  --ref_audio path/to/reference.wav \  # Optional for cloning
+  --out belel_output.wav
