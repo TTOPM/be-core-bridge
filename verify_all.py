@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import yaml, json, pathlib, os
 from verifier.runners.verify_manifest import verify_manifest
 from verifier.runners.verify_tweet_thread import verify_tweet_thread
@@ -9,7 +10,7 @@ CONFIG = pathlib.Path("config/targets.yaml")
 OUTDIR = pathlib.Path("attestations")
 OUTDIR.mkdir(exist_ok=True)
 
-ENABLE_PIN = os.environ.get("ENABLE_IPFS_PIN", "0") in ("1","true","True","YES","yes")
+ENABLE_PIN = os.environ.get("ENABLE_IPFS_PIN", "0") in ("1", "true", "True", "YES", "yes")
 
 def write_bundle(subject: str, bundle: dict):
     # sign if key present
@@ -28,29 +29,60 @@ def write_bundle(subject: str, bundle: dict):
             bundle["evidence_cid"] = ipfs_res["cid"]
             path.write_text(json.dumps(bundle, ensure_ascii=False, indent=2))
         else:
-            bundle["ipfs_error"] = ipfs_res.get("error","unknown")
+            bundle["ipfs_error"] = ipfs_res.get("error", "unknown")
             path.write_text(json.dumps(bundle, ensure_ascii=False, indent=2))
 
-    return {"subject": subject, "integrity_hash": bundle.get("integrity_hash"), "file": str(path), "cid": bundle.get("evidence_cid")}
+    return {
+        "subject": subject,
+        "integrity_hash": bundle.get("integrity_hash"),
+        "file": str(path),
+        "cid": bundle.get("evidence_cid")
+    }
 
 def main():
-    cfg = yaml.safe_load(CONFIG.read_text())
+    if not CONFIG.exists():
+        raise FileNotFoundError(f"Missing config file: {CONFIG}")
+
+    cfg = yaml.safe_load(CONFIG.read_text()) or {}
+    if not isinstance(cfg, dict):
+        raise TypeError("config/targets.yaml must parse to a YAML mapping/object at top level.")
+
     index = []
 
     # GitHub manifests
-    for item in cfg.get("github_manifests", []):
+    github_manifests = cfg.get("github_manifests") or []
+    if not isinstance(github_manifests, list):
+        raise TypeError("config/targets.yaml: github_manifests must be a list (or omitted / null).")
+
+    for item in github_manifests:
+        if not isinstance(item, dict):
+            raise TypeError("config/targets.yaml: each github_manifests entry must be a mapping/object.")
+
         b = verify_manifest(
-            name=item["name"],
-            file=item.get("file",""),
-            raw=item.get("raw",""),
-            html=item.get("html",""),
-            ipfs=item.get("ipfs","")
+            name=item.get("name", ""),
+            file=item.get("file", ""),
+            raw=item.get("raw", ""),
+            html=item.get("html", ""),
+            ipfs=item.get("ipfs", "")
         )
         index.append(write_bundle(b["subject"], b))
 
     # Tweet threads (optional)
-    for item in cfg.get("tweet_threads", []):
-        b = verify_tweet_thread(item["name"], item["status_url"])
+    tweet_threads = cfg.get("tweet_threads") or []
+    if not isinstance(tweet_threads, list):
+        raise TypeError("config/targets.yaml: tweet_threads must be a list (or omitted / null).")
+
+    for item in tweet_threads:
+        if not isinstance(item, dict):
+            raise TypeError("config/targets.yaml: each tweet_threads entry must be a mapping with keys: name, status_url")
+
+        name = item.get("name")
+        status_url = item.get("status_url")
+
+        if not name or not status_url:
+            raise ValueError("config/targets.yaml: tweet_threads entries require 'name' and 'status_url'")
+
+        b = verify_tweet_thread(name, status_url)
         index.append(write_bundle(b["subject"], b))
 
     (OUTDIR / "index.json").write_text(json.dumps(index, ensure_ascii=False, indent=2))
