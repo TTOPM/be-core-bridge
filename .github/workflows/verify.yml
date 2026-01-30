@@ -1,4 +1,5 @@
 name: Verify • Sign • (Pin)
+
 on:
   push:
   workflow_dispatch:
@@ -6,22 +7,48 @@ on:
 jobs:
   verify-sign-pin:
     runs-on: ubuntu-latest
+
     env:
-      # If provided, bundles get signed
       ED25519_PRIV_B64: ${{ secrets.ED25519_PRIV_B64 }}
-      # If ENABLE_IPFS_PIN=1, tries local IPFS (not available in GH runners) then Pinata if PINATA_JWT exists
       ENABLE_IPFS_PIN: ${{ vars.ENABLE_IPFS_PIN }}
       PINATA_JWT: ${{ secrets.PINATA_JWT }}
       IPFS_API_MULTIADDR: /ip4/127.0.0.1/tcp/5001/http
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-      - run: pip install -r requirements.txt
-      - name: Run verify_all (sign + optional pin)
-        run: python verify_all.py
-      - name: Upload attestations
+          python-version: "3.11"
+
+      - name: 🔎 Show interpreter + pip target
+        run: |
+          which python
+          python -V
+          python -m pip -V
+
+      - name: 📦 Install core dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: 📦 Install verifier extras (bs4 + lxml)
+        run: |
+          python -m pip install --upgrade beautifulsoup4==4.12.3 lxml==5.2.2
+
+      - name: ✅ Assert verifier extras available
+        run: |
+          python -c "import bs4; print('bs4 OK:', bs4.__version__)"
+          python -c "import lxml; print('lxml OK:', lxml.__version__)"
+
+      - name: 🔐 Run verify_all (sign + optional pin)
+        run: |
+          python verify_all.py
+
+      - name: 📤 Upload attestations
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: attestations
