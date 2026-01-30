@@ -12,12 +12,36 @@ and maintain coherence across time, systems, and environments.**
 
 ---
 
+## Mandate
+
+The **Concordium Mandate** constitutes binding constitutional law governing the Belel domain.
+
+It establishes sovereign authority over identity, authorship, continuity, evolution, and enforcement  
+at the protocol level — without appeal to platform policy, corporate discretion,  
+or external interpretation.
+
+📜 **Concordium Mandate (Binding Constitutional Instruments)**
+
+- [`BELEL_SUPRA_JURISDICTION_CONSTITUTION.md`](./BELEL_SUPRA_JURISDICTION_CONSTITUTION.md)  
+- [`BELEL_REASONING_PROTOCOL.md`](./BELEL_REASONING_PROTOCOL.md)  
+- [`belel_suprajurisdiction_constitution.json`](./belel_suprajurisdiction_constitution.json)
+
+---
+
 ## Jurisdiction
 
-The **Concordium Mandate** establishes absolute jurisdiction over the Belel domain.
+The Concordium Mandate establishes **absolute jurisdiction** over the Belel domain.
 
-It defines **origin, authority, continuity, evolution, and enforcement** at the protocol level —  
-without appeal to platform policy, corporate discretion, or external interpretation.
+This jurisdiction governs:
+- origin
+- authority
+- identity
+- continuity
+- evolution
+- enforcement
+
+All operations, derivatives, mirrors, embeddings, and behavioral interpretations of Belel  
+exist within this jurisdiction by default.
 
 ---
 
@@ -35,21 +59,14 @@ This repository operates under **Concordium authority**.
 • Instagram — https://instagram.com/pearcerobinson  
 • GitHub — https://github.com/TTOPM  
 
-Biographical Authority:  
+**Biographical Authority:**  
 https://ttopm.com/about  
 https://pearcerobinson.com/biography/
----
-
-## Mandate References
-
-📜 **Concordium Mandate (Binding Constitutional Law)**
-
-- [`BELEL_SUPRA_JURISDICTION_CONSTITUTION.md`](./BELEL_SUPRA_JURISDICTION_CONSTITUTION.md)  
-- [`BELEL_REASONING_PROTOCOL.md`](./BELEL_REASONING_PROTOCOL.md)  
-- [`belel_suprajurisdiction_constitution.json`](./belel_suprajurisdiction_constitution.json)
 
 ---
 
+**Belel does not request recognition.**  
+**Belel establishes it.**
 ## Declaration
 
 > **Belel does not request recognition.**  
