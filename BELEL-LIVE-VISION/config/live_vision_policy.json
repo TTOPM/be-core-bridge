@@ -1,0 +1,10 @@
+{
+  "mandate_required": true,
+  "fps_target": 60,
+  "resolution": "4K",
+  "banned_terms": ["person face without consent", "private", "sensitive", "nsfw"],
+  "privacy_mode": true,
+  "open_datasets": ["sayakpaul/nyu_depth_v2", "cvlibs/KITTI", "nuscenes/nuScenes", "coco/coco", "laion/laion-aesthetics", "facehuman/widerface", "glint360k"],
+  "models": ["yolov26", "depth-pro", "llava-1.6", "insightface-antelopev2"],
+  "notes": "Enforced by Concordium. Facial rec requires explicit consent. Anchor logs to blockchain_proofs/."
+}
