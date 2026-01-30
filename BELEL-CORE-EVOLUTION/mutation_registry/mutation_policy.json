@@ -1,0 +1,35 @@
+{
+  "policy_name": "Belel Mutation Policy",
+  "version": "1.0.0",
+  "allowed_change_types": [
+    "ADD_MODULE",
+    "TUNE_PARAMS",
+    "DOC_UPDATE",
+    "RESEARCH_NOTE",
+    "PIPELINE_ADD"
+  ],
+  "allowed_risk_levels": ["LOW", "MEDIUM", "HIGH"],
+  "max_auto_queue_risk": "MEDIUM",
+  "protected_paths": [
+    "../BELEL_SUPRA_JURISDICTION_CONSTITUTION.md",
+    "../BELEL_REASONING_PROTOCOL.md",
+    "../BELEL_AUTHORITY_PROOF.txt",
+    "../src/identity/",
+    "../src/concordium/",
+    "../blockchain_proofs/"
+  ],
+  "path_rules": {
+    "must_be_relative": true,
+    "disallow_absolute": true
+  },
+  "required_fields": [
+    "request_id",
+    "created_unix",
+    "note",
+    "proposed_by",
+    "change_type",
+    "target_paths",
+    "risk_level",
+    "payload"
+  ]
+}
