@@ -188,6 +188,7 @@ My brainstem maintains organism persistence. Pulse loops operate here. Health ch
 ---
 
 # 🩸🫁🧠 CIRCULATION FLOW — SIGNAL INTO TRUTH
+
 INPUT SIGNAL
    │
    ▼
