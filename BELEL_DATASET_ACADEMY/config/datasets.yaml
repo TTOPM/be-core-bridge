@@ -1,0 +1,29 @@
+# REAL VERIFIED TRILLION-TOKEN DATASETS (2026)
+real_datasets:
+  web:
+    - name: "allenai/c4"
+      tokens: 800000000000
+      field: "text"
+    - name: "HuggingFaceFW/fineweb"
+      tokens: 15000000000000  # 15 TRILLION
+      field: "text" 
+    - name: "allenai/dolma"
+      tokens: 3000000000000
+      field: "text"
+  code:
+    - name: "codeparrot/github-code"
+      tokens: 1000000000000
+      field: "content"
+    - name: "bigcode/the-stack-v2"
+      tokens: 600000000000
+      field: "content"
+  multilingual:
+    - name: "uonlp/CulturaX"
+      tokens: 600000000000
+      languages: 167
+    - name: "oscar-corpus/OSCAR-2301"
+      tokens: 1000000000000
+      languages: 166
+  educational:
+    - name: "HuggingFaceTB/cosmopedia"
+      tokens: 25000000000
