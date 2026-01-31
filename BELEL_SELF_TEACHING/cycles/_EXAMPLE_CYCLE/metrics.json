@@ -1,0 +1,14 @@
+{
+  "sft_count": 2,
+  "dpo_count": 1,
+  "failure_count": 1,
+  "tokens_sft": 820,
+  "tokens_dpo": 410,
+  "tokens_failures": 260,
+  "tokens_total_emitted": 1490,
+  "accept_rate": 0.50,
+  "avg_rubric_total": 0.86,
+  "avg_uncertainty_selected": 0.67,
+  "rare_signal_hit_rate": 0.50,
+  "quarantine_count": 0
+}
