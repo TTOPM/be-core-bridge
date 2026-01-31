@@ -1,0 +1,50 @@
+# FILE: BELEL_DATASET_ACADEMY/assets/verifier-loop.svg
+cat > BELEL_DATASET_ACADEMY/assets/verifier-loop.svg <<'SVG'
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="520" viewBox="0 0 1200 520">
+  <defs>
+    <style>
+      .bg{fill:#0b0f14}
+      .c{fill:#111827;stroke:#34d399;stroke-width:2;rx:18}
+      .t{fill:#e5e7eb;font:700 22px ui-sans-serif,system-ui}
+      .s{fill:#e5e7eb;font:500 16px ui-sans-serif,system-ui}
+      .k{fill:#34d399;font:700 14px ui-sans-serif,system-ui;letter-spacing:.08em}
+      .a{stroke:#34d399;stroke-width:2;marker-end:url(#m)}
+    </style>
+    <marker id="m" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#34d399"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1200" height="520"/>
+  <text class="t" x="50" y="60">VERIFIER LOOP</text>
+  <text class="k" x="50" y="90">CANDIDATE GENERATION • EXECUTION CHECKS • PREFERENCE SYNTHESIS</text>
+
+  <rect class="c" x="70" y="150" width="330" height="140"/>
+  <text class="t" x="100" y="190">PROMPT</text>
+  <text class="s" x="100" y="220">Domain classified</text>
+  <text class="s" x="100" y="245">Hardness scored</text>
+
+  <rect class="c" x="440" y="120" width="330" height="170"/>
+  <text class="t" x="470" y="160">RUNTIME MODEL</text>
+  <text class="s" x="470" y="190">Generate N candidates</text>
+  <text class="s" x="470" y="215">Tool-grounded format</text>
+  <text class="s" x="470" y="240">Self-critique enabled</text>
+
+  <rect class="c" x="830" y="150" width="320" height="140"/>
+  <text class="t" x="860" y="190">VERIFIERS</text>
+  <text class="s" x="860" y="220">Math + tables</text>
+  <text class="s" x="860" y="245">Unit-tests sandbox</text>
+  <text class="s" x="860" y="270">Retrieval entailment</text>
+
+  <rect class="c" x="440" y="330" width="330" height="140"/>
+  <text class="t" x="470" y="370">OUTPUT</text>
+  <text class="s" x="470" y="400">Best-answer SFT upgrade</text>
+  <text class="s" x="470" y="425">Chosen/Rejected pairs</text>
+  <text class="s" x="470" y="450">Logged evidence + lineage</text>
+
+  <line class="a" x1="400" y1="220" x2="440" y2="220"/>
+  <line class="a" x1="770" y1="220" x2="830" y2="220"/>
+  <line class="a" x1="990" y1="290" x2="610" y2="330"/>
+  <line class="a" x1="610" y1="330" x2="610" y2="290"/>
+</svg>
+SVG
