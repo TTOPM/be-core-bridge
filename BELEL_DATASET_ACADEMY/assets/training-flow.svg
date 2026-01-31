@@ -1,0 +1,57 @@
+# FILE: BELEL_DATASET_ACADEMY/assets/training-flow.svg
+cat > BELEL_DATASET_ACADEMY/assets/training-flow.svg <<'SVG'
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="520" viewBox="0 0 1400 520">
+  <defs>
+    <style>
+      .bg{fill:#0b0f14}
+      .card{fill:#111827;stroke:#93c5fd;stroke-width:2;rx:18}
+      .t{fill:#e5e7eb;font:700 22px ui-sans-serif,system-ui}
+      .s{fill:#e5e7eb;font:500 16px ui-sans-serif,system-ui}
+      .k{fill:#93c5fd;font:700 14px ui-sans-serif,system-ui;letter-spacing:.08em}
+      .a{stroke:#93c5fd;stroke-width:2;marker-end:url(#m)}
+    </style>
+    <marker id="m" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#93c5fd"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1400" height="520"/>
+  <text class="t" x="50" y="60">TRAINING FLOW</text>
+  <text class="k" x="50" y="90">EXECUTION-VERIFIED • REFLEXIVE • DOMAIN-OWNED</text>
+
+  <rect class="card" x="50"  y="140" width="300" height="140"/>
+  <text class="t" x="80" y="180">INGEST</text>
+  <text class="s" x="80" y="210">Streaming corpora</text>
+  <text class="s" x="80" y="235">Owned domain corpora</text>
+  <text class="s" x="80" y="260">Dedup + filter</text>
+
+  <rect class="card" x="400" y="140" width="300" height="140"/>
+  <text class="t" x="430" y="180">PROCESS</text>
+  <text class="s" x="430" y="210">Normalize schemas</text>
+  <text class="s" x="430" y="235">Curriculum tags</text>
+  <text class="s" x="430" y="260">Manifests + lineage</text>
+
+  <rect class="card" x="750" y="140" width="300" height="140"/>
+  <text class="t" x="780" y="180">VERIFY</text>
+  <text class="s" x="780" y="210">Math / tables / tests</text>
+  <text class="s" x="780" y="235">Retrieval grounding</text>
+  <text class="s" x="780" y="260">Policy enforcement</text>
+
+  <rect class="card" x="1100" y="140" width="250" height="140"/>
+  <text class="t" x="1130" y="180">TRAIN</text>
+  <text class="s" x="1130" y="210">SFT → DPO/ORPO</text>
+  <text class="s" x="1130" y="235">LoRA optional</text>
+  <text class="s" x="1130" y="260">DeepSpeed tuned</text>
+
+  <rect class="card" x="440" y="340" width="520" height="140"/>
+  <text class="t" x="470" y="380">EVALUATE</text>
+  <text class="s" x="470" y="410">lm-eval runs + metrics.json</text>
+  <text class="s" x="470" y="435">benchmark deltas + regressions</text>
+  <text class="s" x="470" y="460">architecture comparison charts</text>
+
+  <line class="a" x1="350" y1="210" x2="400" y2="210"/>
+  <line class="a" x1="700" y1="210" x2="750" y2="210"/>
+  <line class="a" x1="1050" y1="210" x2="1100" y2="210"/>
+  <line class="a" x1="1225" y1="280" x2="700" y2="340"/>
+</svg>
+SVG
