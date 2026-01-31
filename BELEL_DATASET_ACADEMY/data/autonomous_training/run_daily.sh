@@ -18,3 +18,5 @@ poetry run python src/belel_database_academy/pipelines/evaluation_pipeline.py --
 poetry run python src/belel_database_academy/monitoring/prometheus_metrics.py --daily
 
 echo "$(date): Daily training complete"
+
+
