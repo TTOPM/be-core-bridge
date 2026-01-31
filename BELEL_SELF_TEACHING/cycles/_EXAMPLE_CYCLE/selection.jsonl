@@ -1,0 +1,2 @@
+{"prompt":"Write a verified Python function that returns True if a number is prime.","tags":["rare_signal"],"domain":"code","metadata":{"uncertainty_disagreement":0.71,"rare_score":0.2}}
+{"prompt":"Explain the difference between SFT and DPO with a concrete data format example.","tags":["edge_case"],"domain":"systems","metadata":{"uncertainty_disagreement":0.63,"rare_score":0.0}}
