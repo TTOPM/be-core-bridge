@@ -1,0 +1,15 @@
+cat > BELEL_DATASET_ACADEMY/metrics/charts/verifier_pass_rates.svg <<'EOF'
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="450" viewBox="0 0 1200 450">
+  <rect width="1200" height="450" fill="#050814"/>
+  <text x="40" y="60" fill="#e8f6ff" font-size="28" font-family="system-ui" font-weight="900">Verifier Pass Rates</text>
+  <text x="40" y="95" fill="#9bd6ff" font-size="14" font-family="system-ui">math_exec • unit_tests • retrieval • table_checks</text>
+  <rect x="120" y="150" width="180" height="240" fill="#22d3ee" opacity="0.75"/>
+  <rect x="360" y="190" width="180" height="200" fill="#3b82f6" opacity="0.65"/>
+  <rect x="600" y="220" width="180" height="170" fill="#a855f7" opacity="0.55"/>
+  <rect x="840" y="205" width="180" height="185" fill="#60a5fa" opacity="0.60"/>
+  <text x="140" y="420" fill="#bfe9ff" font-size="12" font-family="monospace">math</text>
+  <text x="380" y="420" fill="#bfe9ff" font-size="12" font-family="monospace">tests</text>
+  <text x="615" y="420" fill="#bfe9ff" font-size="12" font-family="monospace">retrieval</text>
+  <text x="870" y="420" fill="#bfe9ff" font-size="12" font-family="monospace">tables</text>
+</svg>
+EOF
