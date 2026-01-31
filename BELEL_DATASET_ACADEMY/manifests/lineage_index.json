@@ -1,0 +1,8 @@
+cat > BELEL_DATASET_ACADEMY/manifests/lineage_index.json <<'EOF'
+{
+  "format": "BELEL_DATABASE_ACADEMY",
+  "canonical_version": "v1.0",
+  "lineage": [],
+  "notes": "Each entry binds dataset shards -> verification logs -> training artifacts -> eval metrics -> charts."
+}
+EOF
