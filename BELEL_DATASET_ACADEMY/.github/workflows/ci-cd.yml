@@ -1,0 +1,22 @@
+name: Belel CI/CD
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    - run: poetry install
+    - run: poetry run pytest tests/ -v --cov=src
+    
+  ingest-sample:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+    - run: poetry install
+    - run: poetry run belel-ingest --sample 1000
+    - run: poetry run belel-process --sample
