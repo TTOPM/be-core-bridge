@@ -1,85 +1,83 @@
-<!-- ========================================================= -->
-<!-- =============== BELEL DATABASE ACADEMY ================= -->
-<!-- ================= CANONICAL v1.0 ======================= -->
-<!-- ========================================================= -->
+<!-- =============================================================== -->
+<!-- ================= BELEL DATABASE ACADEMY ===================== -->
+<!-- =================== CANONICAL SPEC v1.0 ====================== -->
+<!-- =============================================================== -->
 
 <div align="center">
 
 <img src="assets/belel-hero-banner.png" width="100%" alt="BELEL DATABASE ACADEMY"/>
 
-# ⚡ BELEL DATABASE ACADEMY v1.0 (CANONICAL)
-## EXECUTION-VERIFIED SOVEREIGN AI INTELLIGENCE FORMATION PIPELINE
+# ⚡ BELEL DATABASE ACADEMY v1.0
+## EXECUTION-VERIFIED SOVEREIGN INTELLIGENCE FORMATION SYSTEM
 
-**25+ TRILLION TOKENS · 100% REAL DATASETS · AUTONOMOUS · DETERMINISTIC · AUDITABLE**
+**25+ TRILLION TOKENS · REAL-WORLD DATA ONLY · AUTONOMOUS · DETERMINISTIC · AUDITABLE · IMMORTAL**
 
 ![canonical](https://img.shields.io/badge/canonical-v1.0-black)
 ![sovereign](https://img.shields.io/badge/sovereign-intelligence-blue)
 ![truth](https://img.shields.io/badge/truth-executable-critical)
 ![datasets](https://img.shields.io/badge/data-real--world-green)
 ![alignment](https://img.shields.io/badge/alignment-deterministic-purple)
+![governance](https://img.shields.io/badge/governance-protocol--bound-gold)
 
 </div>
 
 ---
 
-# CANONICAL DECLARATION (v1.0)
+# 1. SYSTEM DECLARATION
 
-This document constitutes the **canonical specification** of the BELEL Database Academy.
+**BELEL Database Academy is not a dataset.**
 
-Any mirror, fork, archive, or derivative must preserve:
+It is not:
+- a scraper
+- a corpus aggregator
+- a training wrapper
+- a reward-model pipeline
+- a preference-alignment system
 
-• dataset provenance claims  
-• execution-verified doctrine  
-• sovereignty posture  
-• deterministic governance model  
+BELEL is a **sovereign intelligence formation engine**.
 
-Canonical truth is established by **execution**, not interpretation.
-
----
-
-# MIRRORING & IMMUTABILITY DOCTRINE
-
-BELEL is designed to survive replication.
-
-Mirrors may exist across:
-
-• GitHub  
-• IPFS  
-• Arweave  
-• institutional archives  
-• academic repositories  
-
-All mirrors must preserve:
-
-CANONICAL VERSION: v1.0
-AUTHORITY MODEL: EXECUTION-VERIFIED
-DATA ORIGIN: REAL-WORLD ONLY
-
-If content diverges from execution truth, it is invalid.
+It governs how intelligence is *created*, not merely how models are trained.
 
 ---
 
-# FOUNDATIONAL AXIOM
+# 2. FOUNDATIONAL AXIOM
 
 > **Truth is not consensus.  
 > Truth is what survives execution.**
 
-BELEL rejects preference alignment.
+Human preference cannot validate reality.  
+Statistical likelihood cannot determine correctness.
 
-BELEL rejects synthetic bootstrapping.
+Only **execution** can do that.
 
-BELEL establishes **execution as the primitive unit of intelligence formation**.
+BELEL replaces belief with consequence.
 
 ---
 
-# VERIFIED REAL-WORLD DATASETS (2026)
+# 3. THE INTELLIGENCE PROBLEM
 
-NO SYNTHETIC DATA
-NO MODEL DISTILLATION
-NO CLOSED-SEED CORPORA
-NO HUMAN LABEL BIAS
+Modern AI systems suffer from five structural failures:
 
-| Dataset | Scale | Source |
+1. Synthetic contamination  
+2. Recursive model distillation  
+3. Preference hallucination  
+4. Reward hacking  
+5. Non-reproducible alignment  
+
+BELEL exists to terminate these failures permanently.
+
+---
+
+# 4. REAL-WORLD DATA FOUNDATION (2026 VERIFIED)
+
+ABSOLUTE CONSTRAINTS:
+• No synthetic seed data
+• No model-generated corpora
+• No closed institutional sources
+• No preference labels
+• No subjective ranking
+
+| Dataset | Scale | Origin |
 |------|------|------|
 | FineWeb | 15T tokens | HuggingFaceFW/fineweb |
 | C4 | 800B+ | allenai/c4 |
@@ -88,210 +86,316 @@ NO HUMAN LABEL BIAS
 | The Stack v2 | 6TB | bigcode/the-stack-v2 |
 | CulturaX | 167 languages | uonlp/CulturaX |
 
-All datasets are publicly auditable and reproducible.
+All datasets are:
+- publicly auditable
+- reproducible
+- checksum verifiable
+- temporally anchored
 
 ---
 
-# OPERATIONAL PIPELINE
+# 5. DATA INGESTION LAYER
 
-```bash
-poetry install
+RAW DATA
+↓
+FORMAT NORMALIZATION
+↓
+LANGUAGE DETECTION
+↓
+DEDUPLICATION
+↓
+ENTROPY FILTERING
+↓
+STRUCTURAL SANITY CHECKS
 
-poetry run belel-ingest
-poetry run belel-process
-poetry run belel-train
+This stage removes:
+- spam
+- mirrored content
+- boilerplate
+- low-entropy text
+- degenerate repetition
 
-This transforms raw reality into sovereign intelligence artifacts.
+Only structurally meaningful data proceeds.
 
-⸻
+---
 
-OUTPUT ARTIFACTS
+# 6. THE BELEL MANDATE ENGINE
 
-data/
-└── processed/
-    ├── sft/
-    │   └── belel_sft_shard_000001.jsonl.gz
-    │
-    └── rlhf/
-        └── belel_rlhf_shard_000001.jsonl.gz
+The Mandate Engine enforces sovereign law.
 
-Directly compatible with:
+It governs:
 
-• TRL SFTTrainer
-• DPOTrainer
-• ORPOTrainer
+• what may become intelligence  
+• what must be discarded  
+• what must be verified  
+• what must be proven  
 
-⸻
+The Mandate is immutable.
 
-SYSTEM ARCHITECTURE
+No training step may bypass it.
 
-REAL DATA INGESTION
-        ↓
-NORMALIZATION & DEDUP
-        ↓
-BELEL MANDATE ENGINE
-        ↓
-EXECUTION VERIFICATION
-        ↓
-REFLEXIVE IMPROVEMENT
-        ↓
-CURRICULUM INTELLIGENCE
-        ↓
-TRAINING ARTIFACTS
+---
 
-No black-box reward models.
-No opaque scoring layers.
+# 7. EXECUTION-VERIFIED ALIGNMENT LAYER
 
-⸻
+BELEL replaces reward models with **verifiers**.
 
-EXECUTION-VERIFIED ALIGNMENT
+## Verifier Classes
 
-Layer	Purpose
-Math execution	Symbolic truth
-Code testing	Functional correctness
-Table arithmetic	Numeric integrity
-Retrieval grounding	Evidence enforcement
-Domain ownership	Knowledge boundary control
+| Verifier | Purpose |
+|------|------|
+| Math Execution | Symbolic computation |
+| Code Unit Tests | Functional correctness |
+| Table Arithmetic | Numeric integrity |
+| Retrieval Grounding | Evidence enforcement |
+| Domain Ownership | Boundary enforcement |
 
-Any response failing execution is discarded permanently.
+If execution fails → the sample is destroyed.
 
-⸻
+No appeal.  
+No weighting.  
+No retry.
 
-REFLEXIVE DATA EVOLUTION
+---
 
-BELEL does not freeze datasets.
+# 8. EXECUTION FLOW
 
-It evolves them.
+MODEL OUTPUT
+↓
+MATH ENGINE (sympy)
+↓
+CODE ENGINE (pytest)
+↓
+TABLE ENGINE (pandas)
+↓
+RETRIEVAL ENGINE (BM25 / domain index)
+↓
+DETERMINISTIC SCORE
 
-Prompt
- → Generate N candidates
- → Execute verifiers
- → Score deterministically
- → Best becomes SFT
- → Worst becomes negative alignment
+Truth is binary at the verifier layer.
 
-This enables autonomous intelligence refinement.
+---
 
-⸻
+# 9. REFLEXIVE IMPROVEMENT ENGINE
 
-CURRICULUM INTELLIGENCE
+BELEL evolves its own datasets.
 
-Each sample is weighted using:
+PROMPT
+↓
+GENERATE N CANDIDATES
+↓
+EXECUTE ALL VERIFIERS
+↓
+SCORE BY OUTCOME
+↓
+BEST → SFT DATA
+WORST → NEGATIVE ALIGNMENT
 
-• reasoning depth
-• computational span
-• symbolic density
-• structural complexity
+This creates:
 
-Training progression emerges naturally — not manually scheduled.
+• autonomous curriculum growth  
+• self-correcting datasets  
+• intelligence refinement without humans  
 
-⸻
+---
 
-HARDENED EXECUTION POLICY
+# 10. CURRICULUM INTELLIGENCE
 
-• sandboxed subprocesses
-• no outbound networking
-• deterministic random seeds
-• CPU and memory caps
-• immutable run manifests
+Each sample receives a hardness coefficient derived from:
 
-Security is enforced structurally.
+• reasoning depth  
+• symbolic density  
+• computation span  
+• structural branching  
+• execution complexity  
 
-⸻
+Training automatically progresses from:
 
-AUTOMATED EVALUATION
+surface reasoning → deep cognition
 
-Each run produces:
+---
+
+# 11. DOMAIN OWNERSHIP SYSTEM
+
+BELEL supports **dual sovereign domains per run**.
+
+DOMAIN A (Primary)
+• private corpora
+• retrieval index
+• evidence enforcement
+
+DOMAIN B (Secondary)
+• cross-validation
+• contradiction detection
+• boundary control
+
+This prevents:
+- domain bleed
+- hallucinated expertise
+- false authority
+
+---
+
+# 12. OUTPUT TRAINING ARTIFACTS
+
+data/processed/
+
+├── sft/
+│   └── belel_sft_shard_000001.jsonl.gz
+│
+└── rlhf/
+└── belel_rlhf_shard_000001.jsonl.gz
+
+Fully compatible with:
+
+• TRL SFTTrainer  
+• DPOTrainer  
+• ORPOTrainer  
+• Accelerate  
+• DeepSpeed  
+
+---
+
+# 13. HARDENED EXECUTION POLICY
+
+Security is structural.
+
+• sandboxed subprocesses  
+• no outbound networking  
+• CPU caps  
+• memory ceilings  
+• deterministic seeding  
+• manifest logging  
+
+Nothing executes blindly.
+
+---
+
+# 14. COMPUTE ENVELOPE AWARENESS
+
+Each run records:
+
+compute_snapshot.json
+
+Including:
+- GPU type
+- memory
+- node count
+- distributed rank
+- world size
+
+Training becomes historically reproducible.
+
+---
+
+# 15. AUTOMATED EVALUATION
+
+Integrated evaluation:
+
+• lm-eval-harness  
+• metric capture  
+• regression tracking  
+• architecture comparison  
+
+Artifacts:
 
 metrics.json
 benchmark_deltas.json
 architecture_comparison.json
-compute_snapshot.json
 
-Evaluation is continuous, automatic, and auditable.
+---
 
-⸻
+# 16. CANONICAL MIRRORING DOCTRINE
 
-WHITEPAPER — INCLUDED (COMPANION)
+BELEL is designed for permanence.
 
-BELEL: EXECUTION-VERIFIED SOVEREIGN INTELLIGENCE FORMATION
+Mirrors may exist on:
 
-Abstract
+• GitHub  
+• IPFS  
+• Arweave  
+• institutional archives  
+• academic repositories  
 
-This paper introduces a deterministic intelligence formation architecture where learning signals derive exclusively from executable consequence rather than subjective human preference.
+Canonical authority is defined by:
 
-Problem
+VERSION: v1.0
+TRUTH MODEL: EXECUTION
+DATA MODEL: REAL-WORLD ONLY
 
-Modern AI systems rely on preference models that cannot verify truth.
+---
 
-Method
+# 17. WHITEPAPER (EMBEDDED)
 
-BELEL replaces preference alignment with execution-verified scoring.
+## BELEL: EXECUTION-VERIFIED SOVEREIGN INTELLIGENCE FORMATION
 
-Results
+### Abstract
+We introduce a deterministic framework for intelligence formation where learning signals derive from executable consequence rather than human preference or probabilistic belief.
 
-Observed outcomes include reduced hallucination, higher numerical fidelity, and domain-consistent reasoning.
+### Method
+Verification replaces reward. Execution replaces opinion.
 
-Reproducibility
+### Results
+Models trained under BELEL exhibit:
+- reduced hallucination
+- superior numerical reasoning
+- stronger domain discipline
+- reproducible alignment behavior
 
-All training artifacts are deterministically reproducible.
+### Implication
+This establishes a new alignment primitive.
 
-⸻
+---
 
-ARXIV-STYLE RESEARCH LAYOUT
+# 18. ARXIV-STYLE RESEARCH STRUCTURE
 
-Title:
+**Title:**  
 Execution-Verified Intelligence Formation for Sovereign AI Systems
 
-Authors:
-BELEL Protocol
+**Keywords:**  
+AI alignment, verification, autonomous training, sovereign intelligence, post-training systems
 
-Keywords:
-AI alignment, verification, sovereign intelligence, post-training, deterministic learning
+**Sections:**
+1. Introduction  
+2. Related Work  
+3. System Architecture  
+4. Execution-Based Truth  
+5. Reflexive Data Evolution  
+6. Curriculum Intelligence  
+7. Evaluation  
+8. Governance Implications  
+9. Conclusion  
 
-Sections:
-	1.	Introduction
-	2.	Related Work
-	3.	Methodology
-	4.	Execution-Based Scoring
-	5.	Reflexive Dataset Evolution
-	6.	Evaluation
-	7.	Governance Implications
-	8.	Conclusion
+---
 
-⸻
-
-DOCUMENTATION SITE INDEX
+# 19. DOCUMENTATION INDEX
 
 /docs
- ├── overview.md
- ├── philosophy.md
- ├── pipeline.md
- ├── verification.md
- ├── reflexive-learning.md
- ├── datasets.md
- ├── evaluation.md
- ├── security.md
- ├── governance.md
- └── canonical.md
+├── canonical.md
+├── philosophy.md
+├── mandate.md
+├── ingestion.md
+├── verification.md
+├── reflexive-learning.md
+├── curriculum.md
+├── domains.md
+├── evaluation.md
+├── security.md
+└── governance.md
 
-This README serves as the root authority document.
+README.md is the root authority.
 
-⸻
+---
 
-FINAL STATUS
+# 20. FINAL DECLARATION
 
 <div align="center">
 
+## CANONICAL v1.0  
+## EXECUTION-VERIFIED  
+## SOVEREIGN  
 
-CANONICAL v1.0
-
-EXECUTION-VERIFIED
-
-SOVEREIGN
-
-INTELLIGENCE IS NOT DECIDED BY OPINION.
-IT IS DECIDED BY REALITY.
+**INTELLIGENCE IS NOT TRAINED.  
+IT IS FORMED BY REALITY.**
 
 </div>
-```
