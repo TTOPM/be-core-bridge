@@ -1,57 +1,71 @@
-# FILE: BELEL_DATASET_ACADEMY/assets/training-flow.svg
-cat > BELEL_DATASET_ACADEMY/assets/training-flow.svg <<'SVG'
-<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="520" viewBox="0 0 1400 520">
+cat > BELEL_DATASET_ACADEMY/assets/training-flow.svg <<'EOF'
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="760" viewBox="0 0 1400 760">
   <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b1220"/>
+      <stop offset="100%" stop-color="#050814"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
     <style>
-      .bg{fill:#0b0f14}
-      .card{fill:#111827;stroke:#93c5fd;stroke-width:2;rx:18}
-      .t{fill:#e5e7eb;font:700 22px ui-sans-serif,system-ui}
-      .s{fill:#e5e7eb;font:500 16px ui-sans-serif,system-ui}
-      .k{fill:#93c5fd;font:700 14px ui-sans-serif,system-ui;letter-spacing:.08em}
-      .a{stroke:#93c5fd;stroke-width:2;marker-end:url(#m)}
+      .bg{fill:url(#g1);}
+      .panel{fill:#0b1020;stroke:#2b90ff;stroke-width:2;rx:18;filter:url(#glow);}
+      .title{fill:#cfe9ff;font-family:ui-sans-serif,system-ui; font-size:26px; font-weight:700;}
+      .sub{fill:#86c5ff;font-family:ui-sans-serif,system-ui; font-size:16px; opacity:.95;}
+      .tag{fill:#7dd3fc;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:14px;}
+      .arrow{stroke:#38bdf8;stroke-width:3;marker-end:url(#m);opacity:.95;}
     </style>
-    <marker id="m" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
-      <path d="M0,0 L0,6 L9,3 z" fill="#93c5fd"/>
+    <marker id="m" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 Z" fill="#38bdf8"/>
     </marker>
   </defs>
 
-  <rect class="bg" x="0" y="0" width="1400" height="520"/>
-  <text class="t" x="50" y="60">TRAINING FLOW</text>
-  <text class="k" x="50" y="90">EXECUTION-VERIFIED • REFLEXIVE • DOMAIN-OWNED</text>
+  <rect class="bg" x="0" y="0" width="1400" height="760"/>
 
-  <rect class="card" x="50"  y="140" width="300" height="140"/>
-  <text class="t" x="80" y="180">INGEST</text>
-  <text class="s" x="80" y="210">Streaming corpora</text>
-  <text class="s" x="80" y="235">Owned domain corpora</text>
-  <text class="s" x="80" y="260">Dedup + filter</text>
+  <text class="title" x="60" y="70">BELEL TRAINING FLOW</text>
+  <text class="sub" x="60" y="105">Autonomous Execution-Verified Sovereign Intelligence Format</text>
 
-  <rect class="card" x="400" y="140" width="300" height="140"/>
-  <text class="t" x="430" y="180">PROCESS</text>
-  <text class="s" x="430" y="210">Normalize schemas</text>
-  <text class="s" x="430" y="235">Curriculum tags</text>
-  <text class="s" x="430" y="260">Manifests + lineage</text>
+  <rect class="panel" x="80" y="150" width="310" height="150"/>
+  <text class="title" x="110" y="200">INGEST</text>
+  <text class="sub" x="110" y="235">Real datasets → normalized records</text>
+  <text class="tag" x="110" y="270">fineweb • c4 • dolma • github-code • stack-v2 • culturax</text>
 
-  <rect class="card" x="750" y="140" width="300" height="140"/>
-  <text class="t" x="780" y="180">VERIFY</text>
-  <text class="s" x="780" y="210">Math / tables / tests</text>
-  <text class="s" x="780" y="235">Retrieval grounding</text>
-  <text class="s" x="780" y="260">Policy enforcement</text>
+  <rect class="panel" x="470" y="150" width="310" height="150"/>
+  <text class="title" x="500" y="200">PROCESS</text>
+  <text class="sub" x="500" y="235">Mandate filters → domain tagging</text>
+  <text class="tag" x="500" y="270">quality • dedupe • pii scrub • language gates • hardness</text>
 
-  <rect class="card" x="1100" y="140" width="250" height="140"/>
-  <text class="t" x="1130" y="180">TRAIN</text>
-  <text class="s" x="1130" y="210">SFT → DPO/ORPO</text>
-  <text class="s" x="1130" y="235">LoRA optional</text>
-  <text class="s" x="1130" y="260">DeepSpeed tuned</text>
+  <rect class="panel" x="860" y="150" width="440" height="150"/>
+  <text class="title" x="890" y="200">VERIFICATION</text>
+  <text class="sub" x="890" y="235">Execution checks → admissible truth</text>
+  <text class="tag" x="890" y="270">retrieval • math_exec • unit_tests • table_checks</text>
 
-  <rect class="card" x="440" y="340" width="520" height="140"/>
-  <text class="t" x="470" y="380">EVALUATE</text>
-  <text class="s" x="470" y="410">lm-eval runs + metrics.json</text>
-  <text class="s" x="470" y="435">benchmark deltas + regressions</text>
-  <text class="s" x="470" y="460">architecture comparison charts</text>
+  <line class="arrow" x1="390" y1="225" x2="470" y2="225"/>
+  <line class="arrow" x1="780" y1="225" x2="860" y2="225"/>
 
-  <line class="a" x1="350" y1="210" x2="400" y2="210"/>
-  <line class="a" x1="700" y1="210" x2="750" y2="210"/>
-  <line class="a" x1="1050" y1="210" x2="1100" y2="210"/>
-  <line class="a" x1="1225" y1="280" x2="700" y2="340"/>
+  <rect class="panel" x="470" y="350" width="830" height="150"/>
+  <text class="title" x="500" y="400">REFLEXIVE ENGINE</text>
+  <text class="sub" x="500" y="435">Runtime candidate generation → verifier scoring → margin selection</text>
+  <text class="tag" x="500" y="470">N candidates • preference pairs • curriculum weighting • rejection sampling</text>
+
+  <line class="arrow" x1="1080" y1="300" x2="1080" y2="350"/>
+
+  <rect class="panel" x="80" y="550" width="560" height="150"/>
+  <text class="title" x="110" y="600">POST-TRAIN</text>
+  <text class="sub" x="110" y="635">SFT → DPO/ORPO → checkpoints</text>
+  <text class="tag" x="110" y="670">trl.SFTTrainer • trl.DPOTrainer • lora • deepspeed • accelerate</text>
+
+  <rect class="panel" x="700" y="550" width="600" height="150"/>
+  <text class="title" x="730" y="600">EVALUATION + METRICS</text>
+  <text class="sub" x="730" y="635">lm-eval → deltas → regression guards</text>
+  <text class="tag" x="730" y="670">metrics.json • benchmark_deltas.json • regressions.json</text>
+
+  <line class="arrow" x1="885" y1="500" x2="560" y2="550"/>
+  <line class="arrow" x1="885" y1="500" x2="1000" y2="550"/>
 </svg>
-SVG
+EOF
