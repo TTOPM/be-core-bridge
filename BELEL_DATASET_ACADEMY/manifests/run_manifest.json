@@ -1,0 +1,14 @@
+cat > BELEL_DATASET_ACADEMY/manifests/run_manifest.json <<'EOF'
+{
+  "format": "BELEL_DATABASE_ACADEMY",
+  "canonical_version": "v1.0",
+  "run_id": "REPLACE_AT_RUNTIME",
+  "created_at_utc": "REPLACE_AT_RUNTIME",
+  "git": { "repo": "TTOPM/be-core-bridge", "path": "BELEL_DATASET_ACADEMY" },
+  "compute": { "snapshot_path": "manifests/compute_snapshot.json" },
+  "datasets": { "manifest_path": "manifests/dataset_manifest.json" },
+  "verification": { "manifest_path": "manifests/verification_manifest.json" },
+  "metrics": { "metrics_path": "metrics/metrics.json" },
+  "lineage": { "index_path": "manifests/lineage_index.json" }
+}
+EOF
