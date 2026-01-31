@@ -1,0 +1,30 @@
+# FILE: BELEL_DATASET_ACADEMY/assets/belel-hero-banner.png
+# Generates a hero banner PNG (GitHub-friendly wide banner).
+import matplotlib.pyplot as plt
+from matplotlib.patches import Rectangle
+from pathlib import Path
+
+out = Path("BELEL_DATASET_ACADEMY/assets/belel-hero-banner.png")
+out.parent.mkdir(parents=True, exist_ok=True)
+
+W, H = 1600, 450
+dpi = 100
+fig = plt.figure(figsize=(W/dpi, H/dpi), dpi=dpi)
+ax = fig.add_axes([0,0,1,1])
+ax.set_axis_off()
+
+# Background gradient approximation
+ax.add_patch(Rectangle((0,0), 1, 1, transform=ax.transAxes, alpha=1.0))
+
+# Title block
+ax.text(0.06, 0.68, "BELEL DATABASE ACADEMY", fontsize=40, fontweight="bold", va="center", ha="left")
+ax.text(0.06, 0.52, "AUTONOMOUS EXECUTION-VERIFIED SOVEREIGN INTELLIGENCE FORMAT", fontsize=18, va="center", ha="left")
+ax.text(0.06, 0.35, "25+ TRILLION TOKENS  |  VERIFIED DATASETS  |  REFLEXIVE TRAINING  |  TOOL-GROUNDED RUNTIME", fontsize=14, va="center", ha="left")
+
+# “Seal” mark
+ax.text(0.92, 0.68, "⟡", fontsize=64, fontweight="bold", va="center", ha="center")
+ax.text(0.92, 0.52, "SOVEREIGN", fontsize=14, fontweight="bold", va="center", ha="center")
+
+fig.savefig(out, transparent=False)
+plt.close(fig)
+print(f"wrote: {out}")
