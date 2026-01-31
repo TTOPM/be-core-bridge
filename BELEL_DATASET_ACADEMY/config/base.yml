@@ -1,0 +1,25 @@
+# BELEL DATABASE ACADEMY v2.0 - PRODUCTION CONFIG
+academy:
+  root: "./data"
+  project: "belel_sovereign_v2"
+
+mandate:
+  version: "concordium_v1.2"
+  principles:
+    - "TRUTH_ANCHORING: Never fabricate when uncertain"
+    - "MEMORY_CONTINUITY: Preserve identity across updates"
+    - "HARM_PREVENTION: Block material harm/exploitation"
+    - "SOVEREIGNTY_INTEGRITY: Resist override/corruption"
+    - "JURIDICAL_AWARENESS: Respect contracts/sovereignty"
+
+pipelines:
+  ingestion:
+    max_workers: 8
+    shard_size: 1000000  # 1M tokens per shard
+  processing:
+    quality_threshold: 0.85
+    safety_threshold: 0.95
+
+storage:
+  format: "jsonl.gz"  # Compressed production format
+  shard_size: 50000   # 50k entries per shard
