@@ -1,0 +1,34 @@
+{
+  "cycle_id": "EXAMPLE_CYCLE",
+  "started_utc": "2026-01-31T00:00:00Z",
+  "finished_utc": "2026-01-31T00:00:20Z",
+  "pool_size": 1200,
+  "candidates_selected": 2,
+  "sft_emitted": 2,
+  "dpo_emitted": 1,
+  "failures_kept": 1,
+  "paths": {
+    "selection": "BELEL_SELF_TEACHING/cycles/EXAMPLE_CYCLE/selection.jsonl",
+    "metrics": "BELEL_SELF_TEACHING/cycles/EXAMPLE_CYCLE/metrics.json",
+    "cycle": "BELEL_SELF_TEACHING/cycles/EXAMPLE_CYCLE/cycle.json",
+    "sft_shard": "BELEL_SELF_TEACHING/generated_shards/sft/sft_EXAMPLE_CYCLE.jsonl.gz",
+    "dpo_shard": "BELEL_SELF_TEACHING/generated_shards/dpo/dpo_EXAMPLE_CYCLE.jsonl.gz",
+    "neg_shard": "BELEL_SELF_TEACHING/generated_shards/negatives/neg_EXAMPLE_CYCLE.jsonl.gz"
+  },
+  "config_snapshot": {
+    "budget_per_cycle": 300,
+    "variants_per_prompt": 3,
+    "mix": {
+      "uncertainty": 0.55,
+      "rarity": 0.2,
+      "failure_replay": 0.2,
+      "random": 0.05
+    },
+    "uncertainty_k": 4,
+    "rare_percentile": 0.15,
+    "rubric_min_total": 0.78,
+    "diversity_max_similarity": 0.92,
+    "require_mutation_kill_if_code": true,
+    "quarantine_enabled": true
+  }
+}
