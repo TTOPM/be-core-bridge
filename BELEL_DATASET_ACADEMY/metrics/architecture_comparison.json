@@ -1,0 +1,11 @@
+cat > BELEL_DATASET_ACADEMY/metrics/architecture_comparison.json <<'EOF'
+{
+  "format": "BELEL_DATABASE_ACADEMY",
+  "canonical_version": "v1.0",
+  "models": [
+    { "name": "BELEL", "verifier_pass_rate": null, "lm_eval_norm": null, "tokens_per_sec": null, "hallucination_proxy": null },
+    { "name": "Baseline_A", "verifier_pass_rate": null, "lm_eval_norm": null, "tokens_per_sec": null, "hallucination_proxy": null },
+    { "name": "Baseline_B", "verifier_pass_rate": null, "lm_eval_norm": null, "tokens_per_sec": null, "hallucination_proxy": null }
+  ]
+}
+EOF
