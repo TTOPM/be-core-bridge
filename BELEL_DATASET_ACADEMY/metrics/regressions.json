@@ -1,0 +1,8 @@
+cat > BELEL_DATASET_ACADEMY/metrics/regressions.json <<'EOF'
+{
+  "format": "BELEL_DATABASE_ACADEMY",
+  "canonical_version": "v1.0",
+  "regressions": [],
+  "policy": "Block promotion if regressions exceed threshold."
+}
+EOF
