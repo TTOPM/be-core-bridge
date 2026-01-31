@@ -1,0 +1,16 @@
+{
+  "cron_schedule": {
+    "daily_training": "0 2 * * *",     // 2AM daily
+    "data_refresh": "0 1 * * *",       // 1AM data pipeline
+    "eval_best_model": "0 4 * * *",    // 4AM benchmark
+    "deploy_winner": "0 6 * * *"       // 6AM production
+  },
+  "training_config": {
+    "epochs_per_day": 5,
+    "max_new_data": 50000,
+    "eval_threshold": 0.02,            // Improve by 2% → deploy
+    "base_model": "meta-llama/Llama-3.2-3B-Instruct",
+    "lora_rank": 16,
+    "lora_alpha": 32
+  }
+}
