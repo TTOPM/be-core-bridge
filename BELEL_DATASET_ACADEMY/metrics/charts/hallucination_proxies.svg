@@ -1,0 +1,11 @@
+cat > BELEL_DATASET_ACADEMY/metrics/charts/hallucination_proxies.svg <<'EOF'
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="450" viewBox="0 0 1200 450">
+  <rect width="1200" height="450" fill="#050814"/>
+  <text x="40" y="60" fill="#e8f6ff" font-size="28" font-family="system-ui" font-weight="900">Hallucination Proxies</text>
+  <text x="40" y="95" fill="#9bd6ff" font-size="14" font-family="system-ui">Lower is better (overlap fails / contradiction checks)</text>
+  <line x1="60" y1="380" x2="1140" y2="380" stroke="#1f2a44" stroke-width="2"/>
+  <line x1="60" y1="120" x2="60" y2="380" stroke="#1f2a44" stroke-width="2"/>
+  <polyline points="60,290 220,300 380,295 540,310 700,305 860,320 1020,330 1140,340"
+            fill="none" stroke="#a855f7" stroke-width="4" opacity="0.85"/>
+</svg>
+EOF
