@@ -1,0 +1,19 @@
+cat > BELEL_DATASET_ACADEMY/metrics/metrics.json <<'EOF'
+{
+  "format": "BELEL_DATABASE_ACADEMY",
+  "canonical_version": "v1.0",
+  "run_id": "REPLACE_AT_RUNTIME",
+  "lm_eval": { "status": "not_run", "results": {} },
+  "throughput": { "tokens_per_second": null, "samples_per_second": null },
+  "verifiers": {
+    "math_exec_pass_rate": null,
+    "unit_tests_pass_rate": null,
+    "retrieval_pass_rate": null,
+    "table_checks_pass_rate": null
+  },
+  "hallucination_proxies": {
+    "retrieval_overlap_fail_rate": null,
+    "contradiction_rate": null
+  }
+}
+EOF
