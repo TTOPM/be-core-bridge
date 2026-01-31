@@ -1,0 +1,18 @@
+cat > BELEL_DATASET_ACADEMY/manifests/dataset_manifest.json <<'EOF'
+{
+  "format": "BELEL_DATABASE_ACADEMY",
+  "canonical_version": "v1.0",
+  "datasets_included": [
+    { "name": "fineweb", "path": "HuggingFaceFW/fineweb", "tokens_claim": "15T" },
+    { "name": "c4", "path": "allenai/c4", "tokens_claim": "800B+" },
+    { "name": "dolma", "path": "allenai/dolma", "tokens_claim": "3T" },
+    { "name": "github-code", "path": "codeparrot/github-code", "tokens_claim": "1T+" },
+    { "name": "the-stack-v2", "path": "bigcode/the-stack-v2", "size_claim": "6TB code" },
+    { "name": "culturax", "path": "uonlp/CulturaX", "languages_claim": "167" }
+  ],
+  "outputs": {
+    "sft_shards_dir": "data/processed/sft/",
+    "rlhf_shards_dir": "data/processed/rlhf/"
+  }
+}
+EOF
