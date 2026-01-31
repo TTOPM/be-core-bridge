@@ -1,163 +1,216 @@
-# BELEL_SELF_TEACHING_GENERATOR.py
-# Autonomous self-teaching loop: active-inspired selection → generation → verification → shard output + guide update
-# Inspired by: A-SOID (uncertainty iteration), Hawk (rare/uncertain signal discovery), ASReview (query strategies for text)
-
-import os
+# BELEL_SELF_TEACHING/BELEL_SELF_TEACHING_GENERATOR.py
 import json
-import gzip
-import hashlib
-import datetime
-import random
 from pathlib import Path
-# Assume these are from your BELEL core (adapt imports as needed)
-from belel_core import (
-    ingest_data,                # pull from internal pool or external if allowed
-    apply_mandate,              # enforce structure/truth
-    verify_execution,           # sandbox math/code execution
-    generate_reflexive_variant, # your existing mutation/reflexion func
-    get_uncertainty_score       # placeholder: implement or stub based on model confidence
-)
 
-# Config paths (create these files manually first or generate defaults)
-CONFIG_DIR = Path("BELEL_SELF_TEACHING/config")
-CONFIG_DIR.mkdir(exist_ok=True, parents=True)
-GUIDE_DIR = Path("BELEL_SELF_TEACHING/guide")
-GUIDE_DIR.mkdir(exist_ok=True, parents=True)
-SHARDS_DIR = Path("BELEL_SELF_TEACHING/generated_shards")
-SHARDS_DIR.mkdir(exist_ok=True, parents=True)
-CYCLES_DIR = Path("BELEL_SELF_TEACHING/cycles")
-CYCLES_DIR.mkdir(exist_ok=True, parents=True)
+from .utils import utc_cycle_id, sha256_text
+from .selectors import pick_candidates
+from .generators import generate_variants, self_consistency_pick
+from .verifiers import verify
+from .quality import basic_sanity_checks, rubric_score
+from .curriculum import assign_level
+from .dpo_builder import build_dpo_pairs
+from .dedup import Deduper
+from .shard_writer import write_jsonl_gz
+from .metrics import aggregate_metrics
+from .guide_updater import ensure_level_files, append_examples
+from .guide_compiler import compile_master
+from .schemas import to_jsonl
 
-# Levels for guide (as previously defined)
-LEVELS = [
-    "1_Foundations",
-    "2_Core_Methodologies",
-    "3_Advanced_Self_Improvement",
-    "4_Specialized_Domains",
-    "5_Meta_Level_Evolution"
-]
+BASE = Path("BELEL_SELF_TEACHING")
+CFG_DIR = BASE / "config"
+GUIDE_LEVELS = BASE / "guide" / "levels"
+GUIDE_COMPILED = BASE / "guide" / "compiled"
+CYCLES = BASE / "cycles"
+OUT_SFT = BASE / "generated_shards" / "sft"
+OUT_DPO = BASE / "generated_shards" / "dpo"
+OUT_NEG = BASE / "generated_shards" / "negatives"
+OUT_MAN = BASE / "generated_shards" / "manifests"
+IDX_DIR = BASE / "indexes"
 
-def load_or_init_config():
-    config_path = CONFIG_DIR / "self_teaching_config.json"
-    if config_path.exists():
-        with open(config_path, 'r') as f:
-            return json.load(f)
-    default = {
-        "budget_per_cycle": 500,           # new examples to generate/verify per run
-        "uncertainty_threshold": 0.65,     # select above this for hard/important
-        "pseudo_label_confidence": 0.92,   # auto-accept high-confidence generations
-        "max_iterations": 10,
-        "shard_size": 1000
-    }
-    with open(config_path, 'w') as f:
-        json.dump(default, f, indent=2)
+def load_json(path: Path, default):
+    if path.exists():
+        return json.loads(path.read_text(encoding="utf-8"))
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(default, indent=2), encoding="utf-8")
     return default
 
-def select_uncertain_or_rare_candidates(pool, config):
-    """Active learning selection: prioritize uncertain / hard / rare signals (inspired by A-SOID + Hawk)"""
-    scores = []
-    for item in pool:
-        # Assume item = {"prompt": str, "existing_completion": str or None, "embedding": vec or None}
-        uncertainty = get_uncertainty_score(item)  # stub: e.g. entropy from model preds
-        # Bonus: rarity (e.g. low freq domain keywords or execution failure history)
-        rarity_bonus = 1.0 if "edge_case" in item.get("tags", []) else 0.5
-        scores.append(uncertainty * rarity_bonus)
-    
-    sorted_idx = sorted(range(len(pool)), key=lambda i: scores[i], reverse=True)
-    return [pool[i] for i in sorted_idx[:config["budget_per_cycle"]]]
+def load_seen_hashes() -> set:
+    IDX_DIR.mkdir(parents=True, exist_ok=True)
+    seen_path = IDX_DIR / "seen_hashes.jsonl"
+    if not seen_path.exists():
+        return set()
+    s = set()
+    for ln in seen_path.read_text(encoding="utf-8").splitlines():
+        if ln.strip():
+            s.add(ln.strip())
+    return s
 
-def generate_new_material(candidates, config):
-    """Generate new completions, explanations, code, etc. with reflexive mutation"""
-    new_items = []
+def persist_seen_hashes(new_hashes: list):
+    seen_path = IDX_DIR / "seen_hashes.jsonl"
+    with seen_path.open("a", encoding="utf-8") as f:
+        for h in new_hashes:
+            f.write(h + "\n")
+
+def run_self_teaching_cycle(belel_core):
+    """
+    belel_core must supply:
+      - ingest_data(sources=[...]) -> List[dict] with {prompt, tags?, domain?, ...}
+      - apply_mandate(text) -> {allowed: bool, reasons: [...]}
+      - verify_execution(text) -> {passed: bool, signals:..., errors:...}
+      - generate_reflexive_variant(prompt, mode=...) -> str
+      - get_uncertainty_score(item) -> float
+    """
+    config = load_json(CFG_DIR / "self_teaching_config.json", {
+        "budget_per_cycle": 300,
+        "variants_per_prompt": 3,
+        "mix": {"uncertainty": 0.55, "rarity": 0.20, "failure_replay": 0.20, "random": 0.05},
+        "rarity_keywords": ["edge case", "counterexample", "adversarial", "race condition", "overflow", "off-by-one"],
+        "rubric_min_total": 0.78,
+        "keep_failures_rate": 0.15,
+        "compile_guide_every_cycle": True
+    })
+
+    strategies = load_json(CFG_DIR / "strategies.json", {
+        "sources": ["internal_pool", "previous_shards"],
+        "domains_default": "general"
+    })
+
+    cycle_id = utc_cycle_id()
+    cycle_dir = CYCLES / cycle_id.replace(":", "-")
+    cycle_dir.mkdir(parents=True, exist_ok=True)
+
+    ensure_level_files(GUIDE_LEVELS)
+
+    seen = load_seen_hashes()
+    deduper = Deduper(seen, fuzzy_threshold=0.92)
+
+    pool = belel_core.ingest_data(sources=strategies["sources"])
+    rarity_keywords = set(config["rarity_keywords"])
+
+    candidates = pick_candidates(
+        pool=pool,
+        budget=config["budget_per_cycle"],
+        get_uncertainty_score=belel_core.get_uncertainty_score,
+        rarity_keywords=rarity_keywords,
+        mix=config["mix"]
+    )
+
+    # Log selection (for auditability)
+    (cycle_dir / "selection.jsonl").write_text(
+        "\n".join(json.dumps(c, ensure_ascii=False) for c in candidates),
+        encoding="utf-8"
+    )
+
+    sft_records = []
+    dpo_records = []
+    failures = []
+    new_hashes_to_persist = []
+
     for cand in candidates:
-        base_prompt = cand.get("prompt", "")
-        # Generate primary
-        completion = generate_reflexive_variant(base_prompt)  # your core generation func
-        # Create variants (self-augmentation like synthetic data gen)
-        variants = [completion]
-        for _ in range(random.randint(1, 3)):
-            mutated = generate_reflexive_variant(completion, mode="mutate")  # e.g. paraphrase, add difficulty
-            variants.append(mutated)
-        
-        for v in variants:
-            verified = verify_execution(v)  # BELEL truth metric
-            if verified["passed"]:
-                new_items.append({
-                    "prompt": base_prompt,
-                    "completion": v,
-                    "source": "self_generated",
-                    "verified_hash": hashlib.sha256(v.encode()).hexdigest(),
-                    "level": assign_level(base_prompt),  # helper below
-                    "uncertainty": get_uncertainty_score(cand)
-                })
-            elif random.random() < 0.2:  # occasionally keep failures for negative examples / DPO
-                new_items.append({
-                    "prompt": base_prompt,
-                    "completion": v,
-                    "source": "self_generated_failure",
-                    "verified_hash": None,
-                    "level": assign_level(base_prompt)
-                })
-    return new_items
+        prompt = cand.get("prompt", "")
+        tags = cand.get("tags", []) or []
+        domain = cand.get("domain") or strategies.get("domains_default", "general")
 
-def assign_level(prompt):
-    """Map to guide levels heuristically (expand with keywords/rules)"""
-    if any(k in prompt.lower() for k in ["truth", "cognition", "perception", "execution"]):
-        return LEVELS[0]
-    # ... add rules for others
-    return LEVELS[4]  # default to meta
+        variants = generate_variants(prompt, belel_core.generate_reflexive_variant, n=config["variants_per_prompt"])
+        variants = self_consistency_pick(variants)
 
-def write_shard(new_items, cycle_id):
-    shard_path = SHARDS_DIR / f"self_generated_{cycle_id}_shard.jsonl.gz"
-    with gzip.open(shard_path, 'wt', encoding='utf-8') as f:
-        for item in new_items:
-            f.write(json.dumps(item) + '\n')
-    print(f"Wrote shard: {shard_path} ({len(new_items)} items)")
+        verified_texts = []
+        rejected_texts = []
 
-def update_self_training_guide(new_items, cycle_id):
-    """Append/update Markdown guide sections in real-time"""
-    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    for level in LEVELS:
-        level_items = [i for i in new_items if i["level"] == level]
-        if not level_items:
-            continue
-        md_path = GUIDE_DIR / f"{level}_{timestamp}.md"
-        with open(md_path, 'a', encoding='utf-8') as f:
-            f.write(f"\n\n## Cycle {cycle_id} Update - {timestamp}\n\n")
-            for item in level_items[:20]:  # limit per update to avoid huge files
-                f.write(f"### Prompt: {item['prompt'][:150]}...\n")
-                f.write(f"**Self-Generated Completion:**\n```text\n{item['completion'][:500]}...\n```\n")
-                if item.get("verified_hash"):
-                    f.write(f"Verified Hash: {item['verified_hash']}\n")
-                f.write("\n")
-    # Optional: compile full guide periodically (separate script)
+        for completion in variants:
+            ok, reason = basic_sanity_checks(prompt, completion)
+            if not ok:
+                rejected_texts.append(completion)
+                continue
 
-def run_self_teaching_cycle():
-    config = load_or_init_config()
-    cycle_id = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    cycle_log = CYCLES_DIR / f"cycle_{cycle_id}.json"
-    
-    # Step 1: Get candidate pool (from ingested + previous self-generated)
-    pool = ingest_data(sources=["internal_pool", "previous_shards"])  # adapt to your func
-    candidates = select_uncertain_or_rare_candidates(pool, config)
-    
-    # Step 2: Generate & verify
-    new_material = generate_new_material(candidates, config)
-    
-    # Step 3: Output shards + guide
-    write_shard(new_material, cycle_id)
-    update_self_training_guide(new_material, cycle_id)
-    
-    # Log cycle
-    with open(cycle_log, 'w') as f:
-        json.dump({
-            "cycle_id": cycle_id,
-            "candidates_selected": len(candidates),
-            "new_verified": len([i for i in new_material if i.get("verified_hash")]),
-            "config": config
-        }, f, indent=2)
-    
-    print(f"Self-teaching cycle {cycle_id} complete. New material: {len(new_material)}")
+            mandate = belel_core.apply_mandate(completion)
+            if not mandate.get("allowed", True):
+                rejected_texts.append(completion)
+                continue
 
-if __name__ == "__main__":
-    run_self_teaching_cycle()
+            if deduper.is_exact_dup(completion) or deduper.is_fuzzy_dup(completion):
+                continue
+
+            ver = verify(completion, belel_core.verify_execution)
+            rub = rubric_score(prompt, completion, ver)
+
+            level = assign_level(prompt, domain)
+            h = sha256_text(prompt + "\n" + completion)
+
+            record = {
+                "prompt": prompt,
+                "completion": completion,
+                "level": level,
+                "domain": domain,
+                "source": "self_generated",
+                "verified": bool(ver.get("passed")),
+                "verifier": ver,
+                "rubric": rub,
+                "hash": h,
+                "cycle_id": cycle_id,
+                "tags": tags,
+                "metadata": cand.get("metadata", {}),
+            }
+
+            if ver.get("passed") and rub["total"] >= config["rubric_min_total"]:
+                sft_records.append(record)
+                verified_texts.append(completion)
+                deduper.add_exact(completion)
+                deduper.remember(completion)
+                new_hashes_to_persist.append(sha256_text(completion))
+            else:
+                rejected_texts.append(completion)
+                if config["keep_failures_rate"] > 0:
+                    failures.append(record)
+
+        # Build DPO pairs from verified vs rejected
+        pairs = build_dpo_pairs(prompt, verified_texts, rejected_texts, limit=2)
+        for chosen, rejected in pairs:
+            level = assign_level(prompt, domain)
+            dpo_records.append({
+                "prompt": prompt,
+                "chosen": chosen,
+                "rejected": rejected,
+                "level": level,
+                "domain": domain,
+                "source": "self_generated_dpo",
+                "chosen_hash": sha256_text(chosen),
+                "rejected_hash": sha256_text(rejected),
+                "cycle_id": cycle_id,
+                "tags": tags
+            })
+
+    # Persist seen hashes
+    persist_seen_hashes(new_hashes_to_persist)
+
+    # Write shards
+    sft_path = OUT_SFT / f"sft_{cycle_id.replace(':','-')}.jsonl.gz"
+    dpo_path = OUT_DPO / f"dpo_{cycle_id.replace(':','-')}.jsonl.gz"
+    neg_path = OUT_NEG / f"neg_{cycle_id.replace(':','-')}.jsonl.gz"
+
+    write_jsonl_gz(sft_path, (json.dumps(r, ensure_ascii=False) for r in sft_records))
+    write_jsonl_gz(dpo_path, (json.dumps(r, ensure_ascii=False) for r in dpo_records))
+    write_jsonl_gz(neg_path, (json.dumps(r, ensure_ascii=False) for r in failures))
+
+    # Metrics
+    m = aggregate_metrics(sft_records, dpo_records, failures)
+    (cycle_dir / "metrics.json").write_text(json.dumps(m, indent=2), encoding="utf-8")
+
+    # Update guide + compile
+    append_examples(GUIDE_LEVELS, sft_records, cycle_id, per_level_cap=10)
+    if config.get("compile_guide_every_cycle", True):
+        compile_master(GUIDE_LEVELS, GUIDE_COMPILED)
+
+    # Cycle summary
+    (cycle_dir / "cycle.json").write_text(json.dumps({
+        "cycle_id": cycle_id,
+        "pool_size": len(pool),
+        "candidates_selected": len(candidates),
+        "sft_emitted": len(sft_records),
+        "dpo_emitted": len(dpo_records),
+        "failures_kept": len(failures),
+        "metrics": m,
+        "config": config
+    }, indent=2), encoding="utf-8")
+
+    return {"cycle_id": cycle_id, "metrics": m, "paths": {"sft": str(sft_path), "dpo": str(dpo_path), "neg": str(neg_path), "cycle_dir": str(cycle_dir)}}
