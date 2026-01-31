@@ -1,0 +1,89 @@
+name: Belel Daily Autonomous Training
+
+# 🔥 DAILY SCHEDULE - 2AM GMT EVERY DAY
+on:
+  schedule:
+    # 0 2 * * * = 2:00 AM GMT daily
+    - cron: '0 2 * * *'
+  workflow_dispatch:  # Manual trigger button
+
+# Runs on Ubuntu with 7GB RAM, 2-core runner
+jobs:
+  autonomous-training:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    
+    steps:
+    # 1. CHECKOUT YOUR REPO
+    - name: Checkout Belel Database Academy
+      uses: actions/checkout@v4
+      
+    # 2. SETUP PYTHON 3.11
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        
+    # 3. INSTALL DEPENDENCIES
+    - name: Install Poetry
+      run: |
+        curl -sSL https://install.python-poetry.org | python3 -
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+        
+    - name: Install dependencies
+      run: |
+        poetry install --no-dev
+        
+    # 4. CREATE DIRECTORIES
+    - name: Setup autonomous training folder
+      run: |
+        mkdir -p data/autonomous_training/{daily_epochs,continuous_data}
+        chmod +x data/autonomous_training/run_daily.sh || echo "Script not found, continuing"
+        
+    # 5. REFRESH TRAINING DATA
+    - name: Ingest fresh real datasets
+      run: |
+        poetry run python src/belel_database_academy/pipelines/ingestion_pipeline.py --daily
+        
+    # 6. RUN DAILY TRAINING
+    - name: Execute autonomous training
+      run: |
+        poetry run python src/belel_database_academy/autopilot/daily_trainer.py
+        
+    # 7. EVALUATE & DEPLOY BEST MODEL
+    - name: Evaluate and deploy best model
+      run: |
+        poetry run python src/belel_database_academy/pipelines/evaluation_pipeline.py --deploy-best
+        
+    # 8. SAVE ARTIFACTS (MODEL WEIGHTS + LOGS)
+    - name: Upload trained model
+      uses: actions/upload-artifact@v4
+      with:
+        name: belel-daily-model-${{ github.run_id }}
+        path: |
+          data/autonomous_training/daily_epochs/*/
+          data/autonomous_training/model_registry.json
+        retention-days: 7
+        
+    # 9. TRAINING LOGS
+    - name: Upload training logs
+      uses: actions/upload-artifact@v4
+      with:
+        name: belel-training-logs-${{ github.run_id }}
+        path: |
+          data/autonomous_training/performance_history.json
+          data/autonomous_training/training_schedule.json
+
+# NOTIFICATIONS
+  notify:
+    needs: autonomous-training
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+    - name: Notify training complete
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
