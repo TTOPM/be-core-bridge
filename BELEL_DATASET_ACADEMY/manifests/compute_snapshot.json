@@ -1,0 +1,13 @@
+cat > BELEL_DATASET_ACADEMY/manifests/compute_snapshot.json <<'EOF'
+{
+  "time_utc": "REPLACE_AT_RUNTIME",
+  "hostname": "REPLACE_AT_RUNTIME",
+  "world_size_env": null,
+  "rank_env": null,
+  "local_rank_env": null,
+  "cuda_visible_devices": null,
+  "torch_cuda_available": null,
+  "num_gpus": 0,
+  "gpus": []
+}
+EOF
