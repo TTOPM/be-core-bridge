@@ -1,0 +1,36 @@
+version: '3.8'
+services:
+  belel-ingester:
+    build: .
+    command: poetry run belel-ingest --datasets real-trillion-sources
+    volumes:
+      - .//app/data
+    environment:
+      - HF_DATASETS_CACHE=/app/data/cache
+    deploy:
+      replicas: 4
+
+  belel-processor:
+    build: .
+    command: poetry run belel-process --all
+    volumes:
+      - .//app/data
+    depends_on:
+      - belel-ingester
+    deploy:
+      replicas: 2
+
+  belel-monitor:
+    build: .
+    command: poetry run belel-monitor
+    ports:
+      - "8000:8000"
+    volumes:
+      - .//app/data
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
