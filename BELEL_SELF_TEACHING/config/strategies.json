@@ -1,0 +1,8 @@
+{
+  "sources": [
+    "internal_pool",
+    "previous_shards"
+  ],
+  "default_domain": "general",
+  "allow_external_ingest": false
+}
