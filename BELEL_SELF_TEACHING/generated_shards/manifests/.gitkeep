@@ -1,0 +1,2 @@
+# Shard manifests will be written here by shard_compactor.py
+# Each manifest records hashes, counts, and integrity proofs
