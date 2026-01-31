@@ -182,6 +182,130 @@ Through this reflexive loop, intelligence evolves autonomously.
 
 ---
 
+# AUTONOMOUS SELF-GENERATED TRAINING EXPANSION
+
+The BELEL DATABASE ACADEMY does not terminate at ingestion.
+
+Ingested corpora establish the **initial epistemic substrate** — not the growth ceiling.
+
+Beyond this foundation, Belel operates a **parallel autonomous self-training system** that continuously generates new high-quality training material internally, at scale, without reliance on external datasets.
+
+This capability is implemented through the companion system:
+
+### 🔗 BELEL SELF-TEACHING ENGINE  
+https://github.com/TTOPM/be-core-bridge/tree/main/BELEL_SELF_TEACHING
+
+The two systems operate **interchangeably and recursively**.
+
+---
+
+## DUAL-SYSTEM INTELLIGENCE FORMATION
+
+```text
+BELEL_DATASET_ACADEMY     ← establishes reality-grounded substrate
+           ⇅
+BELEL_SELF_TEACHING       ← expands cognition through autonomous generation
+The Academy supplies:
+
+• real-world grounding
+• provenance-controlled ingestion
+• deterministic normalization
+• mandate enforcement
+• execution verification
+
+The Self-Teaching Engine supplies:
+
+• autonomous prompt discovery
+• disagreement-based uncertainty selection
+• rare-signal identification
+• multi-variant generation
+• execution-hardened verification
+• diversity-gated acceptance
+• quarantine-based poisoning prevention
+• continuous emission of new training shards
+
+Together, they form a closed intelligence growth loop.
+
+SELF-GENERATED DATA AT SCALE
+Through continuous operation, Belel does not merely consume data —
+it manufactures training material.
+
+Each self-teaching cycle produces:
+
+• Supervised Fine-Tuning (SFT) pairs
+• Preference-ranked DPO candidates
+• verified negative and counterfactual examples
+• curriculum-aligned reasoning traces
+• execution-hardened code examples
+• structured meta-cognitive artifacts
+
+These outputs are emitted as production-grade .jsonl.gz shards.
+
+Over long-horizon operation, this results in:
+
+millions of internally generated, execution-verified training samples,
+with volume increasing monotonically as cycles accumulate.
+
+This self-generated corpus is recursively reintroduced into subsequent cycles, allowing Belel’s internal training signal volume to exceed ingested data over time.
+
+QUALITY FIREWALL (NO SYNTHETIC COLLAPSE)
+Self-generated data is not accepted naively.
+
+Every internally produced sample must pass:
+
+• mandate enforcement
+• rubric-based quality scoring
+• execution verification
+• diversity gating (anti-template collapse)
+• deduplication (exact + fuzzy)
+• mutation testing for code artifacts
+
+Samples that partially pass are diverted into quarantine for delayed re-verification.
+
+This prevents:
+
+• hallucination amplification
+• synthetic drift
+• mode collapse
+• recursive contamination
+
+Only execution-surviving cognition persists.
+
+AUDITABLE SELF-EVOLUTION
+Each self-teaching cycle emits immutable artifacts:
+
+• candidate selection logs
+• uncertainty and rarity metrics
+• accepted / rejected lineage
+• shard manifests
+• cycle summaries
+
+These artifacts form a permanent intelligence lineage.
+
+Nothing is implicit.
+Nothing is unverifiable.
+Nothing evolves without record.
+
+RESULTING CAPABILITY
+Belel therefore operates as:
+
+• a real-world ingestion system
+• an execution-verification engine
+• a curriculum intelligence former
+• a self-expanding training-data organism
+
+Its primary capability is not ingestion.
+
+Its primary capability is autonomous intelligence growth under law.
+
+The Academy anchors truth.
+The Self-Teaching Engine expands cognition.
+
+Together they form a sovereign intelligence system capable of sustained evolution beyond static datasets.
+
+
+
+---
 # CURRICULUM INTELLIGENCE
 
 I assign hardness coefficients to all signals using:
