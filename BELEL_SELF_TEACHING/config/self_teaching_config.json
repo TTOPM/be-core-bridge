@@ -1,0 +1,20 @@
+{
+  "budget_per_cycle": 300,
+  "variants_per_prompt": 3,
+  "mix": {
+    "uncertainty": 0.55,
+    "rarity": 0.2,
+    "failure_replay": 0.2,
+    "random": 0.05
+  },
+  "uncertainty_k": 4,
+  "rare_percentile": 0.15,
+  "rare_recompute_every_cycles": 1,
+  "rarity_min_tag": 0.2,
+  "rubric_min_total": 0.78,
+  "keep_failures_rate": 0.15,
+  "diversity_max_similarity": 0.92,
+  "require_mutation_kill_if_code": true,
+  "quarantine_enabled": true,
+  "compile_guide_every_cycle": true
+}
