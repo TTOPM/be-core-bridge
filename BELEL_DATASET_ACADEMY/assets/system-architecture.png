@@ -1,0 +1,64 @@
+# FILE: BELEL_DATASET_ACADEMY/assets/system-architecture.png
+# Generates a simple system architecture PNG diagram.
+import matplotlib.pyplot as plt
+from matplotlib.patches import FancyBboxPatch, ArrowStyle
+from matplotlib.patches import FancyArrowPatch
+from pathlib import Path
+
+out = Path("BELEL_DATASET_ACADEMY/assets/system-architecture.png")
+out.parent.mkdir(parents=True, exist_ok=True)
+
+fig = plt.figure(figsize=(16, 9), dpi=120)
+ax = fig.add_axes([0,0,1,1])
+ax.set_axis_off()
+
+def box(x,y,w,h,title,lines):
+    p = FancyBboxPatch((x,y),w,h,boxstyle="round,pad=0.01,rounding_size=0.02", linewidth=1.5)
+    ax.add_patch(p)
+    ax.text(x+0.02*w, y+h-0.18*h, title, fontsize=16, fontweight="bold", va="center", ha="left")
+    ax.text(x+0.02*w, y+h-0.42*h, "\n".join(lines), fontsize=12, va="top", ha="left")
+
+def arrow(x1,y1,x2,y2):
+    a = FancyArrowPatch((x1,y1),(x2,y2), arrowstyle=ArrowStyle("Simple", head_length=8, head_width=8), linewidth=1.2)
+    ax.add_patch(a)
+
+box(0.05,0.68,0.40,0.25,"DATA INGEST + NORMALIZATION",[
+    "HF streaming corpora",
+    "Domain corpora (owned)",
+    "Quality filtering + dedup",
+    "Dataset manifest + lineage"
+])
+box(0.55,0.68,0.40,0.25,"VERIFIER + POLICY LAYER",[
+    "Math execution checks",
+    "Unit-test sandbox",
+    "Retrieval entailment proxy",
+    "Network + FS constraints"
+])
+box(0.05,0.38,0.40,0.25,"REFLEXIVE ENGINE",[
+    "Runtime model generates candidates",
+    "Verifier-scored selection",
+    "Preference pair synthesis",
+    "Curriculum hardness tagging"
+])
+box(0.55,0.38,0.40,0.25,"POST-TRAINING",[
+    "TRL SFTTrainer",
+    "TRL DPOTrainer / ORPOTrainer",
+    "LoRA/QLoRA optional",
+    "DeepSpeed envelope-based config"
+])
+box(0.30,0.06,0.40,0.22,"EVALUATION + METRICS",[
+    "lm-eval harness",
+    "Domain eval sets",
+    "Metrics JSON + deltas",
+    "Architecture comparison charts"
+])
+
+arrow(0.45,0.80,0.55,0.80)
+arrow(0.25,0.68,0.25,0.63)
+arrow(0.75,0.68,0.75,0.63)
+arrow(0.45,0.50,0.55,0.50)
+arrow(0.50,0.38,0.50,0.28)
+
+fig.savefig(out, transparent=False)
+plt.close(fig)
+print(f"wrote: {out}")
