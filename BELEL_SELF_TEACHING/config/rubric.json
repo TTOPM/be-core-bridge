@@ -1,0 +1,13 @@
+{
+  "minimum_total": 0.78,
+  "weights": {
+    "clarity": 0.25,
+    "correctness": 0.30,
+    "completeness": 0.25,
+    "verifiability": 0.20
+  },
+  "hard_fail_if": {
+    "contains_disclaimer": true,
+    "hallucinated_execution": true
+  }
+}
