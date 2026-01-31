@@ -1,0 +1,13 @@
+llm_endpoints:
+  primary:
+    provider: "openai"
+    model: "gpt-4o-2024-11-20"
+    api_key: "${OPENAI_API_KEY}"
+  fallback:
+    provider: "anthropic" 
+    model: "claude-3.5-sonnet-20241022"
+    api_key: "${ANTHROPIC_API_KEY}"
+  local:
+    provider: "vllm"
+    model: "meta-llama/Llama-3.2-70B-Instruct"
+    base_url: "http://localhost:8000"
