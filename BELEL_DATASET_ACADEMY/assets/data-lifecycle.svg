@@ -1,52 +1,58 @@
-# FILE: BELEL_DATASET_ACADEMY/assets/data-lifecycle.svg
-cat > BELEL_DATASET_ACADEMY/assets/data-lifecycle.svg <<'SVG'
-<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="520" viewBox="0 0 1400 520">
+cat > BELEL_DATASET_ACADEMY/assets/data-lifecycle.svg <<'EOF'
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="620" viewBox="0 0 1400 620">
   <defs>
     <style>
-      .bg{fill:#0b0f14}
-      .c{fill:#111827;stroke:#fbbf24;stroke-width:2;rx:18}
-      .t{fill:#e5e7eb;font:700 22px ui-sans-serif,system-ui}
-      .s{fill:#e5e7eb;font:500 16px ui-sans-serif,system-ui}
-      .k{fill:#fbbf24;font:700 14px ui-sans-serif,system-ui;letter-spacing:.08em}
-      .a{stroke:#fbbf24;stroke-width:2;marker-end:url(#m)}
+      .bg{fill:#050814;}
+      .ring{fill:none;stroke:#2b90ff;stroke-width:8;opacity:.55;}
+      .node{fill:#0b1020;stroke:#38bdf8;stroke-width:2;rx:20;}
+      .t{fill:#d9f1ff;font-family:ui-sans-serif,system-ui;font-weight:800;font-size:22px;}
+      .s{fill:#8ad1ff;font-family:ui-sans-serif,system-ui;font-size:15px;}
+      .m{fill:#7dd3fc;font-family:ui-monospace,Menlo,monospace;font-size:13px;opacity:.95;}
+      .a{stroke:#38bdf8;stroke-width:3;marker-end:url(#m);}
     </style>
-    <marker id="m" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
-      <path d="M0,0 L0,6 L9,3 z" fill="#fbbf24"/>
+    <marker id="m" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 Z" fill="#38bdf8"/>
     </marker>
   </defs>
 
-  <rect class="bg" x="0" y="0" width="1400" height="520"/>
-  <text class="t" x="50" y="60">DATA LIFECYCLE</text>
-  <text class="k" x="50" y="90">SOURCE → NORMALIZE → VERIFY → SHARD → TRAIN → EVAL → ARCHIVE</text>
+  <rect class="bg" x="0" y="0" width="1400" height="620"/>
+  <circle class="ring" cx="700" cy="320" r="210"/>
+  <text class="t" x="60" y="80">DATA LIFECYCLE</text>
+  <text class="s" x="60" y="110">Ingest → Process → Verify → Train → Evaluate → Archive → Mirror</text>
 
-  <rect class="c" x="50"  y="170" width="190" height="110"/>
-  <text class="t" x="70" y="210">SOURCE</text>
-  <text class="s" x="70" y="240">HF + owned</text>
+  <rect class="node" x="120" y="220" width="270" height="130"/>
+  <text class="t" x="150" y="265">INGEST</text>
+  <text class="m" x="150" y="295">raw → normalized</text>
 
-  <rect class="c" x="260" y="170" width="210" height="110"/>
-  <text class="t" x="280" y="210">NORMALIZE</text>
-  <text class="s" x="280" y="240">Schemas</text>
+  <rect class="node" x="420" y="90" width="270" height="130"/>
+  <text class="t" x="450" y="135">PROCESS</text>
+  <text class="m" x="450" y="165">mandate • dedupe</text>
 
-  <rect class="c" x="490" y="170" width="190" height="110"/>
-  <text class="t" x="510" y="210">VERIFY</text>
-  <text class="s" x="510" y="240">Exec checks</text>
+  <rect class="node" x="740" y="90" width="270" height="130"/>
+  <text class="t" x="770" y="135">VERIFY</text>
+  <text class="m" x="770" y="165">execution gates</text>
 
-  <rect class="c" x="700" y="170" width="190" height="110"/>
-  <text class="t" x="720" y="210">SHARD</text>
-  <text class="s" x="720" y="240">JSONL.gz</text>
+  <rect class="node" x="1040" y="220" width="270" height="130"/>
+  <text class="t" x="1070" y="265">TRAIN</text>
+  <text class="m" x="1070" y="295">SFT • DPO • ORPO</text>
 
-  <rect class="c" x="910" y="170" width="190" height="110"/>
-  <text class="t" x="930" y="210">TRAIN</text>
-  <text class="s" x="930" y="240">SFT + DPO</text>
+  <rect class="node" x="740" y="420" width="270" height="130"/>
+  <text class="t" x="770" y="465">EVALUATE</text>
+  <text class="m" x="770" y="495">lm-eval • deltas</text>
 
-  <rect class="c" x="1120" y="170" width="230" height="110"/>
-  <text class="t" x="1140" y="210">EVALUATE</text>
-  <text class="s" x="1140" y="240">Metrics JSON</text>
+  <rect class="node" x="420" y="420" width="270" height="130"/>
+  <text class="t" x="450" y="465">ARCHIVE</text>
+  <text class="m" x="450" y="495">manifests • lineage</text>
 
-  <line class="a" x1="240" y1="225" x2="260" y2="225"/>
-  <line class="a" x1="470" y1="225" x2="490" y2="225"/>
-  <line class="a" x1="680" y1="225" x2="700" y2="225"/>
-  <line class="a" x1="890" y1="225" x2="910" y2="225"/>
-  <line class="a" x1="1100" y1="225" x2="1120" y2="225"/>
+  <rect class="node" x="120" y="420" width="270" height="130"/>
+  <text class="t" x="150" y="465">MIRROR</text>
+  <text class="m" x="150" y="495">ipfs • arweave</text>
+
+  <line class="a" x1="390" y1="285" x2="420" y2="170"/>
+  <line class="a" x1="690" y1="170" x2="740" y2="170"/>
+  <line class="a" x1="1010" y1="170" x2="1040" y2="285"/>
+  <line class="a" x1="1175" y1="350" x2="875" y2="420"/>
+  <line class="a" x1="740" y1="485" x2="690" y2="485"/>
+  <line class="a" x1="420" y1="485" x2="390" y2="485"/>
 </svg>
-SVG
+EOF
