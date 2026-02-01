@@ -112,7 +112,125 @@ Belel centers on:
 This is superiority in sovereign intelligence formation under law.
 
 ---
+<!-- =============================================================== -->
+<!-- ==================== RUNNABLE PROOF SURFACE =================== -->
+<!-- =============== VISUAL VERIFICATION MATRIX v1.0 =============== -->
+<!-- =============================================================== -->
 
+<div align="center">
+
+# ✅ RUNNABLE PROOF SURFACE
+## EXECUTION RECORD · ARTIFACT EMISSION · AUDIT TRAIL · REPLAYABLE LINEAGE
+
+**This system is verified by running it.**  
+**Every “YES” resolves to a command and a folder of emitted artifacts.**
+
+</div>
+
+---
+
+# ONE-GLANCE PROOF MAP (VISUAL)
+
+```mermaid
+flowchart LR
+  classDef ok fill:#0f5132,stroke:#0f5132,color:#ffffff,stroke-width:2px;
+  classDef mid fill:#1f2937,stroke:#1f2937,color:#ffffff,stroke-width:2px;
+  classDef warn fill:#7c2d12,stroke:#7c2d12,color:#ffffff,stroke-width:2px;
+  classDef box fill:#111827,stroke:#374151,color:#ffffff,stroke-width:1px;
+
+  subgraph R["RUNNABLE ENTRYPOINTS (ONE COMMAND EACH)"]
+    C["CHAT UI<br/>chatwithbelel/"]:::ok
+    S["SELF-TEACHING<br/>BELEL_SELF_TEACHING/"]:::ok
+    D["DATASET ACADEMY<br/>BELEL_DATASET_ACADEMY/"]:::ok
+  end
+
+  subgraph E["EMITTED ARTIFACTS (PROOF OUTPUTS)"]
+    CY["cycles/<cycle_id>/"]:::box
+    SH["generated_shards/<stream>/"]:::box
+    MN["manifests/ + hashes"]:::box
+    MT["metrics/ snapshots"]:::box
+    GD["guide/levels + compiled/"]:::box
+    QN["quarantine/ lanes"]:::box
+  end
+
+  subgraph A["AUDITABILITY (REPLAYABLE LINEAGE)"]
+    LG["cycle.json + selection.jsonl + metrics.json"]:::mid
+    IX["lineage_index.json"]:::mid
+    VF["verify_all.py + canon_audit.py"]:::mid
+  end
+
+  C -->|"docker compose up --build"| CY
+  S -->|"python -m cli run-cycle"| CY
+  S --> SH
+  S --> GD
+  S --> QN
+  S --> LG
+
+  D --> SH
+  D --> MN
+  D --> MT
+  D --> IX
+
+  MN --> VF
+  CY --> VF
+
+
+⸻
+
+PROOF DASHBOARD (YES = RUN + ARTIFACTS EXIST)
+
+Rule: “VERIFIED” means the command runs and the stated artifact paths exist immediately after.
+
+Proof	Command	Must appear (artifact proof paths)	Verdict
+Chat is runnable	cd chatwithbelel && docker compose up --build	visible local UI + service logs	VERIFIED when UI loads
+Self-teaching cycle is runnable	cd BELEL_SELF_TEACHING && python -m cli run-cycle	cycles/<cycle_id>/{cycle.json,metrics.json,selection.jsonl} + generated_shards/{sft,dpo,negatives}/*.jsonl.gz	VERIFIED when folders exist
+Dataset Academy is runnable	cd BELEL_DATASET_ACADEMY && python BELEL_POST_TRAINING_SUPERPIPELINE_ALL_IN_ONE_v3.py --mode daily	manifests/lineage_index.json + metrics/* + emitted .jsonl.gz shards	VERIFIED when artifacts exist
+
+
+⸻
+
+VISUAL DIRECTORY TARGETS (WHAT AN EVALUATOR SHOULD SEE)
+
+BELEL_SELF_TEACHING/
+  cycles/
+    <cycle_id>/
+      selection.jsonl
+      metrics.json
+      cycle.json
+  generated_shards/
+    sft/*.jsonl.gz
+    dpo/*.jsonl.gz
+    negatives/*.jsonl.gz
+    manifests/*          (optional)
+  quarantine/
+    pending/
+    reverify/
+    manifests/           (optional)
+  guide/
+    levels/*.md
+    compiled/MASTER_GUIDE.md
+    compiled/MASTER_GUIDE.json
+
+BELEL_DATASET_ACADEMY/
+  manifests/lineage_index.json
+  metrics/
+  data/… (or configured output tree)
+    *.jsonl.gz
+
+
+⸻
+
+“PROOF, NOT PROSE” LINKS
+	•	Verification Standard: VERIFICATION.md
+	•	One-command Demos: DEMOS.md
+	•	Machine-readable Proof Index: PROOF_INDEX.json
+
+⸻
+
+
+
+
+---
 # REPRODUCIBLE PROOF HOOKS (DEMOS + ARTIFACTS)
 
 ## 1) Run the Dataset Academy
