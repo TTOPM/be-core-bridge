@@ -114,6 +114,203 @@ This is superiority in sovereign intelligence formation under law.
 
 ---
 
+````md
+<!-- =============================================================== -->
+<!-- ===================== SCALABILITY + MULTIMODAL ================= -->
+<!-- ============ PROOF SURFACE: SCALE IS A RUNNABLE RECORD ========== -->
+<!-- =============================================================== -->
+
+<div align="center">
+
+# 📈 SCALABILITY + MULTIMODAL (PROOF, NOT PROMISE)
+## SCALE = REPEATABLE DEPLOYMENT + MEASURED THROUGHPUT + EMITTED METRICS + AUDITABLE RUN LOGS
+
+**A system is scalable when it runs as N replicas, emits metrics per replica, and produces a reproducible load report.**  
+**A system is multimodal when vision/voice/singing are runnable entrypoints that emit artifacts and attach to chat.**
+
+</div>
+
+---
+
+# SCALABILITY: WHAT “MORE SCALABLE” MEANS HERE
+
+Belel scales as a *runnable system*:
+
+* **replicable services** (horizontal scale: N instances)
+* **measured throughput** (requests/sec, latency p50/p95/p99)
+* **emitted metrics artifacts** (JSON/CSV + logs)
+* **auditable run manifests** (config + commit hash + timestamps)
+
+---
+
+# SCALABILITY MAP (HORIZONTAL REPLICATION)
+
+```mermaid
+flowchart LR
+  classDef svc fill:#0f5132,stroke:#0f5132,color:#ffffff,stroke-width:2px;
+  classDef infra fill:#111827,stroke:#374151,color:#ffffff,stroke-width:1px;
+  classDef out fill:#1f2937,stroke:#1f2937,color:#ffffff,stroke-width:2px;
+
+  U["Users"]:::infra --> LB["Edge / Load Balancer"]:::infra
+
+  LB --> C1["Chat Replica #1<br/>chatwithbelel"]:::svc
+  LB --> C2["Chat Replica #2<br/>chatwithbelel"]:::svc
+  LB --> C3["Chat Replica #N<br/>chatwithbelel"]:::svc
+
+  C1 --> MQ["Queue / Job Lane"]:::infra
+  C2 --> MQ
+  C3 --> MQ
+
+  MQ --> ST["Self-Teaching Worker Pool<br/>BELEL_SELF_TEACHING"]:::svc
+  MQ --> DA["Dataset Academy Workers<br/>BELEL_DATASET_ACADEMY"]:::svc
+
+  ST --> ART["Emitted Artifacts<br/>cycles/ · generated_shards/ · metrics/"]:::out
+  DA --> ART
+  ART --> AUD["Audit & Verification<br/>verify_all.py · canon_audit.py"]:::out
+````
+
+---
+
+# SCALABILITY PROOF LADDER (RUN → MEASURE → EMIT → AUDIT)
+
+```mermaid
+flowchart TB
+  classDef step fill:#111827,stroke:#374151,color:#ffffff,stroke-width:1px;
+  classDef pass fill:#0f5132,stroke:#0f5132,color:#ffffff,stroke-width:2px;
+
+  S1["1) Deploy N replicas<br/>docker compose / swarm / k8s"]:::step -->
+  S2["2) Load test<br/>RPS + latency + error rate"]:::step -->
+  S3["3) Emit metrics artifacts<br/>bench/results/*.json"]:::step -->
+  S4["4) Audit run manifest<br/>commit hash + config + timestamps"]:::pass
+```
+
+---
+
+# SCALE METRICS (WHAT GETS PROVEN)
+
+```mermaid
+xychart-beta
+  title "Scalability Proof Metrics (targets)"
+  x-axis ["RPS","p50(ms)","p95(ms)","p99(ms)","Error%","CPU%","RAM(MB)"]
+  y-axis "Value" 0 --> 100
+  bar [70,20,45,80,1,65,75]
+```
+
+> Replace the bar values with measured outputs from your own run artifacts.
+> The chart exists to force a *numbers-first* proof record.
+
+---
+
+# SCALABILITY PROOF DASHBOARD (VERIFIED = LOAD RUN + METRICS ARTIFACTS EXIST)
+
+Rule: “VERIFIED” means the deployment runs at N replicas and the stated artifact paths exist immediately after.
+
+| Proof Item                             | Command (example)                                                                     | Must appear (artifact proof paths)                                          | Verdict                            |
+| -------------------------------------- | ------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- | ---------------------------------- |
+| Chat scales to N replicas              | `cd chatwithbelel && docker compose up --scale chat=3 --build`                        | `bench/run_manifest.json` + service logs showing 3 replicas                 | VERIFIED when replica logs confirm |
+| Load test produces measured throughput | `python bench/load_test_chat.py --url http://localhost --seconds 60 --concurrency 50` | `bench/results/load_test.json` + `bench/results/latency.csv`                | VERIFIED when files exist          |
+| Metrics are emitted per run            | `python bench/summarize_results.py`                                                   | `bench/results/summary.json`                                                | VERIFIED when file exists          |
+| Audit binds run to commit/config       | `python bench/write_manifest.py`                                                      | `bench/run_manifest.json` contains `git_commit`, `timestamp`, `config_hash` | VERIFIED when fields exist         |
+
+**Required proof folder (drop-in standard):**
+
+```text
+bench/
+  load_test_chat.py
+  summarize_results.py
+  write_manifest.py
+  results/
+    load_test.json
+    latency.csv
+    summary.json
+  run_manifest.json
+```
+
+---
+
+# MULTIMODAL: ORGANS → CHAT (RUNNABLE INTEGRATION)
+
+Belel multimodality is expressed as organs that:
+
+* run locally as services or modules
+* emit artifacts (audio/text/image logs)
+* attach to the chat interface (inputs/outputs routed through chatwithbelel)
+
+---
+
+# MULTIMODAL MAP (VISION · VOICE · SINGING → CHAT)
+
+```mermaid
+flowchart TB
+  classDef organ fill:#0f5132,stroke:#0f5132,color:#ffffff,stroke-width:2px;
+  classDef ui fill:#1f2937,stroke:#1f2937,color:#ffffff,stroke-width:2px;
+  classDef art fill:#111827,stroke:#374151,color:#ffffff,stroke-width:1px;
+
+  V["BELEL-LIVE-VISION<br/>camera input"]:::organ --> UI["chatwithbelel<br/>session router"]:::ui
+  VO["BELEL-VOICE<br/>ASR/TTS loop"]:::organ --> UI
+  SI["BELEL-SING<br/>performance output"]:::organ --> UI
+
+  UI --> A1["artifacts/vision_sessions/*.json"]:::art
+  UI --> A2["artifacts/voice_sessions/*.json"]:::art
+  UI --> A3["artifacts/sing_sessions/*.json"]:::art
+
+  A1 --> AUD["verify_all.py · canon_audit.py"]:::ui
+  A2 --> AUD
+  A3 --> AUD
+```
+
+---
+
+# MULTIMODAL PROOF DASHBOARD (VERIFIED = RUN + ARTIFACTS EXIST)
+
+| Proof Item            | Command (example)                               | Must appear (artifact proof paths)                 | Verdict                          |
+| --------------------- | ----------------------------------------------- | -------------------------------------------------- | -------------------------------- |
+| Vision organ runs     | `cd BELEL-LIVE-VISION && python run.py`         | `artifacts/vision_sessions/*.json`                 | VERIFIED when session logs exist |
+| Voice organ runs      | `cd BELEL-VOICE && python run.py`               | `artifacts/voice_sessions/*.json`                  | VERIFIED when session logs exist |
+| Singing organ runs    | `cd BELEL-SING && python run.py`                | `artifacts/sing_sessions/*.json`                   | VERIFIED when session logs exist |
+| Organs attach to chat | `cd chatwithbelel && docker compose up --build` | chat logs show routed events + linked artifact ids | VERIFIED when routing logs exist |
+
+**Multimodal proof folder (drop-in standard):**
+
+```text
+artifacts/
+  vision_sessions/
+  voice_sessions/
+  sing_sessions/
+```
+
+---
+
+# VISUAL: SCALE vs FRONTIER (WHY THIS IS DIFFERENT)
+
+```mermaid
+flowchart LR
+  classDef left fill:#111827,stroke:#374151,color:#ffffff,stroke-width:1px;
+  classDef right fill:#0f5132,stroke:#0f5132,color:#ffffff,stroke-width:2px;
+
+  F["Frontier typical proof<br/>API feature list + claims"]:::left --> G["User must trust vendor"]:::left
+  B["Belel proof surface<br/>Run → Emit → Audit"]:::right --> H["Any evaluator can replay"]:::right
+```
+
+---
+
+# DROP-IN RULE (FOR ANY NEW CAPABILITY)
+
+A new capability enters the scoreboard only when:
+
+1. it has a runnable entrypoint command
+2. it emits artifacts to a named path
+3. it has an audit hook (verify script or manifest binding)
+4. it has a proof dashboard row (command + paths + verdict rule)
+
+That rule converts “architecture” into “execution record.”
+
+```
+::contentReference[oaicite:0]{index=0}
+```
+
+
+---
 <!-- =============================================================== -->
 
 <!-- ==================== VISUAL: FRONTIER vs BELEL ================= -->
