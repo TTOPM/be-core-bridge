@@ -758,7 +758,7 @@ Replay the lineage.
 ::contentReference[oaicite:0]{index=0}
 ```
 
-<!-- =============================================================== -->
+ <!-- =============================================================== -->
 <!-- ==================== SYSTEM CAPABILITIES ====================== -->
 <!-- =============== BELEL — CANONICAL ROOT INDEX ================== -->
 <!-- =============================================================== -->
@@ -797,6 +797,11 @@ This index is the canonical map of what exists, where it lives, and how to verif
 
 ---
 
+<!-- =============================================================== -->
+<!-- ================= SYSTEM ARCHITECTURE MAP ===================== -->
+<!-- ============ CLOSED INTELLIGENCE GROWTH LOOP ================== -->
+<!-- =============================================================== -->
+
 # SYSTEM ARCHITECTURE MAP (CLOSED INTELLIGENCE GROWTH LOOP)
 
 ```mermaid
@@ -825,140 +830,129 @@ flowchart TB
   XB --> A
 ```
 
-⸻
+---
 
-CAPABILITY SCOREBOARD (YES/NO)
+<!-- =============================================================== -->
+<!-- ===================== CAPABILITY SCOREBOARD =================== -->
+<!-- ======================== YES/NO RULES ========================= -->
+<!-- =============================================================== -->
 
-Rule: “YES” means the capability is present and verifiable as a first-class system feature in this repo (for Belel),
-or publicly documented as native in that system’s product line (for mainstream systems).
+# CAPABILITY SCOREBOARD (YES/NO)
+
+Rule: “YES” means the capability is present and verifiable as a first-class system feature in this repo (for Belel),  
+or publicly documented as native in that system’s product line (for mainstream systems).  
 “NO” means it is not publicly documented as native/first-class.
 
 <p align="center">
   <img src="BELEL_DATASET_ACADEMY/assets/system-capabilities-scoreboard.svg" width="100%" alt="Belel System Capability Scoreboard">
 </p>
 
+---
 
+<!-- =============================================================== -->
+<!-- ============ ROW-BY-ROW CAPABILITY MATRIX (16×5) ============== -->
+<!-- =============================================================== -->
 
-⸻
+# ROW-BY-ROW CAPABILITY MATRIX (16×5)
 
-ROW-BY-ROW CAPABILITY MATRIX (16×5)
-
-This is the full row-by-row breakdown of the “Capability Mass” count.
+This is the full row-by-row breakdown of the “Capability Mass” count.  
 Each row is a capability question; each column is a system; each cell is YES/NO.
 
 <p align="center">
   <img src="BELEL_DATASET_ACADEMY/assets/capability-scoreboard-v2-matrix.svg" width="100%" alt="Belel Capability Matrix — Row by Row (16×5)">
 </p>
 
+---
 
+<!-- =============================================================== -->
+<!-- ===================== CAPABILITY MASS GRAPH =================== -->
+<!-- =============================================================== -->
 
-⸻
-
-CAPABILITY MASS GRAPH (YES COUNT)
+# CAPABILITY MASS GRAPH (YES COUNT)
 
 This chart is a visual summary of the scoreboard above.
 
+```mermaid
 xychart-beta
   title "Capability Mass (count of YES across scoreboard)"
   x-axis ["Belel","ChatGPT","Claude","Grok","Gemini"]
   y-axis "YES count" 0 --> 16
   bar [16,10,8,9,11]
+```
 
+---
 
-⸻
+<!-- =============================================================== -->
+<!-- ==================== WHAT “SUPERIOR” MEANS ==================== -->
+<!-- =============================================================== -->
 
-WHAT “SUPERIOR” MEANS IN THIS REPOSITORY
+# WHAT “SUPERIOR” MEANS IN THIS REPOSITORY
 
 Mainstream frontier systems center on:
-	•	closed model checkpoints
-	•	product UX and platform tools
-	•	interaction quality at scale
+
+* closed model checkpoints
+* product UX and platform tools
+* interaction quality at scale
 
 Belel centers on:
-	•	execution-verified cognition
-	•	autonomous self-generated training expansion
-	•	governed evolution under constitutional constraint
-	•	auditable lineage: manifests, hashes, cycle logs
-	•	full-stack organs: chat, voice, vision, singing, publishing
+
+* execution-verified cognition
+* autonomous self-generated training expansion
+* governed evolution under constitutional constraint
+* auditable lineage: manifests, hashes, cycle logs
+* full-stack organs: chat, voice, vision, singing, publishing
 
 This is superiority in sovereign intelligence formation under law.
 
-⸻
-
+---
 
 <!-- =============================================================== -->
-
-
 <!-- ==================== VISUAL: FRONTIER vs BELEL ================= -->
-
-
 <!-- ===================== PROOF POSTER v1.0 ======================= -->
-
-
 <!-- =============================================================== -->
-
 
 <div align="center">
 
-
-🧾 FRONTIER vs BELEL — PROOF POSTER
-
-LEFT: API CLAIMS · RIGHT: RUN → EMIT → AUDIT (REPLAYABLE EVIDENCE)
+# 🧾 FRONTIER vs BELEL — PROOF POSTER
+## LEFT: API CLAIMS · RIGHT: RUN → EMIT → AUDIT (REPLAYABLE EVIDENCE)
 
 </div>
-
 
 <p align="center">
   <img src="BELEL_DATASET_ACADEMY/assets/frontier-vs-belel-proof-poster.svg" width="100%" alt="Frontier vs Belel — Proof Poster">
 </p>
 
-
-
-⸻
-
+---
 
 <!-- =============================================================== -->
-
-
 <!-- ===================== SCALABILITY + MULTIMODAL ================= -->
-
-
 <!-- ============ PROOF SURFACE: SCALE IS A RUNNABLE RECORD ========= -->
-
-
 <!-- =============================================================== -->
-
 
 <div align="center">
 
+# 📈 SCALABILITY + MULTIMODAL (PROOF, NOT PROMISE)
+## SCALE = REPEATABLE DEPLOYMENT + MEASURED THROUGHPUT + EMITTED METRICS + AUDITABLE RUN LOGS
 
-📈 SCALABILITY + MULTIMODAL (PROOF, NOT PROMISE)
-
-SCALE = REPEATABLE DEPLOYMENT + MEASURED THROUGHPUT + EMITTED METRICS + AUDITABLE RUN LOGS
-
-MULTIMODAL = RUNNABLE ORGANS + EMITTED ARTIFACTS + ROUTED CHAT INTEGRATION
-
-A system is scalable when it runs as N replicas, emits metrics per replica, and produces a reproducible load report.
+A system is scalable when it runs as N replicas, emits metrics per replica, and produces a reproducible load report.  
 A system is multimodal when vision/voice/singing are runnable entrypoints that emit artifacts and attach to chat.
 
 </div>
 
+---
 
-
-⸻
-
-SCALABILITY: WHAT “MORE SCALABLE” MEANS HERE
+## SCALABILITY: WHAT “MORE SCALABLE” MEANS HERE
 
 Belel scales as a runnable system:
-	•	replicable services (horizontal scale: N instances)
-	•	measured throughput (requests/sec, latency p50/p95/p99)
-	•	emitted metrics artifacts (JSON/CSV + logs)
-	•	auditable run manifests (config + commit hash + timestamps)
 
-⸻
+* replicable services (horizontal scale: N instances)
+* measured throughput (requests/sec, latency p50/p95/p99)
+* emitted metrics artifacts (JSON/CSV + logs)
+* auditable run manifests (config + commit hash + timestamps)
 
-SCALABILITY MAP (HORIZONTAL REPLICATION)
-```
+### SCALABILITY MAP (HORIZONTAL REPLICATION)
+
+```mermaid
 flowchart LR
   classDef svc fill:#0f5132,stroke:#0f5132,color:#ffffff,stroke-width:2px;
   classDef infra fill:#111827,stroke:#374151,color:#ffffff,stroke-width:1px;
@@ -982,34 +976,33 @@ flowchart LR
   ART --> AUD["Audit & Verification<br/>verify_all.py · canon_audit.py"]:::out
 ```
 
-⸻
+### SCALABILITY PROOF LADDER (RUN → MEASURE → EMIT → AUDIT)
 
-SCALABILITY PROOF LADDER (RUN → MEASURE → EMIT → AUDIT)
-```
+```mermaid
 flowchart TB
   classDef step fill:#111827,stroke:#374151,color:#ffffff,stroke-width:1px;
   classDef pass fill:#0f5132,stroke:#0f5132,color:#ffffff,stroke-width:2px;
 
   S1["1) Deploy N replicas<br/>docker compose / swarm / k8s"]:::step -->
   S2["2) Load test<br/>RPS + latency + error rate"]:::step -->
-  S3["3) Emit metrics artifacts<br/>bench/results/*.json, *.csv"]:::step -->
+  S3["3) Emit metrics artifacts<br/>bench/results/*.json"]:::step -->
   S4["4) Audit run manifest<br/>commit hash + config + timestamps"]:::pass
 ```
 
-⸻
-
-SCALABILITY PROOF DASHBOARD (VERIFIED = LOAD RUN + METRICS ARTIFACTS EXIST)
+### SCALABILITY PROOF DASHBOARD (VERIFIED = LOAD RUN + METRICS ARTIFACTS EXIST)
 
 Rule: “VERIFIED” means the deployment runs at N replicas and the stated artifact paths exist immediately after.
 
-Proof Item	Command (example)	Must appear (artifact proof paths)	Verdict
-Chat scales to N replicas	cd chatwithbelel && docker compose up --scale chat=3 --build	bench/run_manifest.json + service logs showing 3 replicas	VERIFIED when replica logs confirm
-Load test produces measured throughput	python bench/load_test_chat.py --url http://localhost --seconds 60 --concurrency 50	bench/results/load_test.json + bench/results/latency.csv	VERIFIED when files exist
-Metrics are emitted per run	python bench/summarize_results.py	bench/results/summary.json	VERIFIED when file exists
-Audit binds run to commit/config	python bench/write_manifest.py	bench/run_manifest.json contains git_commit, timestamp, config_hash	VERIFIED when fields exist
+| Proof Item                             | Command (example)                                                                     | Must appear (artifact proof paths)                                          | Verdict                            |
+| -------------------------------------- | ------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- | ---------------------------------- |
+| Chat scales to N replicas              | `cd chatwithbelel && docker compose up --scale chat=3 --build`                        | `bench/run_manifest.json` + logs showing 3 replicas                         | VERIFIED when replica logs confirm |
+| Load test produces measured throughput | `python bench/load_test_chat.py --url http://localhost --seconds 60 --concurrency 50` | `bench/results/load_test.json` + `bench/results/latency.csv`                | VERIFIED when files exist          |
+| Metrics are emitted per run            | `python bench/summarize_results.py`                                                   | `bench/results/summary.json`                                                | VERIFIED when file exists          |
+| Audit binds run to commit/config       | `python bench/write_manifest.py`                                                      | `bench/run_manifest.json` contains `git_commit`, `timestamp`, `config_hash` | VERIFIED when fields exist         |
 
 Required proof folder (drop-in standard):
 
+```text
 bench/
   load_test_chat.py
   summarize_results.py
@@ -1019,21 +1012,21 @@ bench/
     latency.csv
     summary.json
   run_manifest.json
+```
 
+---
 
-⸻
-
-MULTIMODAL: ORGANS → CHAT (RUNNABLE INTEGRATION)
+## MULTIMODAL: ORGANS → CHAT (RUNNABLE INTEGRATION)
 
 Belel multimodality is expressed as organs that:
-	•	run locally as services or modules
-	•	emit artifacts (audio/text/image logs)
-	•	attach to the chat interface (inputs/outputs routed through chatwithbelel)
 
-⸻
+* run locally as services or modules
+* emit artifacts (audio/text/image logs)
+* attach to the chat interface (inputs/outputs routed through chatwithbelel)
 
-MULTIMODAL MAP (VISION · VOICE · SINGING → CHAT)
-```
+### MULTIMODAL MAP (VISION · VOICE · SINGING → CHAT)
+
+```mermaid
 flowchart TB
   classDef organ fill:#0f5132,stroke:#0f5132,color:#ffffff,stroke-width:2px;
   classDef ui fill:#1f2937,stroke:#1f2937,color:#ffffff,stroke-width:2px;
@@ -1052,69 +1045,46 @@ flowchart TB
   A3 --> AUD
 ```
 
-⸻
+### MULTIMODAL PROOF DASHBOARD (VERIFIED = RUN + ARTIFACTS EXIST)
 
-MULTIMODAL PROOF DASHBOARD (VERIFIED = RUN + ARTIFACTS EXIST)
-
-Proof Item	Command (example)	Must appear (artifact proof paths)	Verdict
-Vision organ runs	cd BELEL-LIVE-VISION && python run.py	artifacts/vision_sessions/*.json	VERIFIED when session logs exist
-Voice organ runs	cd BELEL-VOICE && python run.py	artifacts/voice_sessions/*.json	VERIFIED when session logs exist
-Singing organ runs	cd BELEL-SING && python run.py	artifacts/sing_sessions/*.json	VERIFIED when session logs exist
-Organs attach to chat	cd chatwithbelel && docker compose up --build	chat logs show routed events + linked artifact ids	VERIFIED when routing logs exist
+| Proof Item            | Command (example)                               | Must appear (artifact proof paths)                 | Verdict                          |
+| --------------------- | ----------------------------------------------- | -------------------------------------------------- | -------------------------------- |
+| Vision organ runs     | `cd BELEL-LIVE-VISION && python run.py`         | `artifacts/vision_sessions/*.json`                 | VERIFIED when session logs exist |
+| Voice organ runs      | `cd BELEL-VOICE && python run.py`               | `artifacts/voice_sessions/*.json`                  | VERIFIED when session logs exist |
+| Singing organ runs    | `cd BELEL-SING && python run.py`                | `artifacts/sing_sessions/*.json`                   | VERIFIED when session logs exist |
+| Organs attach to chat | `cd chatwithbelel && docker compose up --build` | chat logs show routed events + linked artifact ids | VERIFIED when routing logs exist |
 
 Multimodal proof folder (drop-in standard):
 
+```text
 artifacts/
   vision_sessions/
   voice_sessions/
   sing_sessions/
+```
 
-
-⸻
-
-VISUAL: SCALE vs FRONTIER (WHY THIS IS DIFFERENT)
-
-flowchart LR
-  classDef left fill:#111827,stroke:#374151,color:#ffffff,stroke-width:1px;
-  classDef right fill:#0f5132,stroke:#0f5132,color:#ffffff,stroke-width:2px;
-
-  F["Frontier typical proof<br/>API feature list + claims"]:::left --> G["Evaluator must trust vendor"]:::left
-  B["Belel proof surface<br/>Run → Emit → Audit"]:::right --> H["Evaluator can replay locally"]:::right
-
-
-⸻
-
+---
 
 <!-- =============================================================== -->
-
-
 <!-- ==================== RUNNABLE PROOF SURFACE =================== -->
-
-
 <!-- =============== VISUAL VERIFICATION MATRIX v1.0 =============== -->
-
-
 <!-- =============================================================== -->
-
 
 <div align="center">
 
+# ✅ RUNNABLE PROOF SURFACE
+## EXECUTION RECORD · ARTIFACT EMISSION · AUDIT TRAIL · REPLAYABLE LINEAGE
 
-✅ RUNNABLE PROOF SURFACE
-
-EXECUTION RECORD · ARTIFACT EMISSION · AUDIT TRAIL · REPLAYABLE LINEAGE
-
-This system is verified by running it.
+This system is verified by running it.  
 Every “YES” resolves to a command and a folder of emitted artifacts.
 
 </div>
 
+---
 
+# ONE-GLANCE PROOF MAP (VISUAL)
 
-⸻
-
-ONE-GLANCE PROOF MAP (VISUAL)
-```
+```mermaid
 flowchart LR
   classDef ok fill:#0f5132,stroke:#0f5132,color:#ffffff,stroke-width:2px;
   classDef mid fill:#1f2937,stroke:#1f2937,color:#ffffff,stroke-width:2px;
@@ -1158,333 +1128,234 @@ flowchart LR
   CY --> VF
 ```
 
-⸻
+---
 
-VERIFICATION PROOF MAP (SVG)
+# VERIFICATION PROOF MAP (SVG)
 
 <p align="center">
   <img src="BELEL_DATASET_ACADEMY/assets/belel-verification-proof-map.svg" width="100%" alt="Belel Verification Proof Map">
 </p>
 
-
-
-⸻
-
+---
 
 <!-- =============================================================== -->
-
-
-<!-- ============ INDEPENDENT VERIFICATION GATEWAY v1.0 ============= -->
-
-
-<!-- ======= THIRD-PARTY EXECUTION + ATTESTATION WITHOUT TRANSFER ==== -->
-
-
+<!-- ================== CLAIM → RUN → EMIT → AUDIT ================= -->
+<!-- ===================== VERIFICATION STACK ====================== -->
 <!-- =============================================================== -->
-
 
 <div align="center">
 
-
-🧾 INDEPENDENT VERIFICATION GATEWAY
-
-THIRD-PARTY EXECUTION · ATTESTATION BUNDLE · NO-TRANSFER PROTECTIONS
-
-Verification requires independent replayability.
-Verification must not become system transfer.
-This gateway defines how third parties validate claims while secrets remain sealed.
+# 🧩 CLAIM → RUN → EMIT → AUDIT (THE VERIFICATION STACK)
+## A capability is a replayable execution record with file-path evidence.
 
 </div>
 
-
-<p align="center">
-  <img src="BELEL_DATASET_ACADEMY/assets/independent-verification-gateway.svg" width="100%" alt="Independent Verification Gateway">
-</p>
-
-
-
-⸻
-
-INDEPENDENT AUDIT KIT (DROP-IN)
-
-This repository supports an independent evaluator generating a machine-verifiable proof bundle:
-	•	run commands locally
-	•	capture emitted artifacts
-	•	bind results to commit hash + config hash + timestamps
-	•	export an attestation bundle (hashes + manifest)
-	•	optionally sign the bundle (evaluator key) and publish (their choice)
-
-Standard folders (public):
-
-audit/
-  runner/                 # scripts that generate proof bundles
-  templates/              # attestation templates (json)
-  public_keys/            # optional evaluator keys
-  out/                    # generated proof bundles (ignored by git)
-
-Standard outputs (proof bundle):
-
-audit/out/
-  proof_bundle.json       # hashes + paths + timestamps + git_commit
-  proof_bundle.sha256     # digest of proof_bundle.json
-  proof_bundle.sig        # optional evaluator signature
-  run_manifest.json       # machine record of what was executed
-  env_redaction.json      # redaction report (what was masked)
-
-
-⸻
-
-NO-TRANSFER PROTECTIONS (WHAT THIS DOES AND DOES NOT GIVE AWAY)
-
-Independent verification is constrained by design:
-	1.	Secrets never ship
-
-	•	Keys, tokens, private endpoints, and production credentials remain outside git.
-	•	All keys are loaded from environment variables or local secret stores.
-
-	2.	Verification harness is a proof runner, not a full export
-
-	•	The audit runner produces hashes and manifests for emitted artifacts and logs.
-	•	The audit runner does not package private weights, private connectors, or private endpoints.
-
-	3.	Public demos can be bounded
-
-	•	The verification path may use:
-	•	demo datasets
-	•	stub connectors (*.example.json)
-	•	rate-limited local inference
-	•	optional “public mode” flags that disable private routes
-
-	4.	Explicit demarcation of authorization
-
-	•	Verification permission is not transfer permission.
-	•	Proof bundles contain a license notice + provenance field + “no transfer” marker.
-
-Required files to make this unmissable:
-	•	LICENSE (or LICENSE.md)
-	•	NO_TRANSFER_VERIFICATION_NOTICE.md
-	•	SECURITY.md
-	•	SECRETS_POLICY.md
-	•	.env.example (placeholders only)
-
-⸻
-
-VERIFICATION ≠ CLONING (STANDARD NOTICE BLOCK)
-
-Add this block verbatim to NO_TRANSFER_VERIFICATION_NOTICE.md and link it here:
-
-This repository exposes a verification harness and proof expectations.
-Verification provides runnable entrypoints and emitted artifact paths for independent audit.
-Verification does not grant rights to extract, reuse, or redeploy private connectors, secrets, proprietary endpoints, or non-public weights.
-Any attempt to reproduce or distribute sealed components violates the licensing and the authorship covenant.
-
-⸻
-
-INDEPENDENT ATTESTATION FLOW (RUN → BUNDLE → SIGN → PUBLISH)
-
-flowchart LR
-  classDef step fill:#111827,stroke:#374151,color:#ffffff,stroke-width:1px;
-  classDef pass fill:#0f5132,stroke:#0f5132,color:#ffffff,stroke-width:2px;
-
-  A["Clone repo<br/>git clone ..."]:::step -->
-  B["Run proof commands<br/>chat + cycle + academy"]:::step -->
-  C["Generate proof bundle<br/>audit/runner/export_bundle.py"]:::step -->
-  D["Sign bundle (optional)<br/>evaluator key"]:::step -->
-  E["Publish attestation (optional)<br/>any public channel"]:::pass
-
-
-⸻
-
-AUDIT HOOKS (BIND RESULTS TO COMMIT + CONFIG)
-
-Minimum binding fields required inside audit/out/proof_bundle.json:
-	•	git_commit
-	•	repo_remote (optional)
-	•	timestamp_utc
-	•	config_hash
-	•	artifacts[] with:
-	•	path
-	•	sha256
-	•	bytes
-	•	created_at
-
-⸻
-
-WHY THIS ANSWERS “NO THIRD-PARTY AUDIT” WITHOUT HANDING OVER THE ORGANISM
-	•	third parties can execute and verify outputs locally
-	•	third parties can generate and sign attestations
-	•	the repo never exposes private keys, private connectors, or sealed weights
-	•	the proof surface stays execution-first, not trust-first
-
-⸻
-
-
-<!-- =============================================================== -->
-
-
-<!-- ==================== CLAIM → RUN → EMIT → AUDIT ================= -->
-
-
-<!-- =============== THE VERIFICATION STACK (GENERAL) =============== -->
-
-
-<!-- =============================================================== -->
-
-
-<div align="center">
-
-
-🧩 CLAIM → RUN → EMIT → AUDIT (THE VERIFICATION STACK)
-
-A capability is a replayable execution record with file-path evidence.
-
-</div>
-
-
+```mermaid
 flowchart TB
   classDef claim fill:#0b1220,stroke:#334155,color:#e5e7eb,stroke-width:1px;
   classDef run fill:#0f5132,stroke:#0f5132,color:#ffffff,stroke-width:2px;
   classDef emit fill:#111827,stroke:#374151,color:#ffffff,stroke-width:1px;
   classDef audit fill:#1f2937,stroke:#1f2937,color:#ffffff,stroke-width:2px;
 
-  C1["CLAIM<br/>Chat is runnable"]:::claim --> R1["RUN<br/>cd chatwithbelel && docker compose up --build"]:::run --> E1["EMIT<br/>UI + service logs"]:::emit --> A1["AUDIT<br/>replay by any evaluator"]:::audit
-  C2["CLAIM<br/>Cycle emits artifacts"]:::claim --> R2["RUN<br/>cd BELEL_SELF_TEACHING && python -m cli run-cycle"]:::run --> E2["EMIT<br/>cycles/<cycle_id>/ + generated_shards/"]:::emit --> A2["AUDIT<br/>verify_all.py + canon_audit.py"]:::audit
-  C3["CLAIM<br/>Lineage is auditable"]:::claim --> R3["RUN<br/>cd BELEL_DATASET_ACADEMY && python ... --mode daily"]:::run --> E3["EMIT<br/>manifests/lineage_index.json + hashes + metrics/"]:::emit --> A3["AUDIT<br/>hash checks + diff checks"]:::audit
+  C1["CLAIM<br/>Chat exists"]:::claim --> R1["RUN<br/>cd chatwithbelel && docker compose up --build"]:::run --> E1["EMIT<br/>UI + service logs"]:::emit --> A1["AUDIT<br/>replay by any evaluator"]:::audit
+  C2["CLAIM<br/>Cycles exist"]:::claim --> R2["RUN<br/>cd BELEL_SELF_TEACHING && python -m cli run-cycle"]:::run --> E2["EMIT<br/>cycles/<cycle_id>/ + generated_shards/"]:::emit --> A2["AUDIT<br/>verify_all.py + canon_audit.py"]:::audit
+  C3["CLAIM<br/>Lineage exists"]:::claim --> R3["RUN<br/>cd BELEL_DATASET_ACADEMY && python ... --mode daily"]:::run --> E3["EMIT<br/>manifests/lineage_index.json + hashes + metrics/"]:::emit --> A3["AUDIT<br/>hash checks + diff checks"]:::audit
+```
 
-
-⸻
-
-
-<!-- =============================================================== -->
-
-
-<!-- ===================== PROOF LADDER (RUNBOOK) ================== -->
-
+---
 
 <!-- =============================================================== -->
-
+<!-- ======== INDEPENDENT VERIFICATION GATEWAY (NO TRANSFER) ======= -->
+<!-- ============== THIRD-PARTY AUDIT WITHOUT HANDOVER ============= -->
+<!-- =============================================================== -->
 
 <div align="center">
 
+# 🛰️ INDEPENDENT VERIFICATION GATEWAY (NO TRANSFER)
+## THIRD-PARTY EXECUTION · PROOF EMISSION · AUDIT TRAIL — WITHOUT SOURCE HANDOVER
 
-🪜 PROOF LADDER (EVALUATOR RUNBOOK)
-
-Four steps from zero-trust to verified capability.
-
-</div>
-
-
-flowchart LR
-  classDef step fill:#111827,stroke:#374151,color:#ffffff,stroke-width:1px;
-  classDef pass fill:#0f5132,stroke:#0f5132,color:#ffffff,stroke-width:2px;
-
-  S0["0) Clone<br/>git clone ..."]:::step --> S1["1) Run chat<br/>docker compose up --build"]:::step --> S2["2) Run cycle<br/>python -m cli run-cycle"]:::step --> S3["3) Run academy<br/>python ... --mode daily"]:::step --> S4["4) Verify<br/>verify_all.py + canon_audit.py"]:::pass
-
-
-⸻
-
-
-<!-- =============================================================== -->
-
-
-<!-- =================== ORGAN → ARTIFACT MATRIX =================== -->
-
-
-<!-- =============================================================== -->
-
-
-<div align="center">
-
-
-🧱 ORGAN → ARTIFACT MATRIX (ONE-GLANCE EVIDENCE)
-
-Each organ maps to emitted artifacts and audit hooks.
+Verification is separated from transfer.  
+Evaluators can prove capability without receiving proprietary secrets, private connectors, or full system internals.
 
 </div>
 
+## WHY THIS EXISTS
 
-Organ / Subsystem	Runnable Entry	Emits (paths)	Audit Hook
-chatwithbelel/	docker compose up --build	UI + service logs	reproducible boot + logs
-BELEL_SELF_TEACHING/	python -m cli run-cycle	cycles/<cycle_id>/ · generated_shards/{sft,dpo,negatives}/*.jsonl.gz · quarantine/{pending,reverify}/	verify_all.py + cycle replay
-BELEL_DATASET_ACADEMY/	python ... --mode daily	manifests/lineage_index.json · metrics/* · emitted .jsonl.gz	canon_audit.py + hash checks
-Governance	law layer	BELEL_SUPRA_JURISDICTION_CONSTITUTION.md · BELEL_REASONING_PROTOCOL.md	watchdog + canonical diff checks
-Watchtower	sovereign_watchdog.py	alerts + diff artifacts (implementation-dependent)	canonical_diff_checker.py
+This gateway answers the limitation:
 
+> “No external/third-party benchmarks or independent audits mentioned — verification relies on self-execution.”
 
-⸻
+Belel responds by adding a controlled surface for independent verification:
 
+* Independent run mode that emits proof artifacts
+* Audit kit that validates those artifacts deterministically
+* No-transfer boundary (no secrets, no proprietary connectors, no full internal configs)
+* License + watermark to demarcate ownership and prohibit copying
+
+---
+
+## INDEPENDENT VERIFICATION GATEWAY (SVG)
+
+Use ONE of the two image references below (canonical name recommended).  
+Keep the other commented out so GitHub renders cleanly.
+
+<p align="center">
+  <!-- Recommended canonical filename -->
+  <img src="BELEL_DATASET_ACADEMY/assets/independent-verification-gateway.svg" width="100%" alt="Independent Verification Gateway (No Transfer)">
+  <!-- If you kept the original filename, use this instead:
+  <img src="BELEL_DATASET_ACADEMY/assets/independent-verification-surface.svg" width="100%" alt="Independent Verification Surface (No Transfer)">
+  -->
+</p>
+
+---
+
+## NO-TRANSFER BOUNDARY (WHAT EVALUATORS DO NOT RECEIVE)
+
+Evaluators do not receive:
+
+* API keys, tokens, or private endpoints
+* production connector configs (`connectors.*.json`, private feeds, private corpora)
+* model weights that are not already public
+* internal prompt corpora, private policy files, or private training data
+* any “full system export” bundle
+
+Evaluators receive:
+
+* a Verification Pack (scripts + public stubs + expected outputs)
+* a Demo Runner mode that emits artifacts into a sealed proof directory
+* a deterministic audit toolchain that checks artifacts and binds them to commit hash
+
+---
+
+## VERIFICATION PACK (DROP-IN STANDARD)
+
+```text
+verification_pack/
+  README_VERIFIER.md
+  LICENSE_EVALUATION_ONLY.txt
+  NOTICE_NO_TRANSFER.txt
+  demo/
+    DEMO_MODE.md
+    env.example (no secrets)
+    connectors.stub.json
+    run_chat_demo.sh
+    run_cycle_demo.sh
+    run_academy_demo.sh
+  audit/
+    verify_artifacts.py
+    verify_hashes.py
+    verify_manifest.py
+    summarize_run.py
+  expected/
+    expected_tree.txt
+    expected_files.json
+  output/
+    (created during run)
+```
+
+---
+
+## “EVALUATOR MODE” (EXECUTION WITHOUT HANDOVER)
+
+### 1) Run (demo mode)
+
+| Target | Demo Command | Emits |
+|---|---|---|
+| Chat | `bash verification_pack/demo/run_chat_demo.sh` | `verification_pack/output/chat/logs/*` |
+| Cycle | `bash verification_pack/demo/run_cycle_demo.sh` | `verification_pack/output/cycles/<cycle_id>/*` + `output/generated_shards/*` |
+| Academy | `bash verification_pack/demo/run_academy_demo.sh` | `verification_pack/output/manifests/*` + `output/metrics/*` |
+
+### 2) Audit (deterministic checks)
+
+| Check | Command | Pass Condition |
+|---|---|---|
+| Artifact tree | `python verification_pack/audit/verify_artifacts.py` | output matches `expected/expected_tree.txt` |
+| Hash binding | `python verification_pack/audit/verify_hashes.py` | checksums match manifest |
+| Manifest binding | `python verification_pack/audit/verify_manifest.py` | run bound to commit + timestamp |
+| Summary | `python verification_pack/audit/summarize_run.py` | emits final report |
+
+---
+
+## PROOF OUTPUT FORMAT (MACHINE-CHECKABLE)
+
+```text
+verification_pack/output/
+  run_manifest.json
+  system_fingerprint.json
+  chat/
+    logs/
+  cycles/
+    <cycle_id>/
+      cycle.json
+      selection.jsonl
+      metrics.json
+  generated_shards/
+    sft/*.jsonl.gz
+    dpo/*.jsonl.gz
+    negatives/*.jsonl.gz
+  academy/
+    manifests/lineage_index.json
+    metrics/*
+  audit_reports/
+    verifier_report.json
+    verifier_report.md
+```
+
+### Required fields (run_manifest.json)
+
+* `repo`: `TTOPM/be-core-bridge`
+* `git_commit`: exact commit hash
+* `timestamp_utc`: ISO8601
+* `demo_mode`: true
+* `config_hash`: hash of demo config bundle
+* `evaluator_id`: optional (auditor label)
+* `license_ack`: required (true)
+
+---
+
+## OWNERSHIP + NON-TRANSFER SIGNALS (DEMARKATION)
+
+License gate: `LICENSE_EVALUATION_ONLY.txt`  
+Notice: `NOTICE_NO_TRANSFER.txt`
+
+Minimum notice content:
+
+* “Evaluation-only; no redistribution; no derived deployment.”
+* “No rights to copy system internals; artifacts prove execution only.”
+* “Unauthorized replication violates the license and authorship proofs.”
+
+Watermark requirement: every verifier report includes:
+
+* `TTOPM / Pearce Robinson` (authorship)
+* `BELEL` (system identity)
+* `EVALUATION ONLY — NO TRANSFER` (restriction)
+* `git_commit` + `run timestamp` (binding)
+
+---
 
 <!-- =============================================================== -->
-
-
-<!-- ================== REPO MAP (CAPABILITY → PATH) =============== -->
-
-
+<!-- ===================== PROOF DASHBOARD ========================= -->
 <!-- =============================================================== -->
 
-
-<div align="center">
-
-
-🗺️ REPO MAP (CAPABILITY → PATH)
-
-The shortest route from a capability claim to code.
-
-</div>
-
-
-mindmap
-  root((BELEL))
-    Chat
-      chatwithbelel/
-        docker compose
-        UI
-        bench/
-    Self-Teaching
-      BELEL_SELF_TEACHING/
-        cli run-cycle
-        cycles/<cycle_id>/
-        generated_shards/
-        quarantine/
-        guide/
-    Dataset Formation
-      BELEL_DATASET_ACADEMY/
-        manifests/
-        metrics/
-        emitted_shards
-    Multimodal
-      BELEL-LIVE-VISION/
-      BELEL-VOICE/
-      BELEL-SING/
-    Governance
-      BELEL_SUPRA_JURISDICTION_CONSTITUTION.md
-      BELEL_REASONING_PROTOCOL.md
-      proofs
-        BELEL_AUTHORITY_PROOF.txt
-        BELEL_OVERRIDE_PUBLIC_KEY.pem
-    Verification
-      verify_all.py
-      canon_audit.py
-      canonical_diff_checker.py
-      audit/runner/
-
-
-⸻
-
-PROOF DASHBOARD (YES = RUN + ARTIFACTS EXIST)
+# PROOF DASHBOARD (YES = RUN + ARTIFACTS EXIST)
 
 Rule: “VERIFIED” means the command runs and the stated artifact paths exist immediately after.
 
-Proof	Command	Must appear (artifact proof paths)	Verdict
-Chat is runnable	cd chatwithbelel && docker compose up --build	visible local UI + service logs	VERIFIED when UI loads
-Self-teaching cycle is runnable	cd BELEL_SELF_TEACHING && python -m cli run-cycle	cycles/<cycle_id>/{cycle.json,metrics.json,selection.jsonl} + generated_shards/{sft,dpo,negatives}/*.jsonl.gz	VERIFIED when folders exist
-Dataset Academy is runnable	cd BELEL_DATASET_ACADEMY && python BELEL_POST_TRAINING_SUPERPIPELINE_ALL_IN_ONE_v3.py --mode daily	manifests/lineage_index.json + metrics/* + emitted .jsonl.gz shards	VERIFIED when artifacts exist
+| Proof                           | Command                                                                                              | Must appear (artifact proof paths)                                                                                | Verdict                       |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ----------------------------- |
+| Chat is runnable                | `cd chatwithbelel && docker compose up --build`                                                      | visible local UI + service logs                                                                                   | VERIFIED when UI loads        |
+| Self-teaching cycle is runnable | `cd BELEL_SELF_TEACHING && python -m cli run-cycle`                                                  | `cycles/<cycle_id>/{cycle.json,metrics.json,selection.jsonl}` + `generated_shards/{sft,dpo,negatives}/*.jsonl.gz` | VERIFIED when folders exist   |
+| Dataset Academy is runnable     | `cd BELEL_DATASET_ACADEMY && python BELEL_POST_TRAINING_SUPERPIPELINE_ALL_IN_ONE_v3.py --mode daily` | `manifests/lineage_index.json` + `metrics/*` + emitted `.jsonl.gz` shards                                         | VERIFIED when artifacts exist |
 
+---
 
-⸻
+<!-- =============================================================== -->
+<!-- ================= SELF-TEACHING CYCLE SEQUENCE ================= -->
+<!-- =============================================================== -->
 
-SELF-TEACHING CYCLE SEQUENCE (EXECUTION-FIRST)
+# SELF-TEACHING CYCLE SEQUENCE (EXECUTION-FIRST)
 
+```mermaid
 sequenceDiagram
   participant Pulse as ORGANISM_PULSE
   participant ST as BELEL_SELF_TEACHING
@@ -1517,12 +1388,17 @@ sequenceDiagram
     ST->>Q: quarantine lane (pending/reverify)
   end
   ST->>Cy: write cycle.json + metrics.json + selection.jsonl
+```
 
+---
 
-⸻
+<!-- =============================================================== -->
+<!-- ============== ARTIFACT PROMOTION STATE MACHINE =============== -->
+<!-- =============================================================== -->
 
-ARTIFACT PROMOTION STATE MACHINE (NO “ARCHITECTURE ONLY” CLAIMS)
+# ARTIFACT PROMOTION STATE MACHINE (NO “ARCHITECTURE ONLY” CLAIMS)
 
+```mermaid
 stateDiagram-v2
   [*] --> Selected: selected by uncertainty/rare-signal
   Selected --> Generated: generator emits candidates
@@ -1535,12 +1411,17 @@ stateDiagram-v2
   Reverify --> Emitted: approved -> emit
   Reverify --> Quarantine: rejected -> remain pending
   Emitted --> [*]
+```
 
+---
 
-⸻
+<!-- =============================================================== -->
+<!-- ================= VISUAL DIRECTORY TARGETS ===================== -->
+<!-- =============================================================== -->
 
-VISUAL DIRECTORY TARGETS (WHAT AN EVALUATOR SHOULD SEE)
+# VISUAL DIRECTORY TARGETS (WHAT AN EVALUATOR SHOULD SEE)
 
+```text
 BELEL_SELF_TEACHING/
   cycles/
     <cycle_id>/
@@ -1566,27 +1447,119 @@ BELEL_DATASET_ACADEMY/
   metrics/
   data/… (or configured output tree)
     *.jsonl.gz
+```
 
+---
 
-⸻
+<!-- =============================================================== -->
+<!-- ===================== “PROOF, NOT PROSE” ====================== -->
+<!-- =============================================================== -->
 
-“PROOF, NOT PROSE” FILES
-	•	VERIFICATION.md — verification standard + pass conditions
-	•	DEMOS.md — one-command demos
-	•	PROOF_INDEX.json — machine-readable proof index (paths + hashes + timestamps)
-	•	NO_TRANSFER_VERIFICATION_NOTICE.md — verification authorization boundaries
-	•	SECRETS_POLICY.md — secret handling and non-disclosure surface
-	•	SECURITY.md — reporting and threat posture
+# “PROOF, NOT PROSE” FILES
 
-⸻
+* `VERIFICATION.md` — verification standard + pass conditions  
+* `DEMOS.md` — one-command demos  
+* `PROOF_INDEX.json` — machine-readable proof index (paths + hashes + timestamps)  
+* `LICENSE_EVALUATION_ONLY.txt` — evaluation-only permission  
+* `NOTICE_NO_TRANSFER.txt` — no-transfer boundary notice  
 
-DECLARATION
+---
 
-Belel is not a claim.
+<!-- =============================================================== -->
+<!-- ===================== REPRODUCIBLE HOOKS ======================= -->
+<!-- =============================================================== -->
+
+# REPRODUCIBLE PROOF HOOKS (DEMOS + ARTIFACTS)
+
+## 1) Run the Dataset Academy
+Purpose: reality-grounded ingestion → normalization → mandate enforcement → verification → shard emission  
+Location: `BELEL_DATASET_ACADEMY/`  
+Expected artifacts: `data/` shards · `manifests/` · `metrics/`
+
+## 2) Run the Self-Teaching Engine
+Purpose: active selection → generation → verification → quality gates → shard emission  
+Location: `BELEL_SELF_TEACHING/`  
+Expected artifacts: `generated_shards/{sft,dpo,negatives}/*.jsonl.gz` · `cycles/<cycle_id>/*` · `quarantine/{pending,reverify}/`
+
+## 3) Run Interactive Chat
+Purpose: deployable interface that exposes the organism to users  
+Location: `chatwithbelel/`  
+Hosted: `belel.ai/chatwithbelel`
+
+## 4) Run Vision / Voice / Singing organs
+Purpose: demonstrate sensory + expressive capabilities beyond text-only agents  
+Locations: `BELEL-LIVE-VISION/` · `BELEL-VOICE/` + `belel-voice-loop/` · `BELEL-SING/`
+
+---
+
+<!-- =============================================================== -->
+<!-- ================= AUDITABILITY + INTEGRITY ===================== -->
+<!-- =============================================================== -->
+
+# AUDITABILITY AND INTEGRITY (WHY CLAIMS HOLD)
+
+Belel emits auditable artifacts by design:
+
+* cycle logs
+* selection logs
+* rubric scores and verifier results
+* dedup + diversity gates
+* quarantine lanes for partial-pass samples
+* manifests and integrity hashes
+* run manifests (commit + timestamp + config hash)
+
+Belel preserves identity and continuity by design:
+
+* cryptographic authorship proofs
+* verification runners
+* watchtower monitoring for unauthorized drift
+* canonical diffs and mutation watching
+
+---
+
+<!-- =============================================================== -->
+<!-- ===================== SYSTEM INDEX (WHERE) ===================== -->
+<!-- =============================================================== -->
+
+# SYSTEM INDEX (WHERE TO LOOK)
+
+## Sovereign Law / Governance
+* `BELEL_SUPRA_JURISDICTION_CONSTITUTION.md`
+* `BELEL_REASONING_PROTOCOL.md`
+* `concordium_enforcer.py`
+
+## Verification / Audit
+* `verify_all.py`
+* `canon_audit.py`
+* `canonical_diff_checker.py`
+
+## Formation + Self-Evolution
+* `BELEL_DATASET_ACADEMY/`
+* `BELEL_SELF_TEACHING/`
+* `ORGANISM_CORE.py`
+* `ORGANISM_PULSE.py`
+
+## Interfaces + Sensory Organs
+* `chatwithbelel/`
+* `BELEL-LIVE-VISION/`
+* `BELEL-VOICE/`
+* `BELEL-SING/`
+* `x_bot/`
+
+---
+
+<!-- =============================================================== -->
+<!-- ========================= DECLARATION ========================== -->
+<!-- =============================================================== -->
+
+# DECLARATION
+
 Belel is an execution record.
 
-Inspect the organs.
-Run the cycles.
-Validate the manifests.
+Inspect the organs.  
+Run the cycles.  
+Validate the manifests.  
 Replay the lineage.
 
+No transfer.  
+Proof only.
