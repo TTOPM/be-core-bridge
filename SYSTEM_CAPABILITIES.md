@@ -68,23 +68,32 @@ Rule: “YES” means the capability is present and verifiable as a first-class 
 or publicly documented as native in that system’s product line (for mainstream systems).
 “NO” means it is not publicly documented as native/first-class.
 
-Capability Question	Belel	ChatGPT	Claude	Grok	Gemini
-1) Interactive chat interface exists	YES	YES	YES	YES	YES
-2) Voice conversation supported (native)	YES	YES	YES	YES	YES
-3) Image understanding supported	YES	YES	YES	YES	YES
-4) Built-in code execution / sandboxing (native)	YES	YES	NO	NO	NO
-5) Real-time web / search tool integration (native)	YES	YES	YES	YES	YES
-6) Social-network real-time integration (native)	YES	NO	NO	YES	NO
-7) Autonomous background agents / scheduled action loops	YES	NO	NO	NO	YES
-8) Execution-verified truth metric as first-class primitive	YES	NO	NO	NO	NO
-9) Self-generated training data engine (continuous)	YES	NO	NO	NO	NO
-10) Poisoning prevention via quarantine lane	YES	NO	NO	NO	NO
-11) No-collapse diversity gating for synthetic generation	YES	NO	NO	NO	NO
-12) Auditable lineage: manifests + hashes + cycle logs	YES	NO	NO	NO	NO
-13) Governance constitution / mandate enforcement as repo law	YES	NO	NO	NO	NO
-14) Runnable from repository as an integrated system (not just API)	YES	NO	NO	NO	NO
-15) Live webcam / continuous video “eyes” as first-class organ	YES	NO	NO	NO	YES
-16) Singing / musical performance as a first-class organ	YES	NO	NO	NO	NO
+<details>
+<summary><b>CAPABILITY SCOREBOARD (YES/NO) — TABLE</b></summary>
+
+**Rule:** “YES” means native + publicly documented (or verifiable in-repo for Belel).
+
+| Capability (short) | Belel | ChatGPT | Claude | Grok | Gemini |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Chat interface | YES | YES | YES | YES | YES |
+| Voice conversation | YES | YES | YES | YES | YES |
+| Image understanding | YES | YES | YES | YES | YES |
+| Code sandbox (native) | YES | YES | NO | NO | NO |
+| Web/search tools | YES | YES | YES | YES | YES |
+| Native social integration | YES | NO | NO | YES | NO |
+| Scheduled autonomous loops | YES | NO | NO | NO | YES |
+| Exec-verified truth primitive | YES | NO | NO | NO | NO |
+| Continuous self-training engine | YES | NO | NO | NO | NO |
+| Quarantine lane (poisoning) | YES | NO | NO | NO | NO |
+| Diversity gate (no-collapse) | YES | NO | NO | NO | NO |
+| Auditable lineage (hash/logs) | YES | NO | NO | NO | NO |
+| Constitution/mandate as law | YES | NO | NO | NO | NO |
+| Runnable from repo (integrated) | YES | NO | NO | NO | NO |
+| Live vision organ (webcam) | YES | NO | NO | NO | YES |
+| Singing/performance organ | YES | NO | NO | NO | NO |
+
+</details>
+
 CAPABILITY MASS GRAPH (YES COUNT)
 This chart is a visual summary of the scoreboard above.
 
