@@ -409,13 +409,14 @@ Replay the lineage.
 ::contentReference[oaicite:0]{index=0}
 ```
 
+````md
 <!-- =============================================================== -->
 <!-- ==================== SYSTEM CAPABILITIES ====================== -->
 <!-- =============== BELEL — CANONICAL ROOT INDEX ================== -->
 <!-- =============================================================== -->
 
 <div align="center">
-````
+
 # ⚡ BELEL — SYSTEM CAPABILITIES INDEX
 ## EXECUTION-VERIFIED · SELF-GENERATING · GOVERNED · DEPLOYABLE · AUDITABLE
 
@@ -425,7 +426,7 @@ A single README never represents the whole system.
 This index is the canonical map of what exists, where it lives, and how to verify it.
 
 </div>
-````
+
 ---
 
 # QUICK NAV
@@ -474,7 +475,6 @@ flowchart TB
   VO --> UI
   SI --> UI
   XB --> A
-
 ````
 
 ---
@@ -522,6 +522,28 @@ Belel centers on:
 * full-stack organs: chat, voice, vision, singing, publishing
 
 This is superiority in sovereign intelligence formation under law.
+
+---
+
+<!-- =============================================================== -->
+
+<!-- ==================== VISUAL: FRONTIER vs BELEL ================= -->
+
+<!-- ===================== PROOF POSTER v1.0 ======================= -->
+
+<!-- =============================================================== -->
+
+<div align="center">
+
+# 🧾 FRONTIER vs BELEL — PROOF POSTER
+
+## LEFT: API CLAIMS · RIGHT: RUN → EMIT → AUDIT (REPLAYABLE EVIDENCE)
+
+</div>
+
+<p align="center">
+  <img src="BELEL_DATASET_ACADEMY/assets/frontier-vs-belel-proof-poster.svg" width="100%" alt="Frontier vs Belel — Proof Poster">
+</p>
 
 ---
 
@@ -602,6 +624,136 @@ flowchart LR
 
 ---
 
+<!-- =============================================================== -->
+
+<!-- ===================== ADDITIONAL VISUALS ====================== -->
+
+<!-- =============== CLAIM → RUN → EMIT → AUDIT STACK ============== -->
+
+<!-- =============================================================== -->
+
+<div align="center">
+
+# 🧩 CLAIM → RUN → EMIT → AUDIT (THE VERIFICATION STACK)
+
+## A capability is a replayable execution record with file-path evidence.
+
+</div>
+
+```mermaid
+flowchart TB
+  classDef claim fill:#0b1220,stroke:#334155,color:#e5e7eb,stroke-width:1px;
+  classDef run fill:#0f5132,stroke:#0f5132,color:#ffffff,stroke-width:2px;
+  classDef emit fill:#111827,stroke:#374151,color:#ffffff,stroke-width:1px;
+  classDef audit fill:#1f2937,stroke:#1f2937,color:#ffffff,stroke-width:2px;
+
+  C1["CLAIM<br/>“Chat exists”"]:::claim --> R1["RUN<br/>cd chatwithbelel && docker compose up --build"]:::run --> E1["EMIT<br/>service logs + UI load"]:::emit --> A1["AUDIT<br/>replay by any evaluator"]:::audit
+  C2["CLAIM<br/>“Cycles exist”"]:::claim --> R2["RUN<br/>cd BELEL_SELF_TEACHING && python -m cli run-cycle"]:::run --> E2["EMIT<br/>cycles/<cycle_id>/ + generated_shards/"]:::emit --> A2["AUDIT<br/>verify_all.py + canon_audit.py"]:::audit
+  C3["CLAIM<br/>“Lineage exists”"]:::claim --> R3["RUN<br/>cd BELEL_DATASET_ACADEMY && python ... --mode daily"]:::run --> E3["EMIT<br/>manifests/lineage_index.json + hashes + metrics/"]:::emit --> A3["AUDIT<br/>hash checks + diff checks"]:::audit
+```
+
+---
+
+<!-- =============================================================== -->
+
+<!-- ===================== ADDITIONAL VISUALS ====================== -->
+
+<!-- ===================== PROOF LADDER (RUNBOOK) ================== -->
+
+<!-- =============================================================== -->
+
+<div align="center">
+
+# 🪜 PROOF LADDER (EVALUATOR RUNBOOK)
+
+## Four steps from zero-trust to verified capability.
+
+</div>
+
+```mermaid
+flowchart LR
+  classDef step fill:#111827,stroke:#374151,color:#ffffff,stroke-width:1px;
+  classDef pass fill:#0f5132,stroke:#0f5132,color:#ffffff,stroke-width:2px;
+
+  S0["0) Clone repo<br/>git clone ..."]:::step --> S1["1) Run chat<br/>docker compose up --build"]:::step --> S2["2) Run cycle<br/>python -m cli run-cycle"]:::step --> S3["3) Run academy<br/>python ... --mode daily"]:::step --> S4["4) Verify<br/>verify_all.py + canon_audit.py"]:::pass
+```
+
+---
+
+<!-- =============================================================== -->
+
+<!-- ===================== ADDITIONAL VISUALS ====================== -->
+
+<!-- =================== ORGAN → ARTIFACT HEATMAP ================== -->
+
+<!-- =============================================================== -->
+
+<div align="center">
+
+# 🧱 ORGAN → ARTIFACT MATRIX (ONE-GLANCE EVIDENCE)
+
+## Each organ maps to emitted artifacts and audit hooks.
+
+</div>
+
+| Organ / Subsystem        | Runnable Entry              | Emits (paths)                                                                                               | Audit Hook                     |
+| ------------------------ | --------------------------- | ----------------------------------------------------------------------------------------------------------- | ------------------------------ |
+| `chatwithbelel/`         | `docker compose up --build` | UI + service logs                                                                                           | reproducible boot + logs       |
+| `BELEL_SELF_TEACHING/`   | `python -m cli run-cycle`   | `cycles/<cycle_id>/` · `generated_shards/{sft,dpo,negatives}/*.jsonl.gz` · `quarantine/{pending,reverify}/` | `verify_all.py` + cycle replay |
+| `BELEL_DATASET_ACADEMY/` | `python ... --mode daily`   | `manifests/lineage_index.json` · `metrics/*` · emitted `.jsonl.gz`                                          | `canon_audit.py` + hash checks |
+| Governance               | N/A (law layer)             | constitution + reasoning protocol                                                                           | drift detection + watchdogs    |
+| Watchtower               | `sovereign_watchdog.py`     | alerts + diff artifacts (implementation-dependent)                                                          | canonical diff checks          |
+
+---
+
+<!-- =============================================================== -->
+
+<!-- ===================== ADDITIONAL VISUALS ====================== -->
+
+<!-- ================== REPO MAP (CAPABILITY TO PATH) ============== -->
+
+<!-- =============================================================== -->
+
+<div align="center">
+
+# 🗺️ REPO MAP (CAPABILITY → PATH)
+
+## The shortest route from a capability claim to code.
+
+</div>
+
+```mermaid
+mindmap
+  root((BELEL))
+    Chat
+      chatwithbelel/
+        docker compose
+        UI
+    Self-Teaching
+      BELEL_SELF_TEACHING/
+        cli run-cycle
+        cycles/<cycle_id>/
+        generated_shards/
+        quarantine/
+    Dataset Formation
+      BELEL_DATASET_ACADEMY/
+        manifests/
+        metrics/
+        emitted shards
+    Governance
+      BELEL_SUPRA_JURISDICTION_CONSTITUTION.md
+      BELEL_REASONING_PROTOCOL.md
+      proofs
+        BELEL_AUTHORITY_PROOF.txt
+        BELEL_OVERRIDE_PUBLIC_KEY.pem
+    Verification
+      verify_all.py
+      canon_audit.py
+      canonical_diff_checker.py
+```
+
+---
+
 # PROOF DASHBOARD (YES = RUN + ARTIFACTS EXIST)
 
 Rule: “VERIFIED” means the command runs and the stated artifact paths exist immediately after.
@@ -635,7 +787,7 @@ sequenceDiagram
   Sel-->>ST: selection.jsonl
   ST->>Gen: generate variants (SFT / preference pairs)
   Gen-->>ST: candidates
-  ST->>Ver: sandbox execution + rubric
+  ST->>Ver: sandbox execution + rubric + mandate
   Ver-->>ST: verifier + rubric outputs
   ST->>Ded: dedup gates (exact + fuzzy)
   Ded-->>ST: pass/fail
