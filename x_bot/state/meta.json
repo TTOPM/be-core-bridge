@@ -1,16 +1,18 @@
 {
-  "last_post_time": null,
-  "last_post_type": null,
+  "last_post_time": "2026-02-01T22:00:16.359904+00:00",
+  "last_post_type": "analysis",
   "last_weekly_summary": null,
   "last_monthly_summary": null,
   "last_prayer": null,
   "last_prayer_date": null,
   "silent_day_active": false,
   "witness_streak": 0,
-  "day_post_count": 0,
-  "day_key": null,
-  "recent_entry_keys": [],
-  "last_post_hash": null,
-  "last_entry_link": null,
-  "last_entry_title": null
+  "day_post_count": 1,
+  "day_key": "2026-02-01",
+  "recent_entry_keys": [
+    "54eb19ea69d497bafad9bc99882dadfae495fdd2"
+  ],
+  "last_post_hash": "a8b6734e02e6010decf5045d8eb1afd9116988a7",
+  "last_entry_link": "https://www.ft.com/content/64ac36ca-10e4-4cec-97f5-09e20e1364eb",
+  "last_entry_title": "Europe’s gas storage falls to lowest level since 2022"
 }
