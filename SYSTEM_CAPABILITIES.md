@@ -129,7 +129,7 @@ This is superiority in sovereign intelligence formation under law.
 **A system is multimodal when vision/voice/singing are runnable entrypoints that emit artifacts and attach to chat.**
 
 </div>
-
+````
 ---
 
 # SCALABILITY: WHAT “MORE SCALABLE” MEANS HERE
