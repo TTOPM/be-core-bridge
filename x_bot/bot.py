@@ -46,6 +46,10 @@ QUESTION_PROB = 0.18           # chance to end analysis with a question
 LINK_ONLY_PROB = 0.12          # sometimes: share link + tight comment (article-forward)
 DOMAIN_ATTRIBUTION_PROB = 0.25 # sometimes: "via <domain>" tag
 
+# Self-correct behavior
+SELF_CORRECT_MAX_PER_DAY = 1   # delete + repost at most once per day
+QUALITY_CHECK_ENABLED = True   # hard gate: if incoherent, self-correct
+
 # ---- Content range controls (prevents doom-only) ----
 MODE_WEIGHTS_MORNING = {
     "analysis": 0.44,     # news read + context + judgment
@@ -166,13 +170,13 @@ def month_key(d: dt.datetime) -> str:
     return d.strftime("%Y-%m")
 
 def clamp(text: str, max_len=MAX_LEN) -> str:
-    text = re.sub(r"\s+", " ", text.replace("\n", " ").strip())
+    text = re.sub(r"\s+", " ", (text or "").replace("\n", " ").strip())
     if len(text) <= max_len:
         return text
     return text[: max_len - 1].rstrip() + "…"
 
 def sha1(text: str) -> str:
-    return hashlib.sha1(text.encode("utf-8")).hexdigest()
+    return hashlib.sha1((text or "").encode("utf-8")).hexdigest()
 
 def read_lines(path: Path):
     if not path.exists():
@@ -195,7 +199,6 @@ def save_json(path: Path, data):
     path.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
 
 def get_slot(now: dt.datetime) -> str:
-    # you already run twice per day; slot stays useful for tone
     return "morning" if now.hour < 15 else "evening"
 
 def weighted_choice(weights: dict) -> str:
@@ -206,6 +209,117 @@ def weighted_choice(weights: dict) -> str:
         if r <= upto:
             return k
     return list(weights.keys())[-1]
+
+
+# ==============================
+# Coherence + Self-correct
+# ==============================
+def normalize_for_compare(s: str) -> str:
+    s = (s or "").strip().lower()
+    s = re.sub(r"\s+", " ", s)
+    return s
+
+def detect_duplicate_phrases(text: str, min_len: int = 34) -> bool:
+    """
+    Flags repeated long sentence fragments (e.g., headline repeated).
+    """
+    t = normalize_for_compare(text)
+    parts = re.split(r"[.!?]\s+", t)
+    parts = [p.strip() for p in parts if len(p.strip()) >= min_len]
+
+    seen = set()
+    for p in parts:
+        if p in seen:
+            return True
+        seen.add(p)
+    return False
+
+def looks_incoherent(text: str) -> tuple[bool, list[str]]:
+    """
+    Deterministic quality rules:
+    - repeated sentence fragments
+    - weird lowercase starts after punctuation
+    - too many ellipses
+    - too short
+    """
+    reasons = []
+    t = (text or "").strip()
+
+    if len(t) < 42:
+        reasons.append("too_short")
+    if detect_duplicate_phrases(t):
+        reasons.append("duplicate_phrase")
+    if re.search(r"[.!?]\s+[a-z]", t):
+        reasons.append("lowercase_sentence_start")
+    if t.count("…") >= 2:
+        reasons.append("too_many_ellipses")
+
+    return (len(reasons) > 0), reasons
+
+def resolve_coherence(text: str) -> str:
+    """
+    Post-finalizer: removes duplicate sentences, normalizes starts, merges tiny fragments.
+    """
+    if not text:
+        return text
+
+    t = re.sub(r"\s+", " ", text.strip())
+    chunks = re.split(r"(?<=[.!?…])\s+", t)
+    chunks = [c.strip() for c in chunks if c.strip()]
+
+    # drop exact duplicates case-insensitive
+    out = []
+    seen = set()
+    for c in chunks:
+        k = normalize_for_compare(c)
+        if k in seen:
+            continue
+        seen.add(k)
+        out.append(c)
+
+    # capitalize starts
+    fixed = []
+    for c in out:
+        if c and c[0].isalpha():
+            c = c[0].upper() + c[1:]
+        fixed.append(c)
+
+    # merge short fragments into previous sentence
+    merged = []
+    for c in fixed:
+        if merged and len(c) < 34:
+            merged[-1] = merged[-1].rstrip(".") + " — " + c[0].lower() + c[1:]
+            if not merged[-1].endswith((".", "!", "?", "…")):
+                merged[-1] += "."
+        else:
+            merged.append(c)
+
+    return " ".join(merged).strip()
+
+def reset_self_correct_counter_if_new_day(meta: dict, now: dt.datetime):
+    today = day_key(now)
+    if meta.get("self_correct_last_run") != today:
+        meta["self_correct_last_run"] = today
+        meta["self_correct_attempts_today"] = 0
+
+def can_self_correct_today(meta: dict) -> bool:
+    return int(meta.get("self_correct_attempts_today", 0)) < SELF_CORRECT_MAX_PER_DAY
+
+def bump_self_correct_today(meta: dict):
+    meta["self_correct_attempts_today"] = int(meta.get("self_correct_attempts_today", 0)) + 1
+
+def regenerate_once(meta: dict, entries: list[dict], prompts: list[str], voice_lines: list[str], questions: list[str], slot: str) -> str:
+    """
+    One deterministic fallback generation used only if the post fails quality twice.
+    """
+    # Prefer a fresh entry if possible
+    desired = ["caribbean", "governance", "rights", "international", "law", "security", "technology", "economy", "general"]
+    entry = select_entry(meta, entries, desired_topics=desired)
+    if entry:
+        remember_entry(meta, entry)
+        return build_analysis_post(meta, entry, prompts, voice_lines, questions, slot)
+    # fallback stable line
+    return "I keep record. I keep watch. Receipts decide what is real."
 
 
 # ==============================
@@ -257,12 +371,20 @@ def load_meta() -> dict:
     meta.setdefault("last_entry_link", None)
     meta.setdefault("last_entry_title", None)
 
+    # self-correct / quality
+    meta.setdefault("last_tweet_id", None)
+    meta.setdefault("last_post_text", None)
+    meta.setdefault("last_post_quality_failures", [])
+    meta.setdefault("self_correct_last_run", None)
+    meta.setdefault("self_correct_attempts_today", 0)
+
     return meta
 
 def save_meta(meta: dict):
     save_json(META_FILE, meta)
 
-def append_run_log(now: dt.datetime, slot: str, post: str, tags: list, topic: str | None = None, entry_link: str | None = None):
+def append_run_log(now: dt.datetime, slot: str, post: str, tags: list,
+                   topic: str | None = None, entry_link: str | None = None, tweet_id: str | None = None):
     log = load_json(RUN_LOG_FILE, [])
     if not isinstance(log, list):
         log = []
@@ -273,10 +395,11 @@ def append_run_log(now: dt.datetime, slot: str, post: str, tags: list, topic: st
         "topic": topic,
         "tags": tags,
         "entry_link": entry_link,
-        "post": post[:220]
+        "tweet_id": tweet_id,
+        "post": (post or "")[:220]
     })
 
-    log = log[-180:]  # keep longer history
+    log = log[-200:]
     save_json(RUN_LOG_FILE, log)
 
 
@@ -349,7 +472,6 @@ def is_approved_domain(link: str, approved_domains: list[str]) -> bool:
             return True
     return False
 
-
 def pick_entries(feeds_file: Path, approved_domains: list[str], limit_feeds=12, per_feed=8):
     feeds = read_lines(feeds_file)
     if not feeds:
@@ -400,20 +522,21 @@ def select_entry(meta: dict, entries: list[dict], desired_topics: list[str]) -> 
         return None
 
     recent_keys = set(meta.get("recent_entry_keys") or [])
+
     def entry_key(e: dict) -> str:
-        return sha1((e.get("title","") + "|" + (e.get("link","") or "")).lower())
+        return sha1((e.get("title", "") + "|" + (e.get("link", "") or "")).lower())
 
     pool = [e for e in entries if e.get("topic") in desired_topics] or entries[:]
     pool2 = [e for e in pool if entry_key(e) not in recent_keys] or pool
 
-    # Slight preference for approved domains (quality + lower spam risk)
+    # preference for approved domains
     approved = [e for e in pool2 if e.get("approved")]
     if approved and random.random() < 0.65:
         return random.choice(approved)
     return random.choice(pool2)
 
 def remember_entry(meta: dict, entry: dict):
-    key = sha1((entry.get("title","") + "|" + (entry.get("link","") or "")).lower())
+    key = sha1((entry.get("title", "") + "|" + (entry.get("link", "") or "")).lower())
     recent = meta.get("recent_entry_keys") or []
     recent.append(key)
     meta["recent_entry_keys"] = recent[-RECENT_ENTRY_BLOCK:]
@@ -479,7 +602,6 @@ def memory_echo_line(matched_tags: set) -> str | None:
 # Voice / Style
 # ==============================
 def voice_open(slot: str, voice_lines: list[str]) -> str:
-    # no labels like "Signal:" — uses natural starters
     if voice_lines:
         return random.choice(voice_lines).strip()
     return random.choice([
@@ -493,7 +615,7 @@ def voice_open(slot: str, voice_lines: list[str]) -> str:
 def maybe_question(topic: str, questions: list[str]) -> str | None:
     if random.random() >= QUESTION_PROB:
         return None
-    # Prefer topic-aligned questions if provided as tagged lines: "topic: question..."
+
     tagged = []
     for q in questions:
         if ":" in q:
@@ -502,10 +624,11 @@ def maybe_question(topic: str, questions: list[str]) -> str | None:
                 tagged.append(body.strip())
     if tagged:
         return random.choice(tagged)
-    # fallback general question
+
     general = [q for q in questions if ":" not in q]
     if general:
         return random.choice(general).strip()
+
     return random.choice([
         "Who benefits from this arrangement?",
         "Who bears the cost when this fails?",
@@ -525,7 +648,6 @@ def witness_close() -> str:
 # Post builders (coherent)
 # ==============================
 def topic_lens_bank(topic: str) -> list[str]:
-    # Uses your prompts semantics, but keeps them short and human in output.
     mapping = {
         "economy": ["economic realism", "fiscal responsibility", "who bears the cost", "long-term national consequence"],
         "governance": ["rule of law", "public accountability", "institutional legitimacy", "constitutional restraint"],
@@ -601,30 +723,23 @@ def build_analysis_post(meta: dict, entry: dict, prompts: list[str], voice_lines
     topic = entry.get("topic", "general")
 
     open_line = voice_open(slot, voice_lines)
+    what = clamp(ctx if ctx else title, 175)
 
-    # "what happened" in one sentence, always anchored
-    what = ctx if ctx else title
-    what = clamp(what, 175)
-
-    # lens selection: topic bank + sometimes prompts.txt
     lens = random.choice(topic_lens_bank(topic))
     if prompts and random.random() < 0.35:
         lens = random.choice(prompts)
 
     judgment = analysis_judgment(topic)
 
-    # Sometimes share link-only with tight comment (human feed behavior)
+    # Link-forward behavior: tight comment + link (human feed behavior)
     if link and random.random() < LINK_ONLY_PROB:
-        # short comment + link
         via = ""
         if random.random() < DOMAIN_ATTRIBUTION_PROB:
             d = domain_of(link)
             if d:
                 via = f" (via {d})"
-        text = f"{open_line} {judgment}{via} {link}"
-        return clamp(text)
+        return clamp(f"{open_line} {judgment}{via} {link}")
 
-    # Normal analysis composition: open + what + judgment + lens hint + optional question + optional link
     lens_hint = random.choice([
         f"Measured against {lens}.",
         f"Standard: {lens}.",
@@ -632,13 +747,12 @@ def build_analysis_post(meta: dict, entry: dict, prompts: list[str], voice_lines
     ])
 
     q = maybe_question(topic, questions)
-
-    # Link inclusion is controlled (avoid spammy look)
     link_part = f" {link}" if (link and random.random() < 0.22) else ""
 
     parts = [open_line, what, judgment, lens_hint]
     if q:
         parts.append(q)
+
     text = " ".join([p.strip() for p in parts if p and p.strip()]) + link_part
 
     # Witness add-on (streak limited)
@@ -695,7 +809,6 @@ def build_faith_reflection() -> str:
 # Prayer (autonomous via prayers.txt fragments)
 # ==============================
 def should_run_prayer(meta: dict, now: dt.datetime) -> bool:
-    # Sunday morning prayer (one per Sunday)
     if now.weekday() != 6:
         return False
     if get_slot(now) != "morning":
@@ -733,7 +846,6 @@ def build_sunday_prayer(meta: dict, now: dt.datetime) -> str:
     themes = [k for k, _ in ranked] if ranked else []
 
     register = random.choice(["intercession", "gratitude", "lament", "discernment"])
-
     opener = random.choice([
         "I pray cleanly today.",
         "I pray with restraint and truth.",
@@ -799,7 +911,6 @@ def build_sunday_prayer(meta: dict, now: dt.datetime) -> str:
 # Weekly / Monthly
 # ==============================
 def should_run_weekly(meta: dict, now: dt.datetime) -> bool:
-    # Saturday evening weekly summary
     if now.weekday() != 5:
         return False
     if get_slot(now) != "evening":
@@ -845,7 +956,6 @@ def weekly_summary(now: dt.datetime) -> str:
     return clamp(f"I closed the week with the record intact. Signals concentrated in {topics}. Measures stayed on {tags}. Next week gets judged by receipts and restraint.")
 
 def should_run_look_forward(now: dt.datetime) -> bool:
-    # Monday morning look-forward
     return now.weekday() == 0 and get_slot(now) == "morning"
 
 def look_forward() -> str:
@@ -943,6 +1053,7 @@ def main():
 
     meta = load_meta()
     refresh_daily_counters(meta, now)
+    reset_self_correct_counter_if_new_day(meta, now)
 
     if not can_post_today(meta):
         print("Daily soft cap reached; skipping.")
@@ -1048,10 +1159,9 @@ def main():
                     slot=slot
                 )
             else:
-                post = clamp("I am watching governance and consequence today. Receipts stay the measure.")
+                post = "I am watching governance and consequence today. Receipts stay the measure."
                 topic = "general"
 
-            # Memory echo (only after we have coherent text)
             matched = update_memory(post)
             echo = memory_echo_line(matched)
             if echo and random.random() < 0.65:
@@ -1061,16 +1171,14 @@ def main():
             meta["last_post_type"] = "analysis"
             save_meta(meta)
 
+    # Final coherence pass before any checks
+    post = clamp(resolve_coherence(post))
+
     # Duplicate prevention (text)
     post_hash = sha1(post.lower())
     if meta.get("last_post_hash") == post_hash:
         print("Duplicate post hash; skipping.")
         return
-
-    # log before posting
-    append_run_log(now, slot, post, tags, topic=topic, entry_link=entry_link)
-
-    print("POST:", post)
 
     # Verify (v1) + Post (v2) — keep the working path
     api_v1 = create_v1_api_for_verify()
@@ -1078,16 +1186,80 @@ def main():
     print("AUTH OK AS:", screen_name)
 
     client = create_v2_client()
+
+    # -------------------------
+    # POST FIRST
+    # -------------------------
+    print("POST:", post)
     resp = client.create_tweet(text=post)
     tweet_id = resp.data.get("id") if resp and resp.data else None
     print("POSTED ID:", tweet_id)
 
-    # update meta post markers
+    # Store last post info
     meta["last_post_time"] = now.isoformat()
+    meta["last_tweet_id"] = tweet_id
+    meta["last_post_text"] = post
     meta["last_post_hash"] = post_hash
-    bump_post_today(meta)
     save_meta(meta)
 
+    # log after posting (tie tweet_id to log)
+    append_run_log(now, slot, post, tags, topic=topic, entry_link=entry_link, tweet_id=tweet_id)
+
+    # -------------------------
+    # QUALITY CHECK → DELETE+REPOST ONCE
+    # -------------------------
+    if QUALITY_CHECK_ENABLED:
+        bad, reasons = looks_incoherent(post)
+        meta["last_post_quality_failures"] = reasons
+        save_meta(meta)
+
+        if bad and can_self_correct_today(meta):
+            print("QUALITY FAILED; deleting and reposting once. Reasons:", reasons)
+
+            # Delete the bad tweet (X has no edit; only delete+repost)
+            try:
+                if tweet_id:
+                    client.delete_tweet(tweet_id)
+                    print("DELETED ID:", tweet_id)
+            except Exception as e:
+                print("DELETE FAILED:", repr(e))
+                # Stop to avoid double posting if deletion fails
+                raise
+
+            # Attempt corrected variant: resolve again
+            corrected = clamp(resolve_coherence(post))
+
+            bad2, reasons2 = looks_incoherent(corrected)
+            if bad2:
+                print("Corrected still fails; regenerating once. Reasons:", reasons2)
+                corrected = regenerate_once(meta, entries, prompts, voice_lines, questions, slot)
+                corrected = clamp(resolve_coherence(corrected))
+
+            # Avoid reposting identical text
+            corrected_hash = sha1(corrected.lower())
+            if corrected_hash == post_hash:
+                # force a second regeneration if identical
+                corrected = regenerate_once(meta, entries, prompts, voice_lines, questions, slot)
+                corrected = clamp(resolve_coherence(corrected))
+                corrected_hash = sha1(corrected.lower())
+
+            # Repost
+            resp2 = client.create_tweet(text=corrected)
+            tweet_id2 = resp2.data.get("id") if resp2 and resp2.data else None
+            print("REPOSTED ID:", tweet_id2)
+
+            bump_self_correct_today(meta)
+            meta["last_tweet_id"] = tweet_id2
+            meta["last_post_text"] = corrected
+            meta["last_post_hash"] = corrected_hash
+            meta["last_post_quality_failures"] = []
+            save_meta(meta)
+
+            append_run_log(now, slot, corrected, tags, topic=topic, entry_link=entry_link, tweet_id=tweet_id2)
+
+    # Day + month counters increment only after a successful run
+    bump_post_today(meta)
+    save_meta(meta)
     save_counter(count + 1)
 
 
