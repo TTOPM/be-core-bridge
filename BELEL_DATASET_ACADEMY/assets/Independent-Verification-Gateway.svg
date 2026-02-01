@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="1600" height="900" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Independent Verification Gateway — Non-author proof surface">
+<svg width="1600" height="900" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Independent Verification Gateway — third-party audit, execution, and proof">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#0B1220"/>
@@ -14,6 +14,11 @@
     <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#22C55E"/>
       <stop offset="100%" stop-color="#16A34A"/>
+    </linearGradient>
+
+    <linearGradient id="warn" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#D97706"/>
     </linearGradient>
 
     <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
@@ -38,20 +43,30 @@
     </marker>
 
     <style>
-      .title { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji"; font-weight: 800; fill: #E5E7EB; }
-      .subtitle { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; font-weight: 600; fill: #9CA3AF; }
-      .label { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; font-weight: 700; fill: #E5E7EB; }
-      .text { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; font-weight: 500; fill: #CBD5E1; }
-      .muted { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; font-weight: 500; fill: #94A3B8; }
-      .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace; font-weight: 600; fill: #D1D5DB; }
-      .monoDim { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace; font-weight: 600; fill: #9CA3AF; }
+      .title { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji"; font-weight: 900; fill: #E5E7EB; }
+      .subtitle { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; font-weight: 650; fill: #9CA3AF; }
+      .label { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; font-weight: 800; fill: #E5E7EB; }
+      .text { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; font-weight: 560; fill: #CBD5E1; }
+      .muted { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; font-weight: 540; fill: #94A3B8; }
+      .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace; font-weight: 650; fill: #D1D5DB; }
+      .monoDim { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace; font-weight: 650; fill: #9CA3AF; }
+
       .chip { fill: rgba(34,197,94,0.12); stroke: rgba(34,197,94,0.6); stroke-width: 1.2; }
-      .chipText { font-family: ui-sans-serif, system-ui; font-weight: 700; fill: #86EFAC; }
-      .ok { fill: #22C55E; }
+      .chipWarn { fill: rgba(245,158,11,0.10); stroke: rgba(245,158,11,0.65); stroke-width: 1.2; }
+      .chipText { font-family: ui-sans-serif, system-ui; font-weight: 800; fill: #86EFAC; }
+      .chipTextWarn { font-family: ui-sans-serif, system-ui; font-weight: 800; fill: #FCD34D; }
+
+      .okDot { fill: #22C55E; }
+      .warnDot { fill: #F59E0B; }
+
       .line { stroke: #22C55E; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+
       .frame { fill: url(#card); stroke: rgba(148,163,184,0.22); stroke-width: 1.5; }
       .frameStrong { fill: url(#card); stroke: rgba(34,197,94,0.65); stroke-width: 2; }
+
       .divider { stroke: rgba(148,163,184,0.18); stroke-width: 1; }
+      .kpi { fill: rgba(34,197,94,0.10); stroke: rgba(34,197,94,0.55); stroke-width: 1.3; }
+      .kpiWarn { fill: rgba(245,158,11,0.10); stroke: rgba(245,158,11,0.55); stroke-width: 1.3; }
     </style>
   </defs>
 
@@ -61,176 +76,177 @@
   <!-- Header -->
   <g transform="translate(90,70)">
     <text class="title" font-size="46">INDEPENDENT VERIFICATION GATEWAY</text>
-    <text class="subtitle" font-size="18" y="34">NON-AUTHOR RUNS · SIGNED PROOF BUNDLES · REPLAYABLE AUDIT · IMMUTABLE PUBLISH (OPTIONAL)</text>
+    <text class="subtitle" font-size="18" y="34">THIRD-PARTY EXECUTION · EVIDENCE BUNDLES · SIGNED ATTESTATIONS · REPLAYABLE AUDIT</text>
 
     <g transform="translate(0,60)">
-      <rect class="chip" x="0" y="0" rx="14" width="410" height="34"/>
-      <text class="chipText" x="18" y="23" font-size="14">Fixes: “Verification relies on author trust.”</text>
+      <rect class="chipWarn" x="0" y="0" rx="14" width="470" height="34"/>
+      <text class="chipTextWarn" x="18" y="23" font-size="14">Zero-trust standard: evidence does not rely on author custody</text>
 
-      <rect class="chip" x="430" y="0" rx="14" width="430" height="34"/>
-      <text class="chipText" x="448" y="23" font-size="14">Standard: run → emit → hash → sign → replay</text>
+      <rect class="chip" x="490" y="0" rx="14" width="420" height="34"/>
+      <text class="chipText" x="508" y="23" font-size="14">Definition: run → emit → hash → sign → replay</text>
     </g>
   </g>
 
-  <!-- Main cards -->
-  <!-- Card 1: Non-author Runner -->
+  <!-- Left rail: What this gateway guarantees -->
   <g filter="url(#shadow)">
-    <rect x="90" y="190" width="450" height="520" rx="22" class="frameStrong"/>
+    <rect x="90" y="190" width="400" height="520" rx="22" class="frame"/>
   </g>
 
   <g transform="translate(120,220)">
-    <text class="label" font-size="22">1) NON-AUTHOR RUNNER</text>
-    <text class="muted" font-size="14" y="26">Anyone can execute on clean infra (CI, 3P machine).</text>
+    <text class="label" font-size="22">WHAT THE GATEWAY GUARANTEES</text>
+    <text class="muted" font-size="14" y="26">Independent auditability as a first-class system feature.</text>
 
-    <g transform="translate(0,58)">
-      <circle cx="14" cy="8" r="6" class="ok" filter="url(#softGlow)"/>
-      <text class="text" x="34" y="12" font-size="16">GitHub Actions / CI</text>
-      <text class="monoDim" x="34" y="34" font-size="12">.github/workflows/proof.yml</text>
+    <g transform="translate(0,62)">
+      <rect class="kpi" x="0" y="0" width="340" height="56" rx="16"/>
+      <circle cx="22" cy="28" r="7" class="okDot" filter="url(#softGlow)"/>
+      <text class="text" x="42" y="24" font-size="15">Runnable by non-author</text>
+      <text class="muted" x="42" y="42" font-size="12">Clean infra, reproducible commands</text>
     </g>
 
-    <g transform="translate(0,108)">
-      <circle cx="14" cy="8" r="6" class="ok" filter="url(#softGlow)"/>
-      <text class="text" x="34" y="12" font-size="16">Deterministic commands</text>
-      <text class="mono" x="34" y="34" font-size="12">cd chatwithbelel &amp;&amp; docker compose up --build</text>
-      <text class="mono" x="34" y="56" font-size="12">cd BELEL_SELF_TEACHING &amp;&amp; python -m cli run-cycle</text>
-      <text class="mono" x="34" y="78" font-size="12">cd BELEL_DATASET_ACADEMY &amp;&amp; python ... --mode daily</text>
+    <g transform="translate(0,130)">
+      <rect class="kpi" x="0" y="0" width="340" height="56" rx="16"/>
+      <circle cx="22" cy="28" r="7" class="okDot" filter="url(#softGlow)"/>
+      <text class="text" x="42" y="24" font-size="15">Artifacts prove execution</text>
+      <text class="muted" x="42" y="42" font-size="12">File-path evidence + logs + samples</text>
     </g>
 
-    <g transform="translate(0,230)">
-      <rect x="0" y="0" width="390" height="1" class="divider"/>
-      <text class="label" font-size="18" y="38">Outputs captured as CI artifacts</text>
-
-      <g transform="translate(0,58)">
-        <circle cx="14" cy="8" r="6" class="ok" filter="url(#softGlow)"/>
-        <text class="mono" x="34" y="12" font-size="12">proof/PROOF_INDEX.json</text>
-      </g>
-      <g transform="translate(0,90)">
-        <circle cx="14" cy="8" r="6" class="ok" filter="url(#softGlow)"/>
-        <text class="mono" x="34" y="12" font-size="12">proof/SHA256SUMS.txt</text>
-      </g>
-      <g transform="translate(0,122)">
-        <circle cx="14" cy="8" r="6" class="ok" filter="url(#softGlow)"/>
-        <text class="mono" x="34" y="12" font-size="12">proof/logs/**</text>
-      </g>
-      <g transform="translate(0,154)">
-        <circle cx="14" cy="8" r="6" class="ok" filter="url(#softGlow)"/>
-        <text class="mono" x="34" y="12" font-size="12">proof/samples/** (small representative shards)</text>
-      </g>
-      <g transform="translate(0,186)">
-        <circle cx="14" cy="8" r="6" class="ok" filter="url(#softGlow)"/>
-        <text class="mono" x="34" y="12" font-size="12">proof/metadata.json (runner + commit + timestamp)</text>
-      </g>
-    </g>
-  </g>
-
-  <!-- Card 2: Proof Bundle -->
-  <g filter="url(#shadow)">
-    <rect x="575" y="190" width="450" height="520" rx="22" class="frameStrong"/>
-  </g>
-
-  <g transform="translate(605,220)">
-    <text class="label" font-size="22">2) PROOF BUNDLE</text>
-    <text class="muted" font-size="14" y="26">Portable evidence pack. Anyone can inspect without author access.</text>
-
-    <g transform="translate(0,58)">
-      <rect x="0" y="0" width="390" height="86" rx="16" class="frame"/>
-      <text class="label" x="18" y="30" font-size="16">Bundle contents</text>
-      <text class="mono" x="18" y="54" font-size="12">PROOF_INDEX.json · SHA256SUMS.txt · logs/ · samples/ · metadata.json</text>
-      <text class="monoDim" x="18" y="74" font-size="12">Commit SHA + commands + artifact paths + timestamps</text>
+    <g transform="translate(0,198)">
+      <rect class="kpi" x="0" y="0" width="340" height="56" rx="16"/>
+      <circle cx="22" cy="28" r="7" class="okDot" filter="url(#softGlow)"/>
+      <text class="text" x="42" y="24" font-size="15">Cryptographic integrity</text>
+      <text class="muted" x="42" y="42" font-size="12">Hashes + signatures bind outputs to a run</text>
     </g>
 
-    <g transform="translate(0,170)">
-      <text class="label" font-size="18">3) CRYPTO ATTESTATION</text>
-      <text class="muted" font-size="14" y="22">Independent signing converts outputs into audit-grade evidence.</text>
-
-      <g transform="translate(0,42)">
-        <circle cx="14" cy="8" r="6" class="ok" filter="url(#softGlow)"/>
-        <text class="text" x="34" y="12" font-size="16">Sigstore Cosign (preferred)</text>
-        <text class="monoDim" x="34" y="34" font-size="12">cosign attest/sign proof/SHA256SUMS.txt</text>
-      </g>
-
-      <g transform="translate(0,84)">
-        <circle cx="14" cy="8" r="6" class="ok" filter="url(#softGlow)"/>
-        <text class="text" x="34" y="12" font-size="16">GPG signature (fallback)</text>
-        <text class="monoDim" x="34" y="34" font-size="12">gpg --detach-sign proof/SHA256SUMS.txt</text>
-      </g>
-
-      <g transform="translate(0,142)">
-        <rect x="0" y="0" width="390" height="1" class="divider"/>
-        <text class="label" font-size="18" y="40">Hash integrity standard</text>
-        <text class="mono" y="70" font-size="12">sha256sum -c proof/SHA256SUMS.txt</text>
-      </g>
+    <g transform="translate(0,266)">
+      <rect class="kpi" x="0" y="0" width="340" height="56" rx="16"/>
+      <circle cx="22" cy="28" r="7" class="okDot" filter="url(#softGlow)"/>
+      <text class="text" x="42" y="24" font-size="15">Replayable verification</text>
+      <text class="muted" x="42" y="42" font-size="12">Anyone can reproduce and diff results</text>
     </g>
 
     <g transform="translate(0,352)">
-      <text class="label" font-size="18">Declared artifact paths (examples)</text>
-      <text class="mono" y="78" font-size="12">BELEL_SELF_TEACHING/cycles/&lt;cycle_id&gt;/cycle.json</text>
-      <text class="mono" y="100" font-size="12">BELEL_SELF_TEACHING/generated_shards/sft/*.jsonl.gz</text>
-      <text class="mono" y="122" font-size="12">BELEL_DATASET_ACADEMY/manifests/lineage_index.json</text>
-      <text class="mono" y="144" font-size="12">BELEL_DATASET_ACADEMY/metrics/*</text>
+      <rect class="kpiWarn" x="0" y="0" width="340" height="110" rx="16"/>
+      <circle cx="22" cy="32" r="7" class="warnDot" filter="url(#softGlow)"/>
+      <text class="text" x="42" y="28" font-size="15">Optional: external publication</text>
+      <text class="muted" x="42" y="48" font-size="12">Release bundle, IPFS/Arweave CID, or both</text>
+      <text class="muted" x="42" y="70" font-size="12">Transforms “I ran it” into “anyone can retrieve it”</text>
+      <text class="muted" x="42" y="92" font-size="12">Use when permanence and broad scrutiny matter</text>
     </g>
   </g>
 
-  <!-- Card 3: Replayable Audit -->
+  <!-- Main pipeline cards -->
+  <!-- Card A: Third-party Run -->
   <g filter="url(#shadow)">
-    <rect x="1060" y="190" width="450" height="520" rx="22" class="frameStrong"/>
+    <rect x="520" y="190" width="345" height="520" rx="22" class="frameStrong"/>
   </g>
 
-  <g transform="translate(1090,220)">
-    <text class="label" font-size="22">4) REPLAYABLE AUDIT</text>
-    <text class="muted" font-size="14" y="26">Verification without trust: replay + validate + diff.</text>
+  <g transform="translate(550,220)">
+    <text class="label" font-size="22">A) THIRD-PARTY RUN</text>
+    <text class="muted" font-size="14" y="26">Execute on CI, partner machine, or neutral infra.</text>
 
-    <g transform="translate(0,58)">
-      <circle cx="14" cy="8" r="6" class="ok" filter="url(#softGlow)"/>
-      <text class="text" x="34" y="12" font-size="16">Run verifiers</text>
-      <text class="mono" x="34" y="34" font-size="12">python verify_all.py</text>
-      <text class="mono" x="34" y="56" font-size="12">python canon_audit.py</text>
-      <text class="monoDim" x="34" y="78" font-size="12">python canonical_diff_checker.py</text>
+    <g transform="translate(0,60)">
+      <circle cx="14" cy="8" r="6" class="okDot" filter="url(#softGlow)"/>
+      <text class="text" x="34" y="12" font-size="16">Neutral runner options</text>
+      <text class="monoDim" x="34" y="34" font-size="12">CI (GitHub Actions) · External VM · Partner server</text>
     </g>
 
-    <g transform="translate(0,160)">
-      <circle cx="14" cy="8" r="6" class="ok" filter="url(#softGlow)"/>
-      <text class="text" x="34" y="12" font-size="16">Validate signature + hashes</text>
-      <text class="monoDim" x="34" y="34" font-size="12">cosign verify-blob / gpg --verify</text>
-      <text class="monoDim" x="34" y="56" font-size="12">sha256sum -c proof/SHA256SUMS.txt</text>
+    <g transform="translate(0,118)">
+      <circle cx="14" cy="8" r="6" class="okDot" filter="url(#softGlow)"/>
+      <text class="text" x="34" y="12" font-size="16">Reproducible commands</text>
+      <text class="mono" x="34" y="36" font-size="12">make proof</text>
+      <text class="monoDim" x="34" y="56" font-size="12">(wraps chat + cycle + academy, configurable)</text>
     </g>
 
-    <g transform="translate(0,250)">
-      <rect x="0" y="0" width="390" height="1" class="divider"/>
-      <text class="label" font-size="18" y="40">Pass condition</text>
-      <text class="text" y="70" font-size="15">Non-author run produces artifacts at declared paths</text>
-      <text class="text" y="92" font-size="15">Hashes match + signature verifies</text>
-      <text class="text" y="114" font-size="15">Verifier scripts complete without integrity failure</text>
-    </g>
+    <g transform="translate(0,194)">
+      <rect x="0" y="0" width="285" height="1" class="divider"/>
+      <text class="label" font-size="18" y="40">Minimal outputs (required)</text>
 
-    <g transform="translate(0,380)">
-      <text class="label" font-size="18">5) IMMUTABLE PUBLISH (optional)</text>
-      <text class="muted" font-size="14" y="22">Decisive for third-party permanence and replay.</text>
-
-      <g transform="translate(0,42)">
-        <circle cx="14" cy="8" r="6" class="ok" filter="url(#softGlow)"/>
-        <text class="text" x="34" y="12" font-size="16">GitHub Release bundle</text>
-        <text class="monoDim" x="34" y="34" font-size="12">Attach proof/*.zip to tagged release</text>
+      <g transform="translate(0,58)">
+        <circle cx="14" cy="8" r="6" class="okDot" filter="url(#softGlow)"/>
+        <text class="mono" x="34" y="12" font-size="12">proof/metadata.json</text>
       </g>
-      <g transform="translate(0,84)">
-        <circle cx="14" cy="8" r="6" class="ok" filter="url(#softGlow)"/>
-        <text class="text" x="34" y="12" font-size="16">IPFS / Arweave CID</text>
-        <text class="monoDim" x="34" y="34" font-size="12">Publish proof bundle CID for replay</text>
+      <g transform="translate(0,90)">
+        <circle cx="14" cy="8" r="6" class="okDot" filter="url(#softGlow)"/>
+        <text class="mono" x="34" y="12" font-size="12">proof/logs/**</text>
+      </g>
+      <g transform="translate(0,122)">
+        <circle cx="14" cy="8" r="6" class="okDot" filter="url(#softGlow)"/>
+        <text class="mono" x="34" y="12" font-size="12">proof/PROOF_INDEX.json</text>
+      </g>
+      <g transform="translate(0,154)">
+        <circle cx="14" cy="8" r="6" class="okDot" filter="url(#softGlow)"/>
+        <text class="mono" x="34" y="12" font-size="12">proof/SHA256SUMS.txt</text>
       </g>
     </g>
+
+    <g transform="translate(0,378)">
+      <rect x="0" y="0" width="285" height="1" class="divider"/>
+      <text class="muted" font-size="12" y="32">Tip: keep samples small; keep hashes complete.</text>
+    </g>
   </g>
 
-  <!-- Flow arrows between cards -->
-  <path class="line" d="M540,450 C585,450 560,450 575,450" />
-  <path class="line" d="M1025,450 C1070,450 1045,450 1060,450" />
-
-  <!-- Footer strip -->
-  <g transform="translate(90,750)">
-    <rect x="0" y="0" width="1420" height="90" rx="22" fill="rgba(34,197,94,0.10)" stroke="rgba(34,197,94,0.55)" stroke-width="1.5"/>
-    <text class="label" x="26" y="36" font-size="18">Outcome</text>
-    <text class="text" x="26" y="62" font-size="15">Capability becomes an admissible record: non-author run → emitted artifacts → hashed + signed bundle → replayable verification.</text>
-
-    <text class="monoDim" x="980" y="36" font-size="12">Place in repo:</text>
-    <text class="mono" x="980" y="60" font-size="12">BELEL_DATASET_ACADEMY/assets/independent-verification-gateway.svg</text>
+  <!-- Card B: Evidence Bundle -->
+  <g filter="url(#shadow)">
+    <rect x="910" y="190" width="345" height="520" rx="22" class="frameStrong"/>
   </g>
-</svg>
+
+  <g transform="translate(940,220)">
+    <text class="label" font-size="22">B) EVIDENCE BUNDLE</text>
+    <text class="muted" font-size="14" y="26">Portable proof pack, independent of author access.</text>
+
+    <g transform="translate(0,60)">
+      <rect x="0" y="0" width="285" height="98" rx="16" class="frame"/>
+      <text class="label" x="18" y="30" font-size="16">Bundle structure</text>
+      <text class="mono" x="18" y="54" font-size="12">proof/PROOF_INDEX.json</text>
+      <text class="mono" x="18" y="74" font-size="12">proof/SHA256SUMS.txt</text>
+      <text class="monoDim" x="18" y="94" font-size="12">logs/ + samples/ + metadata.json</text>
+    </g>
+
+    <g transform="translate(0,178)">
+      <circle cx="14" cy="8" r="6" class="okDot" filter="url(#softGlow)"/>
+      <text class="text" x="34" y="12" font-size="16">Artifact claims are explicit</text>
+      <text class="monoDim" x="34" y="34" font-size="12">Each entry: path + size + hash + timestamp</text>
+    </g>
+
+    <g transform="translate(0,236)">
+      <circle cx="14" cy="8" r="6" class="okDot" filter="url(#softGlow)"/>
+      <text class="text" x="34" y="12" font-size="16">Integrity is machine-checkable</text>
+      <text class="mono" x="34" y="34" font-size="12">sha256sum -c proof/SHA256SUMS.txt</text>
+    </g>
+
+    <g transform="translate(0,314)">
+      <rect x="0" y="0" width="285" height="1" class="divider"/>
+      <text class="label" font-size="18" y="40">Evidence targets (examples)</text>
+      <text class="monoDim" y="70" font-size="12">cycles/&lt;cycle_id&gt;/cycle.json</text>
+      <text class="monoDim" y="92" font-size="12">generated_shards/sft/*.jsonl.gz</text>
+      <text class="monoDim" y="114" font-size="12">manifests/lineage_index.json</text>
+      <text class="monoDim" y="136" font-size="12">metrics/*</text>
+    </g>
+
+    <g transform="translate(0,468)">
+      <text class="muted" font-size="12">Evidence remains valid even if deployment changes later.</text>
+    </g>
+  </g>
+
+  <!-- Card C: Attest + Replay -->
+  <g filter="url(#shadow)">
+    <rect x="1300" y="190" width="210" height="520" rx="22" class="frameStrong"/>
+  </g>
+
+  <g transform="translate(1328,220)">
+    <text class="label" font-size="22">C) ATTEST + REPLAY</text>
+    <text class="muted" font-size="14" y="26">Sign proof, then replay verification anywhere.</text>
+
+    <g transform="translate(0,64)">
+      <circle cx="14" cy="8" r="6" class="okDot" filter="url(#softGlow)"/>
+      <text class="text" x="34" y="12" font-size="16">Sign (preferred)</text>
+      <text class="monoDim" x="34" y="34" font-size="12">cosign attest/sign</text>
+    </g>
+
+    <g transform="translate(0,124)">
+      <circle cx="14" cy="8" r="6" class="okDot" filter="url(#softGlow)"/>
+      <text class="text" x="34" y="12" font-size="16">Sign (fallback)</text>
+      <text class="monoDim" x="34" y="34" font-size="12">gpg --detach-sign</text>
+    </g>
+
+    <
