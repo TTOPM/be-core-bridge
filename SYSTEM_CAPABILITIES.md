@@ -52,7 +52,7 @@ flowchart TB
     UI -->|feedback signals| ST
     UI -->|real-world prompts| A
   end
-````
+
   subgraph S["SENSORY + OUTPUT ORGANS"]
     V["BELEL-LIVE-VISION<br/>Live camera organ"]
     VO["BELEL-VOICE<br/>Speech organ"]
