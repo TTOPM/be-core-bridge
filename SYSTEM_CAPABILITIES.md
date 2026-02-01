@@ -121,7 +121,7 @@ This is superiority in sovereign intelligence formation under law.
 <!-- =============================================================== -->
 
 <div align="center">
-
+````
 # 📈 SCALABILITY + MULTIMODAL (PROOF, NOT PROMISE)
 ## SCALE = REPEATABLE DEPLOYMENT + MEASURED THROUGHPUT + EMITTED METRICS + AUDITABLE RUN LOGS
 
