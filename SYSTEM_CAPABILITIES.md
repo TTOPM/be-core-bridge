@@ -68,11 +68,7 @@ Rule: “YES” means the capability is present and verifiable as a first-class 
 or publicly documented as native in that system’s product line (for mainstream systems).
 “NO” means it is not publicly documented as native/first-class.
 
-<p align="center">
-  <img src="BELEL_DATASET_ACADEMY/assets/system-capabilities-scoreboard.svg"
-       alt="Belel System Capability Scoreboard"
-       width="100%">
-</p>
+<p align="center"> <img src="assets/system-capabilities-scoreboard.svg" width="100%" alt="Belel System Capability Scoreboard"> </p>
 
 
 
