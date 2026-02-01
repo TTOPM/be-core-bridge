@@ -2,6 +2,7 @@ import os
 import json
 import random
 import re
+import hashlib
 import datetime as dt
 from pathlib import Path
 
@@ -97,11 +98,11 @@ TOPIC_KEYWORDS = {
     "economy": [
         "inflation", "rates", "interest", "bond", "treasury", "budget", "deficit", "debt", "gdp",
         "trade", "tariff", "currency", "usd", "dollar", "de-dollar", "bank", "markets", "stocks",
-        "company", "earnings", "oil", "gas", "energy", "shipment", "supply"
+        "company", "earnings", "oil", "gas", "energy", "shipment", "supply", "rail", "industry"
     ],
     "governance": [
         "minister", "parliament", "senate", "cabinet", "bill", "law", "regulation", "government",
-        "oversight", "audit", "procurement", "tender", "contract", "commission"
+        "oversight", "audit", "procurement", "tender", "contract", "commission", "executive"
     ],
     "rights": [
         "rights", "freedom", "speech", "censorship", "detention", "torture", "discrimination",
@@ -113,7 +114,7 @@ TOPIC_KEYWORDS = {
     ],
     "law": [
         "court", "judge", "trial", "lawsuit", "appeal", "icj", "icc", "tribunal", "verdict",
-        "sentence", "legal"
+        "sentence", "legal", "ruling"
     ],
     "international": [
         "un", "united nations", "eu", "nato", "ohchr", "sanctions", "summit", "treaty", "war",
@@ -134,7 +135,7 @@ def utc_now():
     return dt.datetime.now(dt.timezone.utc)
 
 def clamp(text: str, max_len=MAX_LEN) -> str:
-    text = re.sub(r"\s+", " ", text.replace("\n", " ").strip())
+    text = re.sub(r"\s+", " ", (text or "").replace("\n", " ").strip())
     if len(text) <= max_len:
         return text
     return text[: max_len - 1].rstrip() + "…"
@@ -161,6 +162,9 @@ def load_json(path: Path, default):
 
 def save_json(path: Path, data):
     path.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+
+def sha1(s: str) -> str:
+    return hashlib.sha1((s or "").encode("utf-8")).hexdigest()
 
 def load_counter() -> int:
     if COUNTER_FILE.exists():
@@ -189,6 +193,7 @@ def load_meta() -> dict:
 
     meta.setdefault("last_post_time", None)
     meta.setdefault("last_post_type", None)
+    meta.setdefault("last_post_hash", None)
 
     meta.setdefault("last_weekly_summary", None)
     meta.setdefault("last_monthly_summary", None)
@@ -198,6 +203,10 @@ def load_meta() -> dict:
 
     meta.setdefault("silent_day_active", False)
     meta.setdefault("witness_streak", 0)
+
+    # coherence / repetition controls
+    meta.setdefault("last_entry_key", None)     # title+link hash
+    meta.setdefault("last_entry_topic", None)
 
     return meta
 
@@ -214,7 +223,7 @@ def append_run_log(now: dt.datetime, slot: str, post: str, tags: list, topic: st
         "slot": slot,
         "topic": topic,
         "tags": tags,
-        "post": post[:220]
+        "post": (post or "")[:220]
     })
 
     log = log[-120:]
@@ -233,7 +242,7 @@ def weighted_choice(weights: dict) -> str:
     return list(weights.keys())[-1]
 
 def is_witness_event(text: str) -> bool:
-    t = text.lower()
+    t = (text or "").lower()
     return any(term in t for term in WITNESS_TERMS)
 
 # ---- Headline cleaning + context extraction (crucial) ----
@@ -244,21 +253,15 @@ def clean_headline(title: str) -> str:
         return ""
     t = re.sub(r"\s+", " ", title).strip()
 
-    # cut common "Title | Site" patterns
     for sep in SEPARATORS:
         if sep in t and len(t.split(sep)[0]) >= 18:
             t = t.split(sep)[0].strip()
 
-    # remove bracket junk
     t = re.sub(r"\s*\[[^\]]+\]\s*", " ", t).strip()
     t = re.sub(r"\s*\([^)]+\)\s*$", "", t).strip()
     return t
 
 def extract_context(entry) -> str:
-    """
-    Pull a short 'what happened' sentence from RSS/Atom where possible.
-    This is the bot's "read + comprehend" step without API read endpoints.
-    """
     parts = []
     for attr in ("summary", "description"):
         val = getattr(entry, attr, "") or ""
@@ -269,13 +272,12 @@ def extract_context(entry) -> str:
         return ""
 
     raw = " ".join(parts)
-    raw = re.sub(r"<[^>]+>", " ", raw)  # strip HTML
+    raw = re.sub(r"<[^>]+>", " ", raw)
     raw = re.sub(r"\s+", " ", raw).strip()
 
-    # take first 180-ish chars / first sentence
-    m = re.split(r"(?<=[.!?])\s+", raw)
-    if m and len(m[0]) >= 40:
-        return clamp(m[0], max_len=180)
+    chunks = re.split(r"(?<=[.!?])\s+", raw)
+    if chunks and len(chunks[0]) >= 40:
+        return clamp(chunks[0], max_len=180)
     return clamp(raw, max_len=180)
 
 def classify_topic(text: str) -> str:
@@ -285,10 +287,10 @@ def classify_topic(text: str) -> str:
         for w in words:
             if w in t:
                 scores[topic] += 1
-    # prefer Caribbean if Caribbean term present
+
     if scores.get("caribbean", 0) >= 1:
         return "caribbean"
-    # otherwise max score topic
+
     best = max(scores.items(), key=lambda x: x[1])
     return best[0] if best[1] > 0 else "general"
 
@@ -305,6 +307,12 @@ def topic_tags(topic: str) -> list[str]:
         "general": ["moral agency", "public trust", "truth versus propaganda"],
     }
     return mapping.get(topic, mapping["general"])
+
+def friendly_tag(tag: str) -> str:
+    # For summaries: “procurement_scandal” → “procurement”
+    if not tag:
+        return tag
+    return tag.replace("_", " ")
 
 # ---- Memory ----
 def update_memory(post_text: str) -> set:
@@ -353,7 +361,7 @@ def memory_echo_line(matched_tags: set) -> str | None:
         "The record is converging.",
     ])
 
-# ---- Feed reading (now returns structured entries) ----
+# ---- Feed reading (returns structured entries) ----
 def pick_entries(feeds_file: Path, limit_feeds=10, per_feed=6):
     feeds = read_lines(feeds_file)
     if not feeds:
@@ -372,18 +380,40 @@ def pick_entries(feeds_file: Path, limit_feeds=10, per_feed=6):
                 if not title:
                     continue
                 ctx = extract_context(e)
+
+                # published time if available (helps pick fresher items without web calls)
+                published = getattr(e, "published", "") or ""
+                published_ts = None
+                try:
+                    if getattr(e, "published_parsed", None):
+                        published_ts = dt.datetime.fromtimestamp(
+                            dt.datetime(*e.published_parsed[:6], tzinfo=dt.timezone.utc).timestamp(),
+                            tz=dt.timezone.utc
+                        )
+                except Exception:
+                    published_ts = None
+
                 blob = f"{title}. {ctx}".strip()
                 topic = classify_topic(blob)
+
                 items.append({
                     "title": title,
                     "link": link,
                     "ctx": ctx,
                     "topic": topic,
+                    "published": published,
+                    "published_ts": published_ts.isoformat() if published_ts else None,
                 })
         except Exception:
             continue
 
-    random.shuffle(items)
+    # prefer fresher items when timestamps exist
+    def _ts_key(it):
+        try:
+            return it.get("published_ts") or ""
+        except Exception:
+            return ""
+    items.sort(key=_ts_key, reverse=True)
 
     # de-dupe on title
     seen = set()
@@ -397,13 +427,104 @@ def pick_entries(feeds_file: Path, limit_feeds=10, per_feed=6):
 
     return out
 
-def select_entry(entries: list[dict], desired_topics: list[str]) -> dict | None:
+def entry_key(entry: dict) -> str:
+    return sha1(f"{entry.get('title','')}|{entry.get('link','')}")
+
+def select_entry(entries: list[dict], desired_topics: list[str], meta: dict | None = None) -> dict | None:
     if not entries:
         return None
-    pool = [e for e in entries if e.get("topic") in desired_topics]
-    if pool:
-        return random.choice(pool)
-    return random.choice(entries)
+
+    last_key = (meta or {}).get("last_entry_key")
+    pool = [e for e in entries if e.get("topic") in desired_topics] or entries[:]
+
+    # avoid repeating the last entry if possible
+    if last_key:
+        filtered = [e for e in pool if entry_key(e) != last_key]
+        if filtered:
+            pool = filtered
+
+    return random.choice(pool) if pool else random.choice(entries)
+
+# ---- Comprehension / reasoning layer ----
+def extract_core_claim(title: str, ctx: str) -> str:
+    """
+    Produces a single clean “what happened” statement.
+    It stays short, concrete, and uses the context if it adds detail beyond the title.
+    """
+    t = clean_headline(title or "")
+    c = (ctx or "").strip()
+
+    if not c:
+        return t
+
+    # If context just repeats the title, keep the title only.
+    t_low = t.lower()
+    c_low = c.lower()
+    if t_low and (t_low in c_low or c_low in t_low):
+        return t
+
+    # Keep first sentence of ctx as the claim if it reads like a sentence.
+    if len(c) >= 40:
+        return clamp(c, 180)
+    return t
+
+def judge_signal(topic: str) -> str:
+    """
+    One coherent judgement per topic. No stitched fragments.
+    """
+    if topic == "economy":
+        return random.choice([
+            "Credibility sets the price of money. When trust drops, citizens pay.",
+            "Policy risk becomes a tax when governments burn confidence.",
+            "Incentives drive behaviour. Slogans do not move capital."
+        ])
+    if topic == "governance":
+        return random.choice([
+            "Legitimacy lives in restraint, transparency, and consequence.",
+            "Executive authority stays lawful through oversight and receipts.",
+            "Institutional decay starts when accountability becomes optional."
+        ])
+    if topic == "rights":
+        return random.choice([
+            "Rights restrain power. Speech and due process stay non-negotiable.",
+            "Discrimination becomes a system when it repeats. Name it and enforce consequence.",
+            "Censorship is governance failure. Free expression is civic oxygen."
+        ])
+    if topic == "security":
+        return random.choice([
+            "State force requires proportionality and civilian oversight.",
+            "Policing becomes intimidation when accountability collapses.",
+            "Public safety starts with consequences for abuse."
+        ])
+    if topic == "law":
+        return random.choice([
+            "Courts restrain power when politics tries to bend reality.",
+            "Rule of law functions through enforcement, not performance.",
+            "Due process is legitimacy. Shortcuts produce backlash and decay."
+        ])
+    if topic == "international":
+        return random.choice([
+            "States trade in credibility every day. Reputation is strategic power.",
+            "International law is restraint. Breakdown invites escalation.",
+            "Diplomacy and sanctions move lives. Policy owns consequences."
+        ])
+    if topic == "technology":
+        return random.choice([
+            "Cyber risk is governance risk. Security failures become public harm.",
+            "Surveillance expands capacity. Oversight must expand too.",
+            "Technology without accountability becomes power without consent."
+        ])
+    if topic == "caribbean":
+        return random.choice([
+            "Small states survive through clean institutions. Corruption is geopolitical weakness.",
+            "Strategic posture is survival. Sovereignty requires competence and receipts.",
+            "The Caribbean pays first when governance fails: higher costs, weaker trust."
+        ])
+    return random.choice([
+        "Power moves through incentives. Follow who benefits and who pays.",
+        "Propaganda competes with memory. Receipts protect the record.",
+        "Truth is a discipline: observe, document, then speak."
+    ])
 
 # ---- Post builders: coherent analysis tied to one entry ----
 def build_analysis(entry: dict, lens: str, slot: str) -> str:
@@ -411,86 +532,27 @@ def build_analysis(entry: dict, lens: str, slot: str) -> str:
     ctx = entry.get("ctx", "")
     topic = entry.get("topic", "general")
 
-    # 1) opener by time
     opener = random.choice(
         ["Morning signal:", "Daybreak note:", "First read:"]
         if slot == "morning"
         else ["Evening note:", "Close of play:", "End-of-day signal:"]
     )
 
-    # 2) “what happened” line (context) + “so what” line (analysis)
-    what = ctx if ctx else title
-
-    # 3) topic-specific “so what”
-    if topic == "economy":
-        so_what = random.choice([
-            f"Markets price credibility. Policy that burns trust raises the cost of capital.",
-            f"Capital moves toward stability. Governance risk becomes a tax on everyone.",
-            f"Debt and credibility travel together. Citizens pay for political theatre.",
-        ])
-    elif topic == "governance":
-        so_what = random.choice([
-            f"Executive power stays legitimate through restraint and receipts.",
-            f"Institutional legitimacy runs on transparency and consequence.",
-            f"Abuse of authority becomes normal when oversight becomes optional.",
-        ])
-    elif topic == "rights":
-        so_what = random.choice([
-            f"Rights restrain power. Speech and due process stay non-negotiable.",
-            f"Freedom of expression is a civic oxygen supply. Restriction is governance failure.",
-            f"Discrimination is a system when it repeats. Call it by name and enforce consequences.",
-        ])
-    elif topic == "security":
-        so_what = random.choice([
-            f"Policing standards require proportionality and civilian oversight.",
-            f"State force without accountability becomes intimidation, not protection.",
-            f"Violence policy begins with accountability, not slogans.",
-        ])
-    elif topic == "law":
-        so_what = random.choice([
-            f"Courts become the line when politics tries to bend reality.",
-            f"Rule of law functions through enforcement, not press conferences.",
-            f"Due process is legitimacy. Shortcuts produce backlash and decay.",
-        ])
-    elif topic == "international":
-        so_what = random.choice([
-            f"International posture is credibility. States trade in reputation every day.",
-            f"Law between states is restraint. Breakdown invites escalation.",
-            f"Sanctions and diplomacy move lives. Policy must own its consequences.",
-        ])
-    elif topic == "technology":
-        so_what = random.choice([
-            f"Cyber risk is governance risk. Security failures become public harm.",
-            f"AI and surveillance expand state capacity. Oversight must expand too.",
-            f"Technology without accountability becomes power without consent.",
-        ])
-    elif topic == "caribbean":
-        so_what = random.choice([
-            f"The Caribbean pays first when governance fails: higher costs, weaker trust, fewer options.",
-            f"Strategic posture is survival. Sovereignty requires competence and receipts.",
-            f"Small states need clean institutions. Corruption is geopolitical weakness.",
-        ])
-    else:
-        so_what = random.choice([
-            f"Power moves through incentives. Follow who benefits and who pays.",
-            f"Propaganda competes with memory. Receipts protect the record.",
-            f"Truth remains a discipline: observe, document, then speak.",
-        ])
-
-    # 4) lens line (kept coherent)
+    claim = extract_core_claim(title, ctx)
+    judgement = judge_signal(topic)
     lens_line = f"Lens: {lens}."
 
-    # 5) link only sometimes
     link = entry.get("link") or ""
-    link_part = f" {link}" if (link and random.random() < 0.22) else ""
+    link_part = f" {link}" if (link and random.random() < 0.18) else ""
 
-    text = f"{opener} {title}{link_part} {clamp(what, 180)} {so_what} {lens_line}"
+    # Single thread: headline → claim → judgement → lens
+    text = f"{opener} {title}{link_part} {claim} {judgement} {lens_line}"
     return clamp(text)
 
 def build_uplift_post(slot: str) -> str:
     morning = [
-        "Morning calibration: move with discipline. Protect your peace. Execute one meaningful thing today.",
-        "Build the day clean: integrity, receipts, steady habits. That is sovereignty in practice.",
+        "Morning calibration: discipline first. Protect peace. Execute one meaningful thing.",
+        "Build the day clean: integrity, receipts, steady habits. Sovereignty lives there.",
         "You win by repetition: one clear decision, then follow-through."
     ]
     evening = [
@@ -521,7 +583,7 @@ def build_faith_reflection() -> str:
     lines = [
         "Faith reflection: discipline is spiritual. Clean speech and restraint are worship.",
         "Faith reflection: justice is a standard held when it is inconvenient.",
-        "Faith reflection: the soul strengthens through truth-telling and mercy with boundaries."
+        "Faith reflection: mercy stays real when it keeps boundaries."
     ]
     return clamp(random.choice(lines))
 
@@ -617,7 +679,7 @@ def build_sunday_prayer(meta: dict, now: dt.datetime) -> str:
             "Cover the Caribbean from corruption, violence, and cynicism.",
         ]))
 
-    if themes and random.random() < 0.35:
+    if themes and random.random() < 0.30:
         t = random.choice(themes).replace("_", " ")
         bridges.append(clamp(f"I keep watch over the pattern: {t}."))
 
@@ -672,12 +734,14 @@ def weekly_summary(now: dt.datetime) -> str:
             tag_counts[t] = tag_counts.get(t, 0) + 1
 
     top_topics = [k for k, _ in sorted(topic_counts.items(), key=lambda x: (-x[1], x[0]))][:2]
-    top_tags = [k for k, _ in sorted(tag_counts.items(), key=lambda x: (-x[1], x[0]))][:3]
+    top_tags = [friendly_tag(k) for k, _ in sorted(tag_counts.items(), key=lambda x: (-x[1], x[0]))][:3]
 
     topics = ", ".join(top_topics) if top_topics else "governance"
     tags = ", ".join(top_tags) if top_tags else "liberty, integrity, consequence"
 
-    return clamp(f"Week summary: signals concentrated in {topics}. Measures: {tags}. Next week gets judged by receipts and restraint. I keep watch. I keep record.")
+    return clamp(
+        f"Week summary: the signal clustered in {topics}. The record kept returning to {tags}. Next week gets measured by receipts and restraint."
+    )
 
 def should_run_look_forward(now: dt.datetime) -> bool:
     return now.weekday() == 0 and get_slot(now) == "morning"
@@ -686,7 +750,7 @@ def look_forward() -> str:
     mem = load_memory()
     ranked = sorted(mem.items(), key=lambda x: -int(x[1]))[:4]
     themes = ", ".join([t.replace("_", " ") for t, _ in ranked]) if ranked else "governance, rights, accountability"
-    return clamp(f"Look forward: watch {themes}. Expect narrative management. Demand receipts. The week gets measured against dignity and law.")
+    return clamp(f"Look forward: watch {themes}. Expect narrative management. Demand receipts. Measure the week against dignity and law.")
 
 def should_run_monthly(meta: dict, now: dt.datetime) -> bool:
     last = meta.get("last_monthly_summary")
@@ -755,7 +819,7 @@ def main():
 
     entries = pick_entries(FEEDS_FILE)
     prompts = read_lines(PROMPTS_FILE)
-    style = read_lines(STYLE_FILE)  # currently not used directly; kept as identity anchor
+    _style = read_lines(STYLE_FILE)  # identity anchor
 
     meta = load_meta()
 
@@ -766,7 +830,6 @@ def main():
     # --- Special scheduled modes ---
     if should_run_prayer(meta, now):
         post = build_sunday_prayer(meta, now)
-        save_meta(meta)
         tags = list(update_memory(post))
         meta["last_post_type"] = "prayer"
         save_meta(meta)
@@ -775,21 +838,21 @@ def main():
         post = weekly_summary(now)
         meta["last_weekly_summary"] = now.isoformat()
         meta["last_post_type"] = "weekly"
-        save_meta(meta)
         tags = list(update_memory(post))
+        save_meta(meta)
 
     elif should_run_look_forward(now):
         post = look_forward()
         meta["last_post_type"] = "look_forward"
-        save_meta(meta)
         tags = list(update_memory(post))
+        save_meta(meta)
 
     elif should_run_monthly(meta, now) and slot == "morning":
         post = monthly_ledger()
         meta["last_monthly_summary"] = now.isoformat()
         meta["last_post_type"] = "monthly"
-        save_meta(meta)
         tags = list(update_memory(post))
+        save_meta(meta)
 
     else:
         # Silent observation day (no post)
@@ -815,46 +878,46 @@ def main():
         if mode == "uplift":
             post = build_uplift_post(slot)
             topic = "uplift"
-            lens = random.choice(prompts) if prompts else "moral agency"
             tags = list(update_memory(post))
 
         elif mode == "craft":
             post = build_craft_post()
             topic = "craft"
-            lens = random.choice(prompts) if prompts else "discipline"
             tags = list(update_memory(post))
 
         elif mode == "faith":
             post = build_faith_reflection()
             topic = "faith"
-            lens = random.choice(prompts) if prompts else "moral agency"
             tags = list(update_memory(post))
 
         elif mode == "reflection":
             post = build_reflection_post()
             topic = "reflection"
-            lens = random.choice(prompts) if prompts else "moral agency"
             tags = list(update_memory(post))
 
         else:
-            # signal / market mode: choose matching entry FIRST, then write coherent analysis
+            # signal / market mode: select entry first, then compose coherent analysis
             if mode == "market":
                 desired = ["economy"]
             else:
-                # signal: prefer Caribbean + governance + rights + international, then general
                 desired = ["caribbean", "governance", "rights", "international", "law", "security", "technology", "general"]
 
-            entry = select_entry(entries, desired_topics=desired) if entries else None
+            entry = select_entry(entries, desired_topics=desired, meta=meta) if entries else None
 
             if entry:
                 topic = entry.get("topic") or "general"
-                # Lens chosen from prompts + topic cues
+
+                # Lens selection: prefer topic-aligned lens; occasionally override from prompts file
                 topic_prompt_bank = topic_tags(topic)
                 lens = random.choice(topic_prompt_bank)
                 if prompts and random.random() < 0.35:
                     lens = random.choice(prompts)
 
                 post = build_analysis(entry, lens=lens, slot=slot)
+
+                # record entry to reduce immediate repetition
+                meta["last_entry_key"] = entry_key(entry)
+                meta["last_entry_topic"] = topic
             else:
                 post = "Signal: receipts matter. Documentation is sovereignty."
                 topic = "general"
@@ -877,6 +940,12 @@ def main():
         meta["last_post_type"] = mode
         save_meta(meta)
 
+    # De-dup guard: prevent posting identical text twice
+    post_hash = sha1(post)
+    if meta.get("last_post_hash") == post_hash:
+        print("Duplicate post detected; skipping.")
+        return
+
     append_run_log(now, slot, post, tags, topic=topic)
 
     print("POST:", post)
@@ -892,6 +961,7 @@ def main():
     print("POSTED ID:", tweet_id)
 
     meta["last_post_time"] = now.isoformat()
+    meta["last_post_hash"] = post_hash
     save_meta(meta)
 
     save_counter(count + 1)
