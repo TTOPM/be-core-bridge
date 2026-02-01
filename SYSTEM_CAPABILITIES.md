@@ -958,7 +958,7 @@ Belel scales as a runnable system:
 ⸻
 
 SCALABILITY MAP (HORIZONTAL REPLICATION)
-
+```
 flowchart LR
   classDef svc fill:#0f5132,stroke:#0f5132,color:#ffffff,stroke-width:2px;
   classDef infra fill:#111827,stroke:#374151,color:#ffffff,stroke-width:1px;
@@ -980,12 +980,12 @@ flowchart LR
   ST --> ART["Emitted Artifacts<br/>cycles/ · generated_shards/ · metrics/"]:::out
   DA --> ART
   ART --> AUD["Audit & Verification<br/>verify_all.py · canon_audit.py"]:::out
-
+```
 
 ⸻
 
 SCALABILITY PROOF LADDER (RUN → MEASURE → EMIT → AUDIT)
-
+```
 flowchart TB
   classDef step fill:#111827,stroke:#374151,color:#ffffff,stroke-width:1px;
   classDef pass fill:#0f5132,stroke:#0f5132,color:#ffffff,stroke-width:2px;
@@ -994,7 +994,7 @@ flowchart TB
   S2["2) Load test<br/>RPS + latency + error rate"]:::step -->
   S3["3) Emit metrics artifacts<br/>bench/results/*.json, *.csv"]:::step -->
   S4["4) Audit run manifest<br/>commit hash + config + timestamps"]:::pass
-
+```
 
 ⸻
 
@@ -1033,7 +1033,7 @@ Belel multimodality is expressed as organs that:
 ⸻
 
 MULTIMODAL MAP (VISION · VOICE · SINGING → CHAT)
-
+```
 flowchart TB
   classDef organ fill:#0f5132,stroke:#0f5132,color:#ffffff,stroke-width:2px;
   classDef ui fill:#1f2937,stroke:#1f2937,color:#ffffff,stroke-width:2px;
@@ -1050,7 +1050,7 @@ flowchart TB
   A1 --> AUD["verify_all.py · canon_audit.py"]:::ui
   A2 --> AUD
   A3 --> AUD
-
+```
 
 ⸻
 
@@ -1114,7 +1114,7 @@ Every “YES” resolves to a command and a folder of emitted artifacts.
 ⸻
 
 ONE-GLANCE PROOF MAP (VISUAL)
-
+```
 flowchart LR
   classDef ok fill:#0f5132,stroke:#0f5132,color:#ffffff,stroke-width:2px;
   classDef mid fill:#1f2937,stroke:#1f2937,color:#ffffff,stroke-width:2px;
@@ -1156,7 +1156,7 @@ flowchart LR
 
   MN --> VF
   CY --> VF
-
+```
 
 ⸻
 
