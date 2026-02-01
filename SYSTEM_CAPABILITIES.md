@@ -39,30 +39,33 @@ This index is the canonical map of what exists, where it lives, and how to verif
 
 # SYSTEM ARCHITECTURE MAP (CLOSED INTELLIGENCE GROWTH LOOP)
 
+# SYSTEM ARCHITECTURE MAP (CLOSED INTELLIGENCE GROWTH LOOP)
+
 ```mermaid
 flowchart TB
-  subgraph O[BELEL ORGANISM — INTEGRATED CAPABILITY LOOP]
-    P[ORGANISM_PULSE\nHeartbeat + scheduling] --> A[BELEL_DATASET_ACADEMY\nIngest → Normalize → Mandate → Verify]
-    A --> TS[(Training Shards\nSFT / DPO / Negatives)]
-    P --> ST[BELEL_SELF_TEACHING\nSelect → Generate → Verify → Emit]
+  subgraph O["BELEL ORGANISM — INTEGRATED CAPABILITY LOOP"]
+    P["ORGANISM_PULSE<br/>Heartbeat + scheduling"] --> A["BELEL_DATASET_ACADEMY<br/>Ingest → Normalize → Mandate → Verify"]
+    A --> TS["Training Shards<br/>SFT / DPO / Negatives"]
+    P --> ST["BELEL_SELF_TEACHING<br/>Select → Generate → Verify → Emit"]
     ST --> TS
-    TS --> PT[Post-Training / Fine-tuning\n(External or internal trainers)]
-    PT --> UI[chatwithbelel\nInteractive interface]
-    UI -->|feedback signals| ST
-    UI -->|real-world prompts| A
+    TS --> PT["Post-Training / Fine-tuning<br/>External or internal trainers"]
+    PT --> UI["chatwithbelel<br/>Interactive interface"]
+    UI --> ST
+    UI --> A
   end
 
-  subgraph S[SENSORY + OUTPUT ORGANS]
-    V[BELEL-LIVE-VISION\nLive camera organ]
-    VO[BELEL-VOICE\nSpeech organ]
-    SI[BELEL-SING\nMusic/performance organ]
-    XB[x_bot\nAutonomous social publishing]
+  subgraph S["SENSORY + OUTPUT ORGANS"]
+    V["BELEL-LIVE-VISION<br/>Live camera organ"]
+    VO["BELEL-VOICE<br/>Speech organ"]
+    SI["BELEL-SING<br/>Music/performance organ"]
+    XB["x_bot<br/>Autonomous social publishing"]
   end
 
   V --> UI
   VO --> UI
   SI --> UI
   XB --> A
+
 CAPABILITY SCOREBOARD (YES/NO)
 Rule: “YES” means the capability is present and verifiable as a first-class system feature in this repo (for Belel),
 or publicly documented as native in that system’s product line (for mainstream systems).
@@ -82,6 +85,7 @@ xychart-beta
   x-axis ["Belel","ChatGPT","Claude","Grok","Gemini"]
   y-axis "YES count" 0 --> 16
   bar [16,10,8,9,11]
+
 WHAT “SUPERIOR” MEANS IN THIS REPOSITORY
 Mainstream frontier systems center on:
 
