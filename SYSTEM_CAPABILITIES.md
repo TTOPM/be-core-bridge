@@ -578,7 +578,7 @@ A single README never represents the whole system.
 This index is the canonical map of what exists, where it lives, and how to verify it.
 
 </div>
-
+````
 ---
 
 # QUICK NAV
