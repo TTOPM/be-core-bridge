@@ -1,4 +1,4 @@
-name: Belel Daily Autonomous Training
+name: Belel Daily Autonomous Training 
 
 on:
   schedule:
