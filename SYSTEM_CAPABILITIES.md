@@ -3,9 +3,9 @@
 <!-- ==================== SYSTEM CAPABILITIES ====================== -->
 <!-- =============== BELEL — CANONICAL ROOT INDEX ================== -->
 <!-- =============================================================== -->
-
+````
 <div align="center">
-
+````
 # ⚡ BELEL — SYSTEM CAPABILITIES INDEX
 ## EXECUTION-VERIFIED · SELF-GENERATING · GOVERNED · DEPLOYABLE · AUDITABLE
 
