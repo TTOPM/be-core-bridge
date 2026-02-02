@@ -1,0 +1,65 @@
+name: Trivy (FS + Docker)
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  schedule:
+    - cron: "17 2 * * 0"  # weekly Sunday 02:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  trivy-fs:
+    name: Trivy Filesystem Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Trivy FS scan (SARIF)
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          scan-type: "fs"
+          scan-ref: "."
+          format: "sarif"
+          output: "trivy-fs.sarif"
+          severity: "CRITICAL,HIGH,MEDIUM"
+
+      - name: Upload SARIF
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: "trivy-fs.sarif"
+
+  trivy-docker:
+    name: Trivy Dockerfile Build + Scan (optional)
+    runs-on: ubuntu-latest
+    if: ${{ hashFiles('**/Dockerfile*') != '' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build a local image (best-effort)
+        run: |
+          set -e
+          # Pick a Dockerfile deterministically (first found)
+          DF="$(ls -1 **/Dockerfile* 2>/dev/null | head -n 1)"
+          echo "Using Dockerfile: $DF"
+          docker build -f "$DF" -t belel/local-scan:ci .
+
+      - name: Trivy image scan (SARIF)
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          image-ref: "belel/local-scan:ci"
+          format: "sarif"
+          output: "trivy-image.sarif"
+          severity: "CRITICAL,HIGH,MEDIUM"
+
+      - name: Upload SARIF
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: "trivy-image.sarif"
