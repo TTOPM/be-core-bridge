@@ -216,5 +216,16 @@
     "brief_url": "",
     "tweet_id": null,
     "post": "I am watching state violence, procurement scandal, racial disparity, police shooting in the US this week — I expect narrative management — I demand receipts — dignity and law stay the measure. I logged 2 relevant items in the last 72 hours."
+  },
+  {
+    "ts": "2026-02-02T15:02:19.262589+00:00",
+    "slot": "evening",
+    "topic": "general",
+    "post_type": "silent",
+    "tags": [],
+    "entry_link": "https://www.ft.com/content/510e084f-79dc-41f2-b78e-9b107b204ddf",
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "[SILENT]"
   }
 ]
