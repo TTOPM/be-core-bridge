@@ -1,0 +1,170 @@
+# =========================
+# GEOSCOPE MAP (DIPLOMAT-GRADE)
+# keyword_or_domain = geoscope label
+# =========================
+
+# --- TRINIDAD & TOBAGO / CARIBBEAN CORE ---
+trinidad=Trinidad and Tobago
+tobago=Trinidad and Tobago
+port of spain=Trinidad and Tobago
+scarborough=Tobago
+caricom=CARICOM / Caribbean
+caribbean=CARICOM / Caribbean
+jamaica=CARICOM / Caribbean
+barbados=CARICOM / Caribbean
+guyana=CARICOM / Caribbean
+suriname=CARICOM / Caribbean
+haiti=CARICOM / Caribbean
+bahamas=CARICOM / Caribbean
+antigua=CARICOM / Caribbean
+st lucia=CARICOM / Caribbean
+grenada=CARICOM / Caribbean
+dominica=CARICOM / Caribbean
+venezuela=Caribbean Basin / Venezuela
+cuba=Caribbean Basin / Cuba
+dominican republic=Caribbean Basin / Hispaniola
+puerto rico=Caribbean Basin / Puerto Rico
+oecs=OECS / Eastern Caribbean
+th a=Tobago / THA governance
+trha=Tobago / TRHA governance
+
+# --- NORTH AMERICA ---
+united states=North America / United States
+us=North America / United States
+canada=North America / Canada
+mexico=North America / Mexico
+washington=Washington / U.S. policy center
+pentagon=Washington / U.S. security apparatus
+state department=Washington / U.S. diplomacy
+
+# --- UK / EUROPE ---
+uk=United Kingdom
+britain=United Kingdom
+london=United Kingdom / London
+eu=European Union
+europe=Europe
+brussels=European Union / Brussels
+france=Europe / France
+germany=Europe / Germany
+italy=Europe / Italy
+spain=Europe / Spain
+poland=Europe / Central & Eastern Europe
+ukraine=Eastern Europe / Ukraine war theatre
+russia=Eurasia / Russia
+nato=Euro-Atlantic security architecture
+osce=Europe / security architecture
+
+# --- MIDDLE EAST / LEVANT / GULF ---
+middle east=Middle East
+levant=Levant / Eastern Mediterranean
+israel=Levant / Israel-Palestine
+palestine=Levant / Israel-Palestine
+gaza=Levant / Gaza
+west bank=Levant / West Bank
+iran=Middle East / Iran
+iraq=Middle East / Iraq
+syria=Levant / Syria
+lebanon=Levant / Lebanon
+jordan=Levant / Jordan
+turkey=Turkey / Black Sea gateway
+saudi=Gulf / Saudi Arabia
+uae=Gulf / United Arab Emirates
+qatar=Gulf / Qatar
+yemen=Red Sea / Yemen
+houthi=Red Sea / Yemen
+red sea=Red Sea corridor
+suez=Suez / global shipping choke-point
+strait of hormuz=Gulf / Strait of Hormuz choke-point
+
+# --- AFRICA (REGIONAL GRANULARITY) ---
+africa=Africa
+north africa=North Africa
+maghreb=North Africa / Maghreb
+egypt=North Africa / Egypt
+libya=North Africa / Libya
+sahel=Sahel / security belt
+nigeria=West Africa / Nigeria
+ghana=West Africa / Ghana
+senegal=West Africa / Senegal
+ivory coast=West Africa / Côte d’Ivoire
+east africa=East Africa
+ethiopia=Horn of Africa
+somalia=Horn of Africa / maritime insecurity
+sudan=Sudan / conflict theatre
+south africa=Southern Africa / South Africa
+drc=Central Africa / DRC
+
+# --- ASIA-PACIFIC / INDO-PACIFIC ---
+asia=Asia
+indo-pacific=Indo-Pacific strategic theatre
+china=Indo-Pacific / China
+beijing=China / Beijing policy center
+taiwan=Indo-Pacific / Taiwan Strait
+south china sea=Indo-Pacific / South China Sea
+japan=Indo-Pacific / Japan
+korea=Indo-Pacific / Korean Peninsula
+india=South Asia / India
+pakistan=South Asia / Pakistan
+bangladesh=South Asia / Bangladesh
+asean=Southeast Asia / ASEAN
+philippines=Indo-Pacific / Philippines
+vietnam=Indo-Pacific / Vietnam
+australia=Indo-Pacific / Australia
+new zealand=Indo-Pacific / New Zealand
+
+# --- LATIN AMERICA ---
+latin america=Latin America
+brazil=South America / Brazil
+argentina=South America / Argentina
+colombia=South America / Colombia
+peru=South America / Peru
+chile=South America / Chile
+panama=Panama Canal / shipping corridor
+canal=Panama Canal / shipping corridor
+
+# --- GLOBAL INSTITUTIONS / LAW / FINANCE ---
+un=United Nations system
+united nations=United Nations system
+security council=UN Security Council
+ohchr=UN human rights system
+icc=International criminal law
+icj=International court system
+imf=Global financial governance
+world bank=Global financial governance
+wto=Global trade governance
+g7=G7 / advanced economies
+g20=G20 / major economies
+brics=BRICS / multipolar bloc
+opec=Global energy governance
+iea=Global energy governance
+
+# --- ENERGY / SHIPPING / STRATEGIC RESOURCES ---
+oil=Global energy markets
+gas=Global energy markets
+lng=Global energy markets
+pipeline=Energy infrastructure politics
+rare earth=Strategic minerals / supply chains
+critical minerals=Strategic minerals / supply chains
+sanctions=Coercive statecraft / sanctions regime
+tariff=Trade conflict / tariff regime
+shipping=Global shipping lanes
+strait=Maritime choke-points
+black sea=Black Sea / security theatre
+baltic=Baltic / Euro-Atlantic security
+arctic=Arctic / great power competition
+
+# --- MEDIA DOMAINS (HIGH SIGNAL) ---
+reuters.com=Global diplomacy & markets
+apnews.com=Global public record
+bbc.co.uk=Global public record
+ft.com=Global markets & statecraft
+economist.com=Strategic analysis
+foreignaffairs.com=Strategic analysis
+csis.org=Washington / strategic community
+chathamhouse.org.uk=London / strategic community
+cfr.org=Washington / strategic community
+hrw.org=Human rights / accountability
+amnesty.org=Human rights / accountability
+aljazeera.com=Middle East / regional theatre
+timesofisrael.com=Levant / Israel-Palestine
+haaretz.com=Levant / Israel-Palestine
