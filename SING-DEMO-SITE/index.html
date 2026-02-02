@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BELEL-SING — Public Demo</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <main class="wrap">
+    <header class="hero">
+      <div class="badge">BELEL-SING</div>
+      <h1>Public Singing Demo</h1>
+      <p class="sub">
+        3–5 second capped preview. This page provides a proof-of-capability sample, not service access.
+      </p>
+    </header>
+
+    <section class="card">
+      <h2>Listen</h2>
+      <audio id="player" controls preload="none">
+        <!-- Static fallback sample shipped in repo -->
+        <source src="./samples/sample.wav" type="audio/wav" />
+        Your browser does not support audio playback.
+      </audio>
+
+      <div class="row">
+        <button id="btnSample" class="btn secondary">Load sample</button>
+      </div>
+
+      <hr />
+
+      <h2>Generate a capped preview</h2>
+      <p class="hint">
+        Generation requires a separate demo API. If you haven’t deployed it yet, the button will explain what’s missing.
+      </p>
+
+      <label class="label">Lyrics (short)</label>
+      <input id="lyrics" class="input" maxlength="64" value="We rise together" />
+
+      <div class="row">
+        <label class="label-inline">Seconds</label>
+        <select id="seconds" class="select">
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5" selected>5</option>
+        </select>
+
+        <button id="btnGenerate" class="btn">Generate 3–5s WAV</button>
+      </div>
+
+      <div id="status" class="status" aria-live="polite"></div>
+      <p class="footnote">
+        Output is capped, rate-limited, and constrained to demo presets.
+      </p>
+    </section>
+
+    <footer class="footer">
+      <span>© TTOPM — Proof Surface Demo</span>
+    </footer>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>
