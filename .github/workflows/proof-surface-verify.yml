@@ -1,0 +1,62 @@
+name: Proof Surface Verify (Run → Emit → Audit)
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  schedule:
+    - cron: "0 4 * * *"   # daily 04:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: proof-surface-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  proof-surface:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install deps (best-effort)
+        run: |
+          set -e
+          python -m pip install --upgrade pip
+          # Prefer repo-specific requirements if present
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          if [ -f requirements-ci.txt ]; then pip install -r requirements-ci.txt; fi
+          if [ -f requirements-defender.txt ]; then pip install -r requirements-defender.txt; fi
+          pip install pyyaml filelock
+
+      - name: Run core verifiers (if present)
+        run: |
+          set -e
+          if [ -f verify_all.py ]; then python verify_all.py; else echo "verify_all.py not found (skipping)"; fi
+          if [ -f canon_audit.py ]; then python canon_audit.py; else echo "canon_audit.py not found (skipping)"; fi
+          if [ -f canonical_diff_checker.py ]; then python canonical_diff_checker.py; else echo "canonical_diff_checker.py not found (skipping)"; fi
+
+      - name: Proof surface assertions (paths + artifacts)
+        run: |
+          set -e
+          python scripts/proof_surface_verify.py
+
+      - name: Upload proof logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: proof-surface-${{ github.run_id }}
+          path: |
+            proof_reports/
+          retention-days: 14
