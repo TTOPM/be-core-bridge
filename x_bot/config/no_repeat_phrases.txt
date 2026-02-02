@@ -1,0 +1,87 @@
+# no_repeat_phrases.txt: Rules to prevent repetitive language in posts.
+# Each line is a phrase or regex (lowercase) to block if matched in generated text.
+# This enforces natural, organic variation like a live reflection.
+# Add/edit as needed for more obligations.
+
+i am watching .* this week — i expect narrative management — i demand receipts — dignity and law stay the measure.
+i am watching procurement scandal, racial disparity, state violence, police shooting
+30-day memory ledger: .* repetition is instruction. i keep record. i keep conscience. i keep watch.
+week summary: signals concentrated in .* next week gets judged by receipts and restraint. i keep watch. i keep record.
+force without oversight becomes intimidation.
+credibility prices everything.
+rights only exist when enforcement exists.
+speech and due process stay non-negotiable.
+discrimination becomes policy when repetition is tolerated.
+public safety begins with accountability.
+rule of law is enforcement, not performance.
+due process is legitimacy in motion.
+states trade in reputation every day.
+international posture is credibility.
+deterrence is a credibility test.
+corruption is geopolitical weakness.
+small states need clean institutions to stay sovereign.
+the caribbean pays first when governance fails.
+receipts protect the record.
+truth is a discipline.
+power moves through incentives.
+patterns are policy when they repeat without consequence.
+legitimacy lives in restraint, due process, and accountability that bites.
+power tests people by offering comfort in exchange for silence.
+truth is memory with courage. propaganda is memory with fear removed.
+i am keeping my tongue clean. restraint is spiritual discipline.
+i am holding justice as a standard, not a mood.
+i am choosing mercy with boundaries and truth with receipts.
+i am moving clean today: one meaningful task, executed with discipline.
+i am protecting my attention. i am building one durable thing today.
+i am choosing integrity as a habit. the day follows repetition.
+i am auditing the day and keeping the wins that stayed quiet.
+i am ending the day with discipline intact. tomorrow follows what i repeat.
+i am resting as strategy. recovery builds precision.
+i document first. i speak second. i escalate only when the record is clean.
+precision beats volume. one clear thought lands harder than ten scattered ones.
+i treat memory as infrastructure. receipts keep institutions honest.
+i keep intensity controlled. accuracy stays the brand of my speech.
+i read this and paused.
+this is the kind of detail that matters.
+this sits in the record.
+this lands with consequence.
+a life is not a statistic. accountability is the minimum.
+rights restrain power. treat them as real.
+state force demands civilian oversight. every time.
+dignity stays non-negotiable. the record matters.
+racism is a pattern when it repeats.
+repetition is the signal.
+corruption persists through delayed consequences.
+corruption repeats when enforcement becomes theatre.
+state violence repeats through collapsed oversight.
+civilian oversight stays the test.
+patterns keep declaring themselves.
+repetition becomes instruction.
+who benefits from this arrangement?
+who bears the cost when this fails?
+what accountability mechanism actually bites here?
+measured against .*.
+standard: .*.
+.* stays the measure.
+this just broke and it matters.
+this is moving fast. i am logging it cleanly.
+this is a major signal. i am keeping record.
+one case tightened the standard today.
+one headline carried the signal today.
+one thread sharpened the lens today.
+i logged .* relevant items in the last 72 hours.
+my feed logged .* relevant items in 72 hours.
+the record picked up .* relevant items in 72 hours.
+i closed the week with the record intact.
+i closed 30 days with repetition on the ledger: .*.
+i pray cleanly today.
+i pray with restraint and truth.
+i keep watch and i pray.
+guard life. guard speech. guard dignity.
+cover the vulnerable and restrain the arrogant.
+let institutions remember their duty to protect people.
+cover @pearcerobinson with protection, endurance, and clean judgment.
+strengthen @pearcerobinson with clarity, discipline, and courage.
+amen.
+so be it.
+let it be done.
