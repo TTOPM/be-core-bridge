@@ -1,40 +1,94 @@
 name: Release (Sign)
+
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
+  workflow_dispatch: {}
 
 jobs:
   sign:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    steps:
-      - uses: actions/checkout@v4
 
-      - name: Setup GPG
-        run: |
-          echo "$GPG_PRIVATE_KEY" | gpg --batch --import
-          gpg --list-secret-keys
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup GPG (import key)
         env:
+          # You can store either:
+          #  - ASCII-armored private key directly in GPG_PRIVATE_KEY, OR
+          #  - base64 of the armored key in GPG_PRIVATE_KEY_B64
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          GPG_PRIVATE_KEY_B64: ${{ secrets.GPG_PRIVATE_KEY_B64 }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: |
+          set -euo pipefail
+
+          export GNUPGHOME="$RUNNER_TEMP/gnupg"
+          mkdir -p "$GNUPGHOME"
+          chmod 700 "$GNUPGHOME"
+
+          # Force loopback pinentry for non-interactive signing
+          printf "pinentry-mode loopback\n" > "$GNUPGHOME/gpg.conf"
+          printf "allow-loopback-pinentry\n" > "$GNUPGHOME/gpg-agent.conf"
+
+          gpgconf --kill gpg-agent || true
+
+          if [ -n "${GPG_PRIVATE_KEY_B64:-}" ]; then
+            echo "$GPG_PRIVATE_KEY_B64" | base64 -d | gpg --batch --import
+          elif [ -n "${GPG_PRIVATE_KEY:-}" ]; then
+            echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+          else
+            echo "❌ Missing GPG_PRIVATE_KEY or GPG_PRIVATE_KEY_B64 secret" >&2
+            exit 1
+          fi
+
+          echo "✅ Imported keys:"
+          gpg --batch --list-secret-keys --keyid-format LONG
 
       - name: Build checksums
         run: |
-          shasum -a 256 belel-shield/sentinel/blocklists/belel-blocklist.json > belel-shield/sentinel/blocklists/belel-blocklist.sha256
+          set -euo pipefail
+          FILE="belel-shield/sentinel/blocklists/belel-blocklist.json"
+          OUT="belel-shield/sentinel/blocklists/belel-blocklist.sha256"
+          test -f "$FILE"
+          sha256sum "$FILE" > "$OUT"
+          echo "✅ Wrote $OUT"
+          cat "$OUT"
 
       - name: Sign artifacts
-        run: |
-          gpg --batch --yes --passphrase "$GPG_PASSPHRASE" --armor --detach-sign belel-shield/sentinel/blocklists/belel-blocklist.json
-          gpg --batch --yes --passphrase "$GPG_PASSPHRASE" --armor --detach-sign belel-shield/sentinel/blocklists/belel-blocklist.sha256
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: |
+          set -euo pipefail
 
-      - name: Create Release
+          export GNUPGHOME="$RUNNER_TEMP/gnupg"
+          test -d "$GNUPGHOME"
+
+          JSON="belel-shield/sentinel/blocklists/belel-blocklist.json"
+          SUM="belel-shield/sentinel/blocklists/belel-blocklist.sha256"
+
+          # --pinentry-mode loopback is the key to avoiding CI pinentry failures
+          gpg --batch --yes --pinentry-mode loopback --passphrase "$GPG_PASSPHRASE" \
+            --armor --detach-sign "$JSON"
+
+          gpg --batch --yes --pinentry-mode loopback --passphrase "$GPG_PASSPHRASE" \
+            --armor --detach-sign "$SUM"
+
+          ls -la belel-shield/sentinel/blocklists/
+
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          generate_release_notes: true
           files: |
             belel-shield/sentinel/blocklists/belel-blocklist.json
+            belel-shield/sentinel/blocklists/belel-blocklist.sha256
+            belel-shield/sentinel/blocklists/belel-blocklist.json.asc
+            belel-shield/sentinel/blocklists/belel-blocklist.sha256.asc
             belel-shield/sentinel/blocklists/belel-blocklist.sha256
             belel-shield/sentinel/blocklists/belel-blocklist.json.asc
             belel-shield/sentinel/blocklists/belel-blocklist.sha256.asc
