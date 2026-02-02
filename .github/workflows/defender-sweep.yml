@@ -1,79 +1,137 @@
-name: Belel Core Defender
+name: Belel Core Defender (Sweep)
 
 on:
-  push:
-    branches: [ "main" ]
-    paths:
-      - "be_core_defender.py"
-      - "mutation_watcher.py"
-      - "belel_guardian.py"
-      - "concordium_enforcer.py"
-      - "claim_review_publisher.py"
-      - "media_sentient_engine.py"
-      - "code_hashes.json"
-      - "canonical_config.json"
-      - "requirements-defender.txt"
-      - "**/*.py"
-      - "BELEL_PROTOCOL_OVERVIEW.md"
-  pull_request:
-    branches: [ "main" ]
-    paths:
-      - "be_core_defender.py"
-      - "mutation_watcher.py"
-      - "belel_guardian.py"
-      - "concordium_enforcer.py"
-      - "claim_review_publisher.py"
-      - "media_sentient_engine.py"
-      - "code_hashes.json"
-      - "canonical_config.json"
-      - "requirements-defender.txt"
-      - "**/*.py"
-      - "BELEL_PROTOCOL_OVERVIEW.md"
+  # Long scan (runs even if no file changed)
   schedule:
-    - cron: "0 * * * *"  # hourly drift sweep (not every 5 minutes)
-  workflow_dispatch:
-
-concurrency:
-  group: defender-${{ github.ref }}
-  cancel-in-progress: true
+    - cron: "15 3 * * *"   # 03:15 UTC daily
+  # Manual trigger button
+  workflow_dispatch: {}
 
 permissions:
   contents: read
 
+concurrency:
+  group: defender-sweep-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  run-defender:
+  sweep:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 30
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 0
 
-      - name: Set up Python
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: "pip"
-          cache-dependency-path: requirements-defender.txt
 
-      - name: Preflight: required files present
-        run: |
-          set -e
-          test -f requirements-defender.txt
-          test -f be_core_defender.py
-          echo "✅ preflight ok"
-
-      - name: Install dependencies
+      - name: Install dependencies (defender)
         run: |
           set -e
           python -m pip install --upgrade pip
-          pip install -r requirements-defender.txt
+          if [ -f requirements-defender.txt ]; then
+            pip install -r requirements-defender.txt
+          else
+            pip install requests filelock
+          fi
 
-      - name: Run Belel Core Defender
+      - name: Defender sweep (single-run, no loop)
         env:
-          PYTHONUNBUFFERED: "1"
+          # Keep the defender from looping if your script ever calls sleep logic
+          BELEL_DEFENDER_INTERVAL_SECS: "999999"
         run: |
           set -e
-          python be_core_defender.py
+          python - <<'PY'
+          import json, os, hashlib
+          from pathlib import Path
+          from datetime import datetime
+
+          # Import your defender file (repo root)
+          import be_core_defender
+
+          out_dir = Path("defender_reports")
+          out_dir.mkdir(exist_ok=True)
+
+          ts = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
+
+          # 1) Run the protected-files defender scan once
+          be_core_defender.run_defender()
+
+          # 2) Build a repo-wide hash snapshot (audit surface)
+          #    - excludes .git and large/volatile folders you may not want
+          EXCLUDE_DIRS = {".git", "backup_mirror", "__pycache__", ".venv", "node_modules"}
+          EXCLUDE_SUFFIX = {".pyc", ".log"}
+
+          def sha256_file(p: Path) -> str:
+            h = hashlib.sha256()
+            with p.open("rb") as f:
+              for chunk in iter(lambda: f.read(1024 * 1024), b""):
+                h.update(chunk)
+            return h.hexdigest()
+
+          snapshot = {
+            "generated_utc": ts,
+            "commit": os.environ.get("GITHUB_SHA"),
+            "repo_hashes": {}
+          }
+
+          root = Path(".")
+          for p in root.rglob("*"):
+            if p.is_dir():
+              continue
+            parts = set(p.parts)
+            if any(d in parts for d in EXCLUDE_DIRS):
+              continue
+            if p.suffix in EXCLUDE_SUFFIX:
+              continue
+            # Skip extremely large files to keep runtime predictable on free runners
+            try:
+              if p.stat().st_size > 50 * 1024 * 1024:  # 50MB
+                continue
+            except OSError:
+              continue
+            try:
+              snapshot["repo_hashes"][str(p)] = sha256_file(p)
+            except Exception:
+              # If a file is unreadable for any reason, skip it (sweep should still complete)
+              continue
+
+          # 3) Emit sweep artifacts (downloadable)
+          (out_dir / f"repo_hash_snapshot_{ts}.json").write_text(json.dumps(snapshot, indent=2), encoding="utf-8")
+          (out_dir / f"sweep_meta_{ts}.json").write_text(json.dumps({
+            "generated_utc": ts,
+            "commit": os.environ.get("GITHUB_SHA"),
+            "workflow": os.environ.get("GITHUB_WORKFLOW"),
+            "run_id": os.environ.get("GITHUB_RUN_ID"),
+            "ref": os.environ.get("GITHUB_REF"),
+          }, indent=2), encoding="utf-8")
+
+          print("✅ Defender sweep complete.")
+          print(f"📁 Outputs: {out_dir.resolve()}")
+          PY
+
+      - name: Upload sweep artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: defender-sweep-${{ github.run_id }}
+          path: |
+            defender_reports/
+            backup_mirror/
+            code_hashes.json
+          retention-days: 30
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "✅ Defender sweep finished."
+          echo "📦 Download artifacts from the workflow run:"
+          echo "  - defender_reports/repo_hash_snapshot_*.json"
+          echo "  - code_hashes.json"
+          echo "  - backup_mirror/* (if created)"
