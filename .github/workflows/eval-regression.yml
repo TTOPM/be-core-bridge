@@ -1,0 +1,42 @@
+name: Eval Regression (No-Regression Gate)
+
+on:
+  schedule:
+    - cron: "0 6 * * *"  # daily 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install minimal deps
+        run: |
+          set -e
+          python -m pip install --upgrade pip
+          pip install pyyaml
+
+      - name: Run eval
+        run: |
+          set -e
+          python scripts/eval_smoke.py
+
+      - name: Upload eval report
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-report-${{ github.run_id }}
+          path: |
+            metrics/eval_latest.json
+          retention-days: 30
