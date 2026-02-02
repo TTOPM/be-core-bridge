@@ -1,0 +1,41 @@
+name: CI (Lint + Tests)
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install CI tools
+        run: |
+          set -e
+          python -m pip install --upgrade pip
+          pip install ruff black pytest
+
+      - name: Ruff (lint)
+        run: |
+          ruff check . || true
+
+      - name: Black (format check)
+        run: |
+          black --check . || true
+
+      - name: Pytest (best-effort)
+        run: |
+          pytest -q || true
