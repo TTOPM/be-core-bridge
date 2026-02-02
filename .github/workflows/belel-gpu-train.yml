@@ -1,0 +1,101 @@
+name: Belel GPU Train (LoRA/QLoRA → Eval → Promote)
+
+on:
+  workflow_dispatch:
+    inputs:
+      train_tag:
+        description: "Label for this training run (e.g. nightly-2026-02-02)"
+        required: false
+        default: "manual"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: belel-gpu-train
+  cancel-in-progress: false
+
+jobs:
+  gpu-train:
+    # IMPORTANT: requires a self-hosted runner with GPU
+    runs-on: [self-hosted, linux, x64, gpu]
+    timeout-minutes: 360
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install GPU requirements
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-gpu.txt
+
+      - name: Create training dirs
+        run: |
+          mkdir -p data/autonomous_training/continuous_data
+          mkdir -p data/autonomous_training/daily_epochs
+          mkdir -p data/autonomous_training/evals
+          mkdir -p data/autonomous_training/logs
+          mkdir -p data/autonomous_training/run_manifests
+          mkdir -p models/adapters
+          mkdir -p models/candidates
+
+      - name: Write run manifest (bind to commit/config)
+        run: |
+          python scripts/write_run_manifest.py \
+            --out data/autonomous_training/run_manifests/gpu_train_manifest.json \
+            --purpose gpu_train \
+            --tag "${{ inputs.train_tag }}"
+
+      - name: Train LoRA/QLoRA from latest gated shards
+        env:
+          # Set these as GitHub Secrets for private base models:
+          # HF_TOKEN, BASE_MODEL_ID
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          BASE_MODEL_ID: ${{ secrets.BASE_MODEL_ID }}
+        run: |
+          python scripts/train_lora.py \
+            --base-model "${BASE_MODEL_ID}" \
+            --token-env HF_TOKEN \
+            --train-data emitted_shards/daily \
+            --outdir models/candidates \
+            --lora-rank 16 \
+            --batch-size 2 \
+            --grad-accum 8 \
+            --epochs 1 \
+            --lr 2e-4
+
+      - name: Evaluate candidate vs current best
+        run: |
+          python scripts/eval_harness.py \
+            --candidate models/candidates \
+            --current models/adapters/current \
+            --out data/autonomous_training/evals/eval_report.json
+
+      - name: Promote only if improved (no-regression policy)
+        run: |
+          python scripts/promote_if_better.py \
+            --eval data/autonomous_training/evals/eval_report.json \
+            --candidate models/candidates \
+            --current models/adapters/current \
+            --registry data/autonomous_training/model_registry.json \
+            --history data/autonomous_training/performance_history.json \
+            --min-improvement 0.002 \
+            --no-regression true
+
+      - name: Upload training artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: belel-gpu-train-${{ github.run_id }}
+          path: |
+            data/autonomous_training/run_manifests/
+            data/autonomous_training/evals/
+            data/autonomous_training/model_registry.json
+            data/autonomous_training/performance_history.json
+            models/candidates/
+          retention-days: 30
