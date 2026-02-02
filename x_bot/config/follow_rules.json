@@ -1,0 +1,10 @@
+{
+  "enabled": true,
+  "verified_only": true,
+  "max_follows_per_day": 1,
+  "max_follows_per_week": 3,
+  "cooldown_hours": 18,
+  "run_probability": 0.18,
+  "min_followers": 2000,
+  "min_account_age_days": 60
+}
