@@ -1,0 +1,89 @@
+name: Belel Daily Pipeline (Generate → Verify → Gate → Emit)
+
+on:
+  schedule:
+    - cron: "0 2 * * *"   # 02:00 UTC daily
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: belel-daily-pipeline
+  cancel-in-progress: false
+
+jobs:
+  daily-pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install CI requirements
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-ci.txt
+
+      - name: Create runtime dirs
+        run: |
+          mkdir -p data/autonomous_training/continuous_data
+          mkdir -p data/autonomous_training/logs
+          mkdir -p data/autonomous_training/run_manifests
+          mkdir -p artifacts/shards_daily
+
+      - name: Write run manifest (bind to commit/config)
+        run: |
+          python scripts/write_run_manifest.py \
+            --out data/autonomous_training/run_manifests/run_manifest.json \
+            --purpose daily_pipeline
+
+      - name: Generate daily shards (SFT + DPO + negatives)
+        run: |
+          python scripts/generate_shards_daily.py \
+            --outdir data/autonomous_training/continuous_data \
+            --emit artifacts/shards_daily \
+            --samples-sft 2500 \
+            --samples-dpo 800 \
+            --samples-neg 400 \
+            --seed 41
+
+      - name: Verify shards (schema + mandate + execution checks)
+        run: |
+          python scripts/verify_shards.py \
+            --indir artifacts/shards_daily \
+            --report data/autonomous_training/logs/verify_report.json
+
+      - name: Dedup + diversity gate
+        run: |
+          python scripts/dedup_diversity_gate.py \
+            --indir artifacts/shards_daily \
+            --outdir artifacts/shards_daily_gated \
+            --report data/autonomous_training/logs/gates_report.json
+
+      - name: Package gated shards (emit)
+        run: |
+          mkdir -p emitted_shards/daily
+          rsync -a artifacts/shards_daily_gated/ emitted_shards/daily/
+
+      - name: Upload emitted artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: belel-daily-pipeline-${{ github.run_id }}
+          path: |
+            data/autonomous_training/logs/
+            data/autonomous_training/run_manifests/
+            emitted_shards/daily/
+          retention-days: 30
+
+      - name: Summary
+        run: |
+          echo "✅ Daily Pipeline complete."
+          echo "Emitted shards: emitted_shards/daily/"
+          echo "Reports: data/autonomous_training/logs/"
