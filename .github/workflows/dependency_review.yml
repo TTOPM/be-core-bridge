@@ -1,0 +1,28 @@
+name: Dependency Review (PR)
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  dependency-review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v4
+        with:
+          # Fail PR if it introduces vulnerabilities of these severities
+          fail-on-severity: high
+          # Allow show-only mode by default? No — enforce.
+          allow-licenses: |
+            MIT
+            Apache-2.0
+            BSD-2-Clause
+            BSD-3-Clause
+            ISC
+            MPL-2.0
