@@ -1,58 +1,93 @@
-name: Sync to Hugging Face
+name: Sync to Hugging Face (push-only)
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hf-sync-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   sync:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
-      - name: 🧾 Checkout GitHub repo
-        uses: actions/checkout@v3
+      - name: Checkout (full history)
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          lfs: false
 
-      - name: 🧬 Install Git LFS
+      - name: Install Git LFS
         run: |
           sudo apt-get update
           sudo apt-get install -y git-lfs
           git lfs install
 
-      - name: 🔐 Set Git Identity
-        run: |
-          git config --global user.email "you@example.com"
-          git config --global user.name "Pearce Robinson"
-
-      - name: 🌐 Add HF Remote & Pull (Ignore Missing LFS Objects)
+      - name: Verify HF token present
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          git remote | grep hf || git remote add hf https://pearcerobinson:${HF_TOKEN}@huggingface.co/TTOPM/belel-protocol
+          if [ -z "$HF_TOKEN" ]; then
+            echo "❌ Missing secret: HF_TOKEN"
+            exit 1
+          fi
+          echo "✅ HF_TOKEN is set (hidden)."
 
-          # Avoid LFS smudge errors
-          git lfs install --skip-smudge
-          git pull hf main --rebase || echo "Skipping LFS error on pull"
-
-      - name: 🧹 Configure Git LFS & Remove Orphaned Binary Files
+      - name: Configure Git identity
         run: |
-          git lfs track "*.wav" || true
-          echo "*.wav filter=lfs diff=lfs merge=lfs -text" >> .gitattributes
-          git add .gitattributes || true
+          git config --global user.email "actions@github.com"
+          git config --global user.name "github-actions[bot]"
 
-          # Prevent breaking if file already gone
-          if [ -f audio/belel_entry_response.wav ]; then
-            git rm --cached audio/belel_entry_response.wav || true
+      - name: Add Hugging Face remote (push-only)
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          # Push-only remote. No pull/fetch from HF.
+          # Use a fixed username; token is the credential.
+          git remote remove hf 2>/dev/null || true
+          git remote add hf "https://huggingface.co/TTOPM/belel-protocol"
+
+          # Configure credential helper for this run
+          git config --global credential.helper store
+          printf "https://user:%s@huggingface.co\n" "$HF_TOKEN" > ~/.git-credentials
+
+          # Sanity
+          git remote -v
+
+      - name: Push branch + tags to Hugging Face (push-only)
+        env:
+          # If you *want* hard overwrite every time, set to "true"
+          FORCE_OVERWRITE: "true"
+        run: |
+          set -e
+
+          # Ensure we're on main
+          git checkout main
+
+          if [ "$FORCE_OVERWRITE" = "true" ]; then
+            echo "⚠️ Force overwriting HF main to match GitHub main"
+            git push hf main --force
+            git push hf --tags --force || true
+          else
+            echo "✅ Safer mode: force-with-lease"
+            git push hf main --force-with-lease
+            git push hf --tags --force-with-lease || true
           fi
 
-          git add .
-          git commit -m "Configure LFS and cleanup orphaned binaries" || echo "Nothing to commit"
-
-      - name: 🚀 Push to Hugging Face
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      - name: Push LFS objects (if any)
         run: |
-          git push hf main --force-with-lease || echo "Push failed. Manual review may be needed."
+          # This pushes LFS blobs referenced by commits you just pushed.
+          # If you have a lot of LFS history and want everything, use: git lfs push --all hf main
+          git lfs push hf main || true
 
+      - name: Done
+        run: |
+          echo "✅ Sync complete (push-only)."
+          echo "HF repo: TTOPM/belel-protocol"
