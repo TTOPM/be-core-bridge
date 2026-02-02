@@ -1,29 +1,48 @@
 name: Docker Firewall (GHCR)
+
 on:
+  workflow_dispatch:
   push:
     branches: [ main ]
     paths:
       - 'belel-shield/packaging/Dockerfile.firewall'
       - 'belel-shield/firewall/linux/**'
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      packages: write
-      contents: read
     steps:
       - uses: actions/checkout@v4
+
+      - name: Confirm inputs exist
+        run: |
+          set -euo pipefail
+          test -f belel-shield/packaging/Dockerfile.firewall
+          test -f belel-shield/firewall/linux/belel_firewall.sh
+          ls -la belel-shield/packaging
+          ls -la belel-shield/firewall/linux
+
+      - name: Set image name
+        run: |
+          echo "IMAGE=ghcr.io/${{ github.repository_owner }}/belel-firewall" >> $GITHUB_ENV
+
       - name: Login to GHCR
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: .
           file: belel-shield/packaging/Dockerfile.firewall
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/belel-firewall:latest
+          tags: |
+            ${{ env.IMAGE }}:latest
+            ${{ env.IMAGE }}:${{ github.sha }}
