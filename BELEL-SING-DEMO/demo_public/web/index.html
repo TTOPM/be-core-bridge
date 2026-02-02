@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BELEL-SING • Public Demo</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <h1>BELEL-SING</h1>
+      <p class="sub">Public demo • 3–5 seconds • capped • no transfer</p>
+    </header>
+
+    <section class="card">
+      <label>Lyrics (max 80 chars)</label>
+      <input id="lyrics" maxlength="80" value="We rise together" />
+
+      <label>Length</label>
+      <div class="row">
+        <button class="chip" data-seconds="3">3s</button>
+        <button class="chip selected" data-seconds="5">5s</button>
+      </div>
+
+      <button id="generate" class="primary">Generate demo</button>
+
+      <div class="player">
+        <audio id="audio" controls></audio>
+        <div id="status" class="status">Ready.</div>
+      </div>
+
+      <footer class="fineprint">
+        Output is a demo artifact. Internal checkpoints remain private.
+      </footer>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
