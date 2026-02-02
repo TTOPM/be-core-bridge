@@ -1,0 +1,70 @@
+name: Release (Provenance + SBOM)
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install build tooling
+        run: |
+          set -e
+          python -m pip install --upgrade pip
+          pip install build wheel setuptools
+          pip install cyclonedx-bom
+
+      - name: Build Python package (best-effort)
+        run: |
+          set -e
+          mkdir -p dist
+          # If pyproject exists, build; otherwise just produce a repo snapshot tarball
+          if [ -f pyproject.toml ]; then
+            python -m build
+          else
+            echo "No pyproject.toml found. Creating source snapshot only."
+            tar -czf dist/repo-snapshot.tar.gz .
+          fi
+
+      - name: Generate SBOM (Python env, best-effort)
+        run: |
+          set -e
+          mkdir -p dist
+          # Creates a CycloneDX SBOM of installed Python packages
+          cyclonedx-py -o dist/sbom.cdx.json || echo "SBOM generation best-effort: cyclonedx-py failed"
+
+      - name: Build checksums
+        run: |
+          set -e
+          cd dist
+          sha256sum * > SHA256SUMS.txt
+          cd -
+
+      - name: Attest build provenance (dist/)
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: "dist/*"
+
+      - name: Create GitHub Release + upload assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*
