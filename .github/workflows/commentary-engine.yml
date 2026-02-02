@@ -1,17 +1,15 @@
-name: Commentary Engine 🎙️
+name: Commentary Engine
 
 on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "0 */6 * * *"
   push:
     paths:
       - "media_sentient_engine.py"
       - ".github/workflows/commentary-engine.yml"
       - "config/canonical_config.json"
       - "config/canonical_responses.yml"
-      - "requirements.txt"
-      - "requirements-ci.txt"
-  schedule:
-    - cron: "0 */6 * * *" # every 6 hours (UTC)
-  workflow_dispatch: {}
 
 permissions:
   contents: read
@@ -21,101 +19,68 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  commentary:
+  run:
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
     steps:
-      - name: 🧾 Checkout repo
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: 🐍 Setup Python 3.11
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-          cache: "pip"
 
-      - name: 📦 Install dependencies (robust)
+      - name: Install dependencies
         shell: bash
         run: |
           set -euo pipefail
           python -m pip install --upgrade pip
-
-          # Prefer requirements.txt, fall back to requirements-ci.txt, else minimal deps.
-          if [ -f "requirements.txt" ]; then
-            echo "▶ Installing requirements.txt"
+          if [ -f requirements.txt ]; then
             pip install -r requirements.txt
-          elif [ -f "requirements-ci.txt" ]; then
-            echo "▶ Installing requirements-ci.txt"
-            pip install -r requirements-ci.txt
-          else
-            echo "⚠️ No requirements file found. Installing minimal deps."
-            pip install "PyYAML==6.0.2" "requests>=2.31.0"
           fi
-
-          # Hard safety net: YAML parsing must always exist.
+          # common hard dependency for YAML configs
           pip install "PyYAML==6.0.2"
 
-      - name: ✅ Preflight: verify engine + config exist
+      - name: Preflight checks
         shell: bash
+        env:
+          COMMENTARY_BEARER_TOKEN: ${{ secrets.COMMENTARY_BEARER_TOKEN }}
         run: |
           set -euo pipefail
 
           if [ ! -f "media_sentient_engine.py" ]; then
             echo "❌ media_sentient_engine.py not found at repo root."
-            echo "   Expected: ./media_sentient_engine.py"
             ls -la
             exit 1
           fi
 
           if [ ! -f "config/canonical_config.json" ]; then
             echo "❌ Missing config/canonical_config.json"
+            ls -la config || true
+            exit 1
+          fi
+
+          if [ -z "${COMMENTARY_BEARER_TOKEN:-}" ]; then
+            echo "❌ Missing secret: COMMENTARY_BEARER_TOKEN"
+            echo "Add it in: Settings → Secrets and variables → Actions → New repository secret"
             exit 1
           fi
 
           if [ -f "config/canonical_responses.yml" ]; then
             echo "✅ Found config/canonical_responses.yml"
           else
-            echo "⚠️ config/canonical_responses.yml not found (engine may still run)."
+            echo "⚠️ config/canonical_responses.yml not found (engine may still run depending on defaults)."
           fi
 
-      - name: 🔒 Preflight: required secret present?
-        shell: bash
-        env:
-          TOKEN: ${{ secrets.COMMENTARY_BEARER_TOKEN }}
-        run: |
-          set -euo pipefail
-          if [ -z "${TOKEN:-}" ]; then
-            echo "❌ Missing COMMENTARY_BEARER_TOKEN secret"
-            echo "   Repo Settings → Secrets and variables → Actions → New repository secret"
-            exit 1
-          fi
-          echo "✅ COMMENTARY_BEARER_TOKEN is set (hidden)."
-
-      - name: 🧠 Run Commentary Engine (root)
+      - name: Run Commentary Engine
         shell: bash
         env:
           COMMENTARY_BEARER_TOKEN: ${{ secrets.COMMENTARY_BEARER_TOKEN }}
-          CANONICAL_CONFIG_PATH: config/canonical_config.json
-          CANONICAL_RESPONSES_PATH: config/canonical_responses.yml
-          PYTHONUNBUFFERED: "1"
+          CANONICAL_CONFIG_PATH: "config/canonical_config.json"
+          CANONICAL_RESPONSES_PATH: "config/canonical_responses.yml"
         run: |
           set -euo pipefail
-
-          # Ensure repo root imports work cleanly.
-          export PYTHONPATH="$(pwd):$PYTHONPATH"
-
-          echo "▶ Running: python media_sentient_engine.py"
+          export PYTHONPATH="$(pwd):${PYTHONPATH:-}"
           python media_sentient_engine.py
-
-      - name: 📎 Upload artifacts (if engine emits logs)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: commentary-engine-${{ github.run_id }}
-          path: |
-            artifacts/**
-            logs/**
-            output/**
-          if-no-files-found: ignore
-          retention-days: 14
