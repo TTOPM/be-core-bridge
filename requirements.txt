@@ -50,6 +50,18 @@ pydantic==2.9.2
 pytest==8.2.1
 pytest-mock==3.14.0
 
+torch>=2.4.0
+flash-attn
+huggingface-hub
+modelscope
+pybullet
+nerfstudio
+librosa
+web3
+pygltflib
+pytest
+ipfshttpclient  # For local IPFS anchoring (run local IPFS daemon)
+# Add Belel's existing deps if needed (e.g., langchain)
 # 🧠 Sovereign Belel API + Chat
 fastapi==0.110.2
 uvicorn==0.29.0
