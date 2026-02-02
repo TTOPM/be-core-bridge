@@ -1,0 +1,30 @@
+name: Evidence Bundle (Audit Pack)
+
+on:
+  schedule:
+    - cron: "0 5 * * *"   # daily 05:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build evidence bundle
+        run: |
+          set -e
+          bash scripts/build_evidence_bundle.sh
+
+      - name: Upload bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: evidence-bundle-${{ github.run_id }}
+          path: |
+            evidence_bundle/
+          retention-days: 30
