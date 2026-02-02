@@ -1,18 +1,49 @@
 name: Blocklist Verify (PR)
+
 on:
   pull_request:
     paths:
-      - 'belel-shield/sentinel/blocklists/**'
-      - 'belel-shield/scripts/hash_blocklist.py'
-      - 'scripts/hash_blocklist.py'
+      - "belel-shield/sentinel/blocklists/**"
+      - "belel-shield/scripts/hash_blocklist.py"
+      - "scripts/hash_blocklist.py"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
 
 jobs:
   verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Sanity check paths (debug)
+        run: |
+          echo "Repo root:"
+          pwd
+          echo
+          echo "Listing expected directories:"
+          ls -la belel-shield/sentinel/blocklists || true
+          ls -la belel-shield/scripts || true
+          echo
+          echo "Target files:"
+          test -f "belel-shield/scripts/hash_blocklist.py" && echo "OK: hasher exists" || (echo "MISSING: hasher" && exit 1)
+          test -f "belel-shield/sentinel/blocklists/belel-blocklist.json" && echo "OK: json exists" || (echo "MISSING: blocklist json" && exit 1)
+          test -f "belel-shield/sentinel/blocklists/belel-blocklist.sha256" && echo "OK: sha exists" || (echo "MISSING: sha256 file" && exit 1)
+
       - name: Verify blocklist checksum
         run: |
+          python3 --version
           python3 belel-shield/scripts/hash_blocklist.py --verify \
             belel-shield/sentinel/blocklists/belel-blocklist.json \
             belel-shield/sentinel/blocklists/belel-blocklist.sha256
