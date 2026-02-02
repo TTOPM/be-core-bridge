@@ -1,10 +1,36 @@
 {
-  "enabled": true,
+  "enabled": false,
   "verified_only": true,
-  "max_follows_per_day": 1,
-  "max_follows_per_week": 3,
-  "cooldown_hours": 18,
-  "run_probability": 0.18,
-  "min_followers": 2000,
-  "min_account_age_days": 60
+
+  "mode": "allowlist_only",
+  "allowlist_file": "x_bot/config/follow_allowlist.txt",
+
+  "daily_follow_cap": 2,
+  "min_minutes_between_follows": 720,
+
+  "cooldown_days_after_unfollow_or_block": 30,
+
+  "require_reason": true,
+  "reason_min_chars": 18,
+
+  "seed_discovery": {
+    "enabled": false,
+    "seed_file": "x_bot/config/follow_seeds.txt",
+    "max_candidates_per_seed": 10,
+    "max_new_allowlist_additions_per_day": 0
+  },
+
+  "safety": {
+    "never_follow_if_recent_error": true,
+    "error_cooldown_minutes": 180,
+    "never_mass_follow": true,
+    "never_follow_on_keyword_only": true
+  },
+
+  "logging": {
+    "log_file": "x_bot/state/follow_log.json",
+    "write_attempts": true,
+    "write_successes": true,
+    "write_failures": true
+  }
 }
