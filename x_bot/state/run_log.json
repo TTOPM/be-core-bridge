@@ -76,5 +76,20 @@
     "brief_url": null,
     "tweet_id": null,
     "post": "I am watching procurement scandal, racial disparity, state violence, police shooting in the US and international institutions this week — I expect narrative management — I demand receipts — dignity and law stay the measure."
+  },
+  {
+    "ts": "2026-02-02T14:34:21.234820+00:00",
+    "slot": "morning",
+    "topic": null,
+    "post_type": "look_forward",
+    "tags": [
+      "racism",
+      "state_violence",
+      "procurement_scandal"
+    ],
+    "entry_link": null,
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "I am watching state violence, procurement scandal, racial disparity, police shooting in the US this week — I expect narrative management — I demand receipts — dignity and law stay the measure. I logged 2 relevant items in the last 72 hours."
   }
 ]
