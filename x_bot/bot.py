@@ -242,7 +242,7 @@ TOPIC_KEYWORDS = {
         "st lucia", "antigua", "bahamas", "haiti", "dominica"
     ],
     # Added expansions
-    "uk": ["uk", "britain", "england", "london", "brexit", "nhs", "bexley"],
+    "uk": ["uk", "britain", "england", "london", "brexit", "nhs", "city of london"],
     "environment": ["climate", "hurricane", "tsunami", "wildfire", "pollution", "earthquake"],
     "general": []  # Fallback
 }
@@ -591,7 +591,7 @@ def load_geo_aliases() -> dict:
     return load_json(GEO_ALIASES_FILE, {
         "trinidad_and_tobago": ["trinidad", "tobago", "trinidad and tobago"],
         "caribbean": ["caribbean", "caricom", "jamaica", "barbados", "guyana", "grenada", "st lucia", "antigua", "bahamas", "haiti", "dominica"],
-        "uk": ["uk", "united kingdom", "britain", "england", "scotland", "wales", "northern ireland", "london", "bexley"],
+        "uk": ["uk", "united kingdom", "britain", "england", "scotland", "wales", "northern ireland", "london", "city of london"],
         "us": ["us", "united states", "america", "usa"],
         "international": ["un", "united nations", "nato", "eu", "ohchr", "icj", "icc"]
     })
