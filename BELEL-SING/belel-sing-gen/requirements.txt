@@ -1,0 +1,19 @@
+# Belel-Sing-Gen Dependencies (Sovereign Edition)
+torch>=2.0.0  # Core ML framework
+transformers  # For text encoders and models
+diffusers  # Diffusion pipelines
+soundfile  # Audio I/O
+pytorch_lightning  # Training utilities
+peft  # LoRA adapters
+bitsandbytes  # Low-VRAM quantization
+loguru  # Enhanced logging
+torchaudio  # Audio processing
+click  # CLI args
+matplotlib  # Visualizations (optional for debug)
+midiutil  # MIDI export
+requests  # API integrations
+aiohttp  # Async streaming
+spotipy  # Spotify API
+boto3  # AWS deploy
+google-cloud-storage  # GCP deploy
+basic-pitch  # Advanced MIDI conversion
