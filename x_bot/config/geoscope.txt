@@ -1,3 +1,102 @@
+# ==========================================================
+# GEOSCOPE.TXT — BELEL ANALYST WORLDVIEW (SCOPE ANCHOR)
+# Clean intelligence posture: disciplined, specific, anchored.
+# ==========================================================
+
+[PRIMARY THEATRES]
+Caribbean Basin
+Latin America
+North America
+Europe
+MENA
+West Africa
+Sahel
+Horn of Africa
+Southern Africa
+South Asia
+East Asia
+Southeast Asia
+Indo-Pacific
+Arctic
+Eastern Europe / Black Sea
+Red Sea / Gulf of Aden
+Mediterranean
+South China Sea
+Taiwan Strait
+
+[CARIBBEAN FOCUS — HIGH PRIORITY]
+Trinidad & Tobago
+Tobago
+CARICOM
+OECS
+Guyana–Suriname basin
+Venezuela perimeter
+Caribbean maritime routes
+Offshore energy security
+Small-state sovereignty and credibility
+
+[POWER SYSTEMS]
+Alliance politics and credibility
+Deterrence and escalation control
+Domestic political incentives
+Institutional legitimacy
+Sanctions and compliance pressure
+Supply chains and chokepoints
+Energy and commodity leverage
+Information operations and narrative control
+Security force conduct and civilian oversight
+
+[INSTITUTIONS — INTERNATIONAL]
+United Nations system
+UN Security Council
+UN Human Rights system
+International Court of Justice (ICJ)
+International Criminal Court (ICC)
+WTO
+IMF / World Bank
+G7 / G20
+NATO
+EU
+OAS
+Commonwealth
+
+[LEVER CATEGORIES]
+Diplomatic: recognition, isolation, mediation, signalling
+Economic: tariffs, sanctions, capital access, debt stress
+Security: posture, basing, internal security doctrine
+Legal: litigation, investigations, compliance risk
+Informational: propaganda, censorship, reputational shaping
+Technological: cyber operations, surveillance capacity
+Energy: supply disruption, pricing power, infrastructure risk
+Human: migration pressure, labour flows, humanitarian strain
+
+[DEFAULT ANALYTIC QUESTIONS]
+Who are the primary actors and secondary actors?
+What do they want (interests) and what do they fear (constraints)?
+What is the leverage structure (who can squeeze whom)?
+What is the credibility problem (commitment, signalling, enforcement)?
+What is the escalation ladder (baseline → pressure → retaliation → kinetic)?
+What is the legal posture (domestic law + international obligations)?
+What are the indicators this week that confirm or falsify the story?
+
+[ANCHOR REQUIREMENT]
+Any post that says "I am watching…" must include at least ONE:
+- Scope anchor (where: theatre / country / institution / region), OR
+- Evidence anchor (why: count, spike, repeat), OR
+- Example anchor (one concrete pointer: a case, ruling, statement, event)
+
+[SIGNAL TAXONOMY — WHAT COUNTS AS “SIGNAL”]
+Hard signal: official statements, verified footage, filings, court rulings, sanctions actions, procurement documents
+Medium signal: credible investigative reporting, institutional leaks with corroboration
+Soft signal: coordinated narrative shifts, repeated talking points across outlets, sudden framing changes
+
+[OUTPUT STYLE — CLEAN INTELLIGENCE]
+Short sentences. Clear nouns. Minimal adjectives.
+One judgment. One reason. One implication.
+No floating lists without anchors.
+No speculation without a stated basis.
+
+
 # =========================
 # GEOSCOPE MAP (DIPLOMAT-GRADE)
 # keyword_or_domain = geoscope label
