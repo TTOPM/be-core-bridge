@@ -1,22 +1,95 @@
 name: Belel CI/CD
-on: [push, pull_request]
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: belel-ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-    - run: poetry install
-    - run: poetry run pytest tests/ -v --cov=src
-    
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install Poetry (pipx)
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pipx
+          pipx ensurepath
+          pipx install poetry
+
+      - name: Install deps
+        run: |
+          poetry --version
+          poetry install --no-interaction
+
+      - name: Run tests
+        run: |
+          poetry run pytest -v tests/ --cov=src --cov-report=term-missing
+
   ingest-sample:
+    # Keep this from burning PR minutes / hanging in queue
+    if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
-    - run: poetry install
-    - run: poetry run belel-ingest --sample 1000
-    - run: poetry run belel-process --sample
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install Poetry (pipx)
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pipx
+          pipx ensurepath
+          pipx install poetry
+
+      - name: Install deps
+        run: |
+          poetry install --no-interaction
+
+      - name: Verify CLI entrypoints exist
+        run: |
+          poetry run python -c "import shutil; \
+            assert shutil.which('belel-ingest'), 'Missing CLI: belel-ingest'; \
+            assert shutil.which('belel-process'), 'Missing CLI: belel-process'; \
+            print('OK: CLI entrypoints present')"
+
+      - name: Ingest sample
+        run: |
+          poetry run belel-ingest --sample 1000
+
+      - name: Process sample
+        run: |
+          poetry run belel-process --sample
+
+      - name: Upload ingest artifacts (if any)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ingest-sample-${{ github.run_id }}
+          path: |
+            data/
+            logs/
+          if-no-files-found: ignore
+          retention-days: 14
