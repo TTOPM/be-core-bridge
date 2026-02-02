@@ -1,0 +1,10 @@
+{
+  "checkpoint_dir": "~/.cache/belel-sing-gen/checkpoints",
+  "sample_rate": 44100,
+  "low_vram_bits": 4,
+  "default_languages": ["en", "zh", "es", "ar", "hi"],
+  "spotify_api": {"client_id": "", "client_secret": "", "user_id": ""},
+  "mubert_api_key": "",
+  "lalal_api_key": "",
+  "nft_webhook": "",
+  "cloud_provider": "aws"  # or "gcp"
