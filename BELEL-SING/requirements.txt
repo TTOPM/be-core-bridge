@@ -25,3 +25,14 @@ huggingface_hub
 onnxruntime
 scikit-learn
 requests
+torch==2.1.0
+transformers==4.38.0
+diffusers==0.25.0
+stable-audio-tools==0.1.0
+pydub==0.25.1
+librosa==0.10.1
+soundfile==0.12.1
+einops==0.7.0
+flash-attn==2.5.0
+mamba-ssm==1.0.0  # From 2026 SSM-TTM paper
+audiocraft==1.2.0  # For MusicGen updates
