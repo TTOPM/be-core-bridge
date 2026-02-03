@@ -72,8 +72,6 @@ This graph illustrates how BELEL-SING leads in offline capability and controllab
 
 ## Contributing
 
-Fork the repo, submit PRs for enhancements (e.g., new model integrations). Join discussions on X (@pearcerobinson) or Hugging Face.
+ Join discussions on X (@pearcerobinson)
 
-## License
 
-MIT License. See [LICENSE](../LICENSE) for details.
