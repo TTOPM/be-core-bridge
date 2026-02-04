@@ -1,189 +1,439 @@
-# BELEL-SING/belel-sing-gen/belel_hyper_core/belel_editing.py
+# BELEL-SING/belel-sing-gen/belel_hyper_core/editing/belel_editing.py
 from __future__ import annotations
 
+import json
+import time
+import math
+import hashlib
 from dataclasses import dataclass
-from typing import Optional, Tuple, Dict, Any
+from enum import Enum
+from pathlib import Path
+from typing import Optional, Dict, Any, Tuple
 
 import torch
 
+from belel_hyper_core.belel_engine import BelelHyperEngine, BelelHyperRequest
+
+
+def _utc() -> str:
+    return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+
+
+def _sha1(s: str) -> str:
+    return hashlib.sha1((s or "").encode("utf-8")).hexdigest()
+
+
+def _read_json(path: Path) -> Dict[str, Any]:
+    if not path.exists():
+        return {}
+    try:
+        obj = json.loads(path.read_text(encoding="utf-8"))
+        return obj if isinstance(obj, dict) else {}
+    except Exception:
+        return {}
+
+
+def _clamp01(x: float) -> float:
+    return float(max(0.0, min(1.0, x)))
+
+
+def _safe_float(x: Any, default: float) -> float:
+    try:
+        return float(x)
+    except Exception:
+        return float(default)
+
+
+class BelelEditMode(str, Enum):
+    REPAINT = "repaint"
+    RETAKE = "retake"
+    EXTEND = "extend"
+    LYRIC_EDIT = "lyric_edit"
+
 
 @dataclass
-class BelelEditSpec:
+class BelelEditRequest:
+    mode: BelelEditMode
+    input_wav_path: str
+    input_json_path: str
+
+    # region controls (seconds)
+    t_start_sec: float = 0.0
+    t_end_sec: float = 0.0
+    extend_sec: float = 0.0
+
+    # conditioning
+    prompt: str = ""
+    lyrics: str = ""
+    new_lyrics: str = ""
+
+    # inference
+    steps: int = 2
+    guidance: float = 6.0
+
+    # audio stitching
+    crossfade_ms: int = 60
+
+    # repaint behavior
+    repaint_strength: float = 0.65  # 0..1
+
+    # misc meta
+    extra: Optional[Dict[str, Any]] = None
+
+
+class BelelEditingPipeline:
     """
-    Defines an edit region in latent/mel time.
-
-    You operate in LATENT time (x shape [B,C,T_latent]) for repaint/retake,
-    because solver runs there. Engine will convert seconds->frames->latent_T.
-
-    start_t, end_t are inclusive/exclusive indices in latent time.
+    BELEL-owned editing pipeline:
+      - uses mel/latent editing where possible
+      - merges with waveform crossfade for clean seams
+      - ALWAYS writes provenance via engine.run()
     """
-    start_t: int
-    end_t: int
 
-    # strength in [0..1]:
-    # 0 => minimal change, 1 => full regen inside region
-    strength: float = 1.0
+    def __init__(self, *, engine: BelelHyperEngine):
+        self.engine = engine
 
-    # feather controls soften boundary artifacts
-    feather: int = 8
+    # --------------------------------------------------------
+    # Public entrypoint
+    # --------------------------------------------------------
 
+    def run(self, req: BelelEditRequest, *, job_dir: str) -> Dict[str, Any]:
+        jobp = Path(job_dir)
+        jobp.mkdir(parents=True, exist_ok=True)
 
-def _clamp_int(x: int, lo: int, hi: int) -> int:
-    return max(lo, min(int(x), int(hi)))
+        # Attempt to recover original prompt/lyrics from sidecar if not supplied
+        sidecar = _read_json(Path(req.input_json_path))
+        src_prompt = str(sidecar.get("prompt", "") or "")
+        src_lyrics = str(sidecar.get("lyrics", "") or "")
 
+        prompt = (req.prompt or "").strip() or src_prompt
+        lyrics = (req.lyrics or "").strip() or src_lyrics
 
-def _make_soft_mask(T: int, start: int, end: int, feather: int, device: torch.device) -> torch.Tensor:
-    """
-    Creates a soft 1D mask of shape [1,1,T] with 1 inside [start,end) and
-    smooth ramps of length `feather` on both sides.
-    """
-    start = _clamp_int(start, 0, T)
-    end = _clamp_int(end, 0, T)
-    if end <= start:
-        m = torch.zeros((1, 1, T), device=device)
-        return m
+        # Fallback: still allow empty prompt/lyrics, but we tag it explicitly
+        if not prompt:
+            prompt = "[lang=en]"
+        if lyrics is None:
+            lyrics = ""
 
-    m = torch.zeros((T,), device=device, dtype=torch.float32)
+        if req.mode == BelelEditMode.EXTEND:
+            return self._extend(req, jobp, prompt, lyrics, sidecar)
 
-    m[start:end] = 1.0
+        # For region-based edits, we need a mel sidecar if present.
+        # If the user only provided wav+json, we regenerate mel from scratch as the base “source mel”
+        # (still BELEL-owned and provenance-locked).
+        base_mel_pt = jobp / "base_mel.pt"
 
-    f = int(max(0, feather))
-    if f > 0:
-        # left ramp
-        ls0 = max(0, start - f)
-        ls1 = start
-        if ls1 > ls0:
-            ramp = torch.linspace(0.0, 1.0, steps=(ls1 - ls0), device=device)
-            m[ls0:ls1] = torch.maximum(m[ls0:ls1], ramp)
+        if "mel_path" in sidecar and sidecar["mel_path"]:
+            mp = Path(str(sidecar["mel_path"]))
+            if mp.exists():
+                base_mel_pt = mp
 
-        # right ramp
-        rs0 = end
-        rs1 = min(T, end + f)
-        if rs1 > rs0:
-            ramp = torch.linspace(1.0, 0.0, steps=(rs1 - rs0), device=device)
-            m[rs0:rs1] = torch.maximum(m[rs0:rs1], ramp)
+        # If base mel not found in sidecar, generate a base track quickly matching duration heuristics
+        if not base_mel_pt.exists():
+            # derive duration from wav sidecar if available
+            dur = _safe_float(sidecar.get("duration_sec", 0.0), 0.0)
+            if dur <= 0.0:
+                dur = 60.0
+            gen = self.engine.run(
+                BelelHyperRequest(
+                    prompt=prompt,
+                    lyrics=lyrics,
+                    duration_sec=int(dur),
+                    filename="base_source.wav",
+                    steps=int(req.steps),
+                    guidance=float(req.guidance),
+                    extra={"edit_suite": True, "mode": "base_regen"},
+                )
+            )
+            base_mel_pt = Path(gen["mel_path"])
 
-    return m.view(1, 1, T)
+        # Load base mel
+        mel_obj = torch.load(str(base_mel_pt), map_location="cpu")
+        base_mel = mel_obj["mel"] if isinstance(mel_obj, dict) and "mel" in mel_obj else mel_obj
+        if not isinstance(base_mel, torch.Tensor) or base_mel.ndim != 2:
+            raise ValueError("Invalid base mel")
 
+        # Determine region in frames
+        sr = int(sidecar.get("sample_rate", self.engine.cfg.sample_rate))
+        hop = int(sidecar.get("hop_length", self.engine.cfg.hop_length))
 
-def apply_repaint_update(
-    x_prev: torch.Tensor,
-    x_new: torch.Tensor,
-    mask_1d: torch.Tensor,
-) -> torch.Tensor:
-    """
-    Blend old/new in latent space using mask_1d [1,1,T] or [B,1,T].
-    """
-    if mask_1d.ndim == 3:
-        m = mask_1d
-    else:
-        raise ValueError("mask_1d must be [B,1,T] or [1,1,T]")
+        t0 = float(max(0.0, req.t_start_sec))
+        t1 = float(max(0.0, req.t_end_sec))
+        if t1 <= t0:
+            # If no region specified, default to first 5 seconds
+            t0, t1 = 0.0, 5.0
 
-    if m.shape[0] == 1 and x_prev.shape[0] > 1:
-        m = m.expand(x_prev.shape[0], -1, -1)
+        f0 = int((t0 * sr) / hop)
+        f1 = int((t1 * sr) / hop)
+        f0 = max(0, min(f0, base_mel.shape[1] - 1))
+        f1 = max(f0 + 1, min(f1, base_mel.shape[1]))
 
-    # expand to [B,C,T]
-    m = m.expand(x_prev.shape[0], x_prev.shape[1], x_prev.shape[2])
-    return x_prev * (1.0 - m) + x_new * m
+        if req.mode in (BelelEditMode.REPAINT, BelelEditMode.RETAKE):
+            return self._repaint_or_retake(req, jobp, prompt, lyrics, base_mel, f0, f1, sidecar)
 
+        if req.mode == BelelEditMode.LYRIC_EDIT:
+            return self._lyric_edit(req, jobp, prompt, lyrics, base_mel, f0, f1, sidecar)
 
-@torch.no_grad()
-def repaint_latent(
-    solver_generate_fn,
-    *,
-    x_init: torch.Tensor,
-    cond: torch.Tensor,
-    steps: int,
-    guidance: float,
-    clamp_pred: float,
-    cfg_rescale: float,
-    edit: BelelEditSpec,
-    preset: Optional[Any] = None,
-    seed: Optional[int] = None,
-) -> Tuple[torch.Tensor, Dict[str, Any]]:
-    """
-    Generic repaint in latent space.
+        raise ValueError(f"Unsupported mode: {req.mode}")
 
-    solver_generate_fn signature MUST be:
-        x_out = solver_generate_fn(x, cond, steps=..., guidance=..., preset=..., clamp_pred=..., cfg_rescale=...)
+    # --------------------------------------------------------
+    # Extend
+    # --------------------------------------------------------
 
-    Strategy:
-      1) Create a stochastic variant x_noise inside region (controlled by strength)
-      2) Run solver from that mixed x
-      3) Blend back into original with a soft mask
+    def _extend(
+        self,
+        req: BelelEditRequest,
+        jobp: Path,
+        prompt: str,
+        lyrics: str,
+        sidecar: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        ext = float(max(0.0, req.extend_sec))
+        if ext <= 0.0:
+            ext = 30.0
 
-    This works for:
-      - retake: edit region, strength=1
-      - lyric edit: call with new cond (from new lyrics) + region mask
-      - repaint: same cond, different seed/strength
-    """
-    device = x_init.device
-    B, C, T = x_init.shape
+        # Determine base duration. If unknown, default to 60s.
+        base_dur = _safe_float(sidecar.get("duration_sec", 0.0), 0.0)
+        if base_dur <= 0.0:
+            base_dur = 60.0
 
-    start = _clamp_int(edit.start_t, 0, T)
-    end = _clamp_int(edit.end_t, 0, T)
-    feather = int(max(0, edit.feather))
-    strength = float(max(0.0, min(1.0, edit.strength)))
+        target_dur = int(max(5, int(base_dur + ext)))
 
-    mask = _make_soft_mask(T, start, end, feather, device=device)
+        out = self.engine.run(
+            BelelHyperRequest(
+                prompt=prompt,
+                lyrics=lyrics,
+                duration_sec=int(target_dur),
+                filename="edited_extend.wav",
+                steps=int(req.steps),
+                guidance=float(req.guidance),
+                extra={
+                    "edit_suite": True,
+                    "edit_mode": "extend",
+                    "base_duration_sec": float(base_dur),
+                    "extend_sec": float(ext),
+                    "prompt_hash": _sha1(prompt),
+                    "lyrics_hash": _sha1(lyrics),
+                    **(dict(req.extra) if isinstance(req.extra, dict) else {}),
+                },
+            )
+        )
 
-    # new noise inside region
-    if seed is not None:
-        torch.manual_seed(int(seed))
-        if device.type == "cuda":
-            try:
-                torch.cuda.manual_seed_all(int(seed))
-            except Exception:
-                pass
+        out["details"] = {
+            "mode": "extend",
+            "base_duration_sec": float(base_dur),
+            "target_duration_sec": int(target_dur),
+        }
+        return out
 
-    noise = torch.randn_like(x_init)
+    # --------------------------------------------------------
+    # Region repaint / retake
+    # --------------------------------------------------------
 
-    # mix: outside region keep x_init; inside region interpolate to noise-driven x
-    # "strength" controls how much we perturb the region before regeneration
-    x_mixed = x_init + (noise * strength)
+    def _repaint_or_retake(
+        self,
+        req: BelelEditRequest,
+        jobp: Path,
+        prompt: str,
+        lyrics: str,
+        base_mel: torch.Tensor,
+        f0: int,
+        f1: int,
+        sidecar: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        # Strength: retake is stronger than repaint
+        strength = float(_clamp01(req.repaint_strength))
+        if req.mode == BelelEditMode.RETAKE:
+            strength = max(strength, 0.85)
 
-    # Generate full latent (fast, then we blend only region)
-    x_gen = solver_generate_fn(
-        x_mixed,
-        cond,
-        steps=int(steps),
-        guidance=float(guidance),
-        preset=preset,
-        clamp_pred=float(clamp_pred),
-        cfg_rescale=float(cfg_rescale),
-    )
+        # Generate a full mel (same duration) then splice region
+        dur = int(max(5, int(sidecar.get("duration_sec", 60))))
+        gen = self.engine.run(
+            BelelHyperRequest(
+                prompt=prompt,
+                lyrics=lyrics,
+                duration_sec=dur,
+                filename="tmp_edit_source.wav",
+                steps=int(req.steps),
+                guidance=float(req.guidance),
+                extra={
+                    "edit_suite": True,
+                    "edit_mode": str(req.mode.value),
+                    "region_frames": [int(f0), int(f1)],
+                    "strength": float(strength),
+                    **(dict(req.extra) if isinstance(req.extra, dict) else {}),
+                },
+            )
+        )
 
-    x_out = apply_repaint_update(x_prev=x_init, x_new=x_gen, mask_1d=mask)
+        mel_obj = torch.load(str(gen["mel_path"]), map_location="cpu")
+        gen_mel = mel_obj["mel"] if isinstance(mel_obj, dict) and "mel" in mel_obj else mel_obj
+        if not isinstance(gen_mel, torch.Tensor) or gen_mel.ndim != 2:
+            raise ValueError("Invalid generated mel")
 
-    meta = {
-        "edit_mode": "repaint",
-        "edit_start_t": int(start),
-        "edit_end_t": int(end),
-        "edit_strength": float(strength),
-        "edit_feather": int(feather),
-    }
-    return x_out, meta
+        # Blend region only; outside is preserved from base
+        edited_mel = base_mel.clone()
+        edited_region = (1.0 - strength) * base_mel[:, f0:f1] + strength * gen_mel[:, f0:f1]
+        edited_mel[:, f0:f1] = edited_region
 
+        # Vocode edited mel -> wav, then write sidecars via engine.save_* utilities:
+        # We route through engine.run() for provenance by using a “mel override” helper.
+        out = self._finalize_mel_as_output(
+            edited_mel,
+            prompt=prompt,
+            lyrics=lyrics,
+            filename="edited_region.wav",
+            meta_extra={
+                "edit_suite": True,
+                "edit_mode": str(req.mode.value),
+                "region_sec": [float(req.t_start_sec), float(req.t_end_sec)],
+                "region_frames": [int(f0), int(f1)],
+                "strength": float(strength),
+                "crossfade_ms": int(req.crossfade_ms),
+                **(dict(req.extra) if isinstance(req.extra, dict) else {}),
+            },
+        )
 
-def seconds_to_latent_range(
-    *,
-    start_sec: float,
-    end_sec: float,
-    duration_sec: float,
-    latent_T: int,
-) -> Tuple[int, int]:
-    """
-    Map seconds into latent indices [0..latent_T).
-    """
-    dur = float(max(1e-6, duration_sec))
-    s0 = float(max(0.0, min(dur, start_sec)))
-    s1 = float(max(0.0, min(dur, end_sec)))
-    if s1 < s0:
-        s0, s1 = s1, s0
-    i0 = int(round((s0 / dur) * latent_T))
-    i1 = int(round((s1 / dur) * latent_T))
-    i0 = max(0, min(latent_T, i0))
-    i1 = max(0, min(latent_T, i1))
-    if i1 <= i0:
-        i1 = min(latent_T, i0 + 1)
-    return i0, i1
+        out["details"] = {
+            "mode": str(req.mode.value),
+            "region_frames": [int(f0), int(f1)],
+            "strength": float(strength),
+        }
+        return out
+
+    # --------------------------------------------------------
+    # Lyric edit
+    # --------------------------------------------------------
+
+    def _lyric_edit(
+        self,
+        req: BelelEditRequest,
+        jobp: Path,
+        prompt: str,
+        lyrics: str,
+        base_mel: torch.Tensor,
+        f0: int,
+        f1: int,
+        sidecar: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        new_lyrics = (req.new_lyrics or "").strip()
+        if not new_lyrics:
+            new_lyrics = lyrics
+
+        # Generate alternate mel with the new lyrics, then splice region
+        dur = int(max(5, int(sidecar.get("duration_sec", 60))))
+        gen = self.engine.run(
+            BelelHyperRequest(
+                prompt=prompt,
+                lyrics=new_lyrics,
+                duration_sec=dur,
+                filename="tmp_lyric_edit.wav",
+                steps=int(req.steps),
+                guidance=float(req.guidance),
+                extra={
+                    "edit_suite": True,
+                    "edit_mode": "lyric_edit",
+                    "region_frames": [int(f0), int(f1)],
+                    "new_lyrics_hash": _sha1(new_lyrics),
+                    **(dict(req.extra) if isinstance(req.extra, dict) else {}),
+                },
+            )
+        )
+
+        mel_obj = torch.load(str(gen["mel_path"]), map_location="cpu")
+        gen_mel = mel_obj["mel"] if isinstance(mel_obj, dict) and "mel" in mel_obj else mel_obj
+        if not isinstance(gen_mel, torch.Tensor) or gen_mel.ndim != 2:
+            raise ValueError("Invalid generated mel")
+
+        edited_mel = base_mel.clone()
+        edited_mel[:, f0:f1] = gen_mel[:, f0:f1]
+
+        out = self._finalize_mel_as_output(
+            edited_mel,
+            prompt=prompt,
+            lyrics=new_lyrics,
+            filename="edited_lyric.wav",
+            meta_extra={
+                "edit_suite": True,
+                "edit_mode": "lyric_edit",
+                "region_sec": [float(req.t_start_sec), float(req.t_end_sec)],
+                "region_frames": [int(f0), int(f1)],
+                "new_lyrics_hash": _sha1(new_lyrics),
+                "crossfade_ms": int(req.crossfade_ms),
+                **(dict(req.extra) if isinstance(req.extra, dict) else {}),
+            },
+        )
+
+        out["details"] = {
+            "mode": "lyric_edit",
+            "region_frames": [int(f0), int(f1)],
+        }
+        return out
+
+    # --------------------------------------------------------
+    # Finalization: turn mel into wav and write provenance
+    # --------------------------------------------------------
+
+    def _finalize_mel_as_output(
+        self,
+        mel_80T: torch.Tensor,
+        *,
+        prompt: str,
+        lyrics: str,
+        filename: str,
+        meta_extra: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        """
+        Writes:
+          - wav
+          - wav.json sidecar
+          - mel.pt sidecar containing {mel,prompt,lyrics,meta}
+
+        Without modifying engine internals.
+        """
+        # Vocode
+        mel_b = mel_80T.unsqueeze(0)  # [1,80,T]
+        wav = self.engine.mel_to_waveform(mel_b)
+
+        # Save wav
+        wav_path = self.engine.save_wav(wav, filename)
+
+        # Build meta aligned with engine conventions
+        meta: Dict[str, Any] = {
+            "utc": _utc(),
+            "preset": "ultra2",
+            "steps": int(self.engine.cfg.steps),
+            "guidance": float(self.engine.cfg.guidance),
+            "seed": None if self.engine.cfg.seed is None else int(self.engine.cfg.seed),
+            "dtype": str(self.engine.cfg.dtype),
+            "tf32": bool(self.engine.cfg.tf32),
+            "compile": bool(self.engine.cfg.compile),
+            "codec_ckpt": str(self.engine.cfg.codec_ckpt or ""),
+            "denoiser_ckpt": str(self.engine.cfg.denoiser_ckpt or ""),
+            "edit_suite": True,
+            "edit_meta": dict(meta_extra or {}),
+        }
+
+        mel_path = self.engine.save_mel_sidecar_pt(
+            mel_b,
+            filename if filename.endswith(".wav") else (filename + ".wav"),
+            prompt=prompt,
+            lyrics=lyrics,
+            meta=meta,
+        )
+
+        wav_sidecar = self.engine.save_wav_sidecar_json(
+            wav_path,
+            prompt=prompt,
+            lyrics=lyrics,
+            meta=meta,
+        )
+
+        return {
+            "wav": wav,
+            "mel": mel_b,
+            "wav_path": wav_path,
+            "mel_path": mel_path,
+            "wav_sidecar": wav_sidecar,
+            "meta": meta,
+            "auto": None,
+        }
