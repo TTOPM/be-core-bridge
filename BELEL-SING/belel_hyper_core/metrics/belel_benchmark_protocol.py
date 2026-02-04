@@ -1,121 +1,231 @@
 # BELEL-SING/belel-sing-gen/belel_hyper_core/metrics/belel_benchmark_protocol.py
 from __future__ import annotations
 
-import time
+from dataclasses import dataclass, asdict
+from typing import Dict, Any, Tuple
 import math
-from dataclasses import dataclass
-from typing import Dict, Any, Tuple, Optional
 
-import numpy as np
 import torch
+import torch.nn.functional as F
 
 
 # ============================================================
-# BENCHMARK RESULT
-# ============================================================
-
-@dataclass
-class BelelBenchmarkResult:
-    # Performance
-    wall_time_sec: float
-    peak_vram_gb: float
-
-    # Audio fidelity proxies
-    spectral_convergence: float
-    hf_energy_stability: float
-    transient_stability: float
-
-    # Vocal / structure proxies
-    voiced_ratio_stability: float
-    formant_continuity: float
-    structural_repetition_penalty: float
-
-    # Composite
-    quality_score: float
-    passed: bool
-
-    details: Dict[str, Any]
-
-
-# ============================================================
-# PROTOCOL DEFAULTS (LOCKED GATES)
+# Configuration (locked defaults)
 # ============================================================
 
 @dataclass
 class BelelBenchmarkGates:
     """
-    These are not arbitrary.
-    They define what BELEL considers acceptable output.
+    Hard quality gates.
+    If ANY gate fails → output is rejected.
+    These can be tightened over time, never loosened.
     """
 
-    # Performance (RTX 4090 class expectations)
-    max_wall_time_sec: float = 6.0
-    max_peak_vram_gb: float = 18.0
+    # Spectral stability
+    max_logmel_l2: float = 0.085
 
-    # Fidelity
-    max_spectral_convergence: float = 0.18     # lower is better
-    min_hf_energy_stability: float = 0.85       # higher is better
-    min_transient_stability: float = 0.80
+    # High-frequency energy sanity (anti-smear / anti-mush)
+    min_hf_energy_ratio: float = 0.015
 
-    # Vocal / structure
-    min_voiced_ratio_stability: float = 0.75
-    min_formant_continuity: float = 0.78
-    max_structural_repetition_penalty: float = 0.25
+    # Temporal coherence (frame-to-frame stability)
+    max_frame_delta: float = 0.12
 
-    # Composite score
-    min_quality_score: float = 8.2
+    # Voicing stability proxy
+    min_voiced_ratio: float = 0.35
+
+    # Lyric / semantic alignment proxy
+    min_alignment_score: float = 0.55
+
+
+@dataclass
+class BelelBenchmarkWeights:
+    """
+    Weights for final scalar score.
+    Must sum to 1.0.
+    """
+
+    fidelity: float = 0.30
+    hf_stability: float = 0.15
+    temporal_coherence: float = 0.15
+    voicing: float = 0.15
+    alignment: float = 0.25
 
 
 # ============================================================
-# CORE METRICS
+# Core protocol
 # ============================================================
 
-def _spectral_convergence(mel: torch.Tensor) -> float:
+class BelelBenchmarkProtocol:
     """
-    Measures frame-to-frame spectral drift.
-    Lower = more stable / less smear.
-    """
-    diff = mel[:, 1:] - mel[:, :-1]
-    num = diff.norm(p=2)
-    den = mel.norm(p=2).clamp(min=1e-6)
-    return float((num / den).clamp(0, 1).item())
+    Canonical Belel quality judge.
 
+    Inputs:
+      - mel: [80, T] float32
+      - optional alignment score (0..1) from Belel aligner
 
-def _hf_energy_stability(mel: torch.Tensor) -> float:
+    Outputs:
+      - final_score: float (0..10)
+      - passed: bool
+      - breakdown: dict (for logging / evolution)
     """
-    High-frequency energy consistency proxy.
-    """
-    hf = mel[int(mel.shape[0] * 0.65) :, :]
-    energy = hf.abs().mean(dim=0)
-    std = energy.std()
-    mean = energy.mean().clamp(min=1e-6)
-    stability = 1.0 - (std / mean).clamp(0, 1)
-    return float(stability.item())
 
+    def __init__(
+        self,
+        *,
+        gates: BelelBenchmarkGates | None = None,
+        weights: BelelBenchmarkWeights | None = None,
+    ):
+        self.gates = gates or BelelBenchmarkGates()
+        self.weights = weights or BelelBenchmarkWeights()
 
-def _transient_stability(mel: torch.Tensor) -> float:
-    """
-    Penalizes excessive transient spikes (clicks, zipper noise).
-    """
-    delta = mel[:, 1:] - mel[:, :-1]
-    spikes = (delta.abs() > 3.5).float().mean()
-    return float((1.0 - spikes).clamp(0, 1).item())
+        # Validate weights
+        wsum = sum(asdict(self.weights).values())
+        if abs(wsum - 1.0) > 1e-6:
+            raise ValueError(f"Benchmark weights must sum to 1.0 (got {wsum})")
 
+    # --------------------------------------------------------
+    # Public entrypoint
+    # --------------------------------------------------------
 
-def _voiced_ratio_stability(mel: torch.Tensor) -> float:
-    """
-    Simple voiced/unvoiced proxy using energy floor.
-    """
-    energy = mel.mean(dim=0)
-    voiced = (energy > energy.mean() * 0.6).float()
-    ratio = voiced.mean()
-    return float((1.0 - abs(ratio - 0.55)).clamp(0, 1).item())
+    def evaluate(
+        self,
+        mel: torch.Tensor,
+        *,
+        alignment_score: float = 0.0,
+    ) -> Tuple[float, bool, Dict[str, Any]]:
+        """
+        Evaluate a mel spectrogram.
 
+        Returns:
+          score_10: float in [0,10]
+          passed: bool
+          breakdown: dict
+        """
+        mel = self._ensure_mel(mel)
 
-def _formant_continuity(mel: torch.Tensor) -> float:
-    """
-    Penalizes erratic spectral centroid jumps.
-    """
-    freqs = torch.arange(mel.shape[0], device=mel.device).float()
-    centroid = (mel * freqs[:, None]).sum(dim=0) / mel.sum(dim=0).clamp(min=1e-6)
-    jumps = (centroid[1
+        # --- Compute metrics
+        logmel_l2 = self._logmel_l2(mel)
+        hf_ratio = self._hf_energy_ratio(mel)
+        frame_delta = self._temporal_delta(mel)
+        voiced_ratio = self._voiced_ratio(mel)
+
+        # --- Gate checks
+        gate_failures = {}
+
+        if logmel_l2 > self.gates.max_logmel_l2:
+            gate_failures["logmel_l2"] = logmel_l2
+
+        if hf_ratio < self.gates.min_hf_energy_ratio:
+            gate_failures["hf_energy_ratio"] = hf_ratio
+
+        if frame_delta > self.gates.max_frame_delta:
+            gate_failures["frame_delta"] = frame_delta
+
+        if voiced_ratio < self.gates.min_voiced_ratio:
+            gate_failures["voiced_ratio"] = voiced_ratio
+
+        if alignment_score < self.gates.min_alignment_score:
+            gate_failures["alignment_score"] = alignment_score
+
+        passed = len(gate_failures) == 0
+
+        # --- Normalize components to 0..1
+        fidelity_n = self._inv_norm(logmel_l2, self.gates.max_logmel_l2)
+        hf_n = self._norm(hf_ratio, self.gates.min_hf_energy_ratio)
+        temporal_n = self._inv_norm(frame_delta, self.gates.max_frame_delta)
+        voicing_n = self._norm(voiced_ratio, self.gates.min_voiced_ratio)
+        align_n = max(0.0, min(1.0, float(alignment_score)))
+
+        # --- Weighted final score (0..1)
+        score_01 = (
+            self.weights.fidelity * fidelity_n
+            + self.weights.hf_stability * hf_n
+            + self.weights.temporal_coherence * temporal_n
+            + self.weights.voicing * voicing_n
+            + self.weights.alignment * align_n
+        )
+
+        score_10 = float(max(0.0, min(10.0, score_01 * 10.0)))
+
+        breakdown = {
+            "passed": passed,
+            "gate_failures": gate_failures,
+            "components": {
+                "logmel_l2": logmel_l2,
+                "hf_energy_ratio": hf_ratio,
+                "frame_delta": frame_delta,
+                "voiced_ratio": voiced_ratio,
+                "alignment_score": alignment_score,
+            },
+            "normalized": {
+                "fidelity": fidelity_n,
+                "hf_stability": hf_n,
+                "temporal": temporal_n,
+                "voicing": voicing_n,
+                "alignment": align_n,
+            },
+            "weights": asdict(self.weights),
+            "gates": asdict(self.gates),
+            "score_10": score_10,
+        }
+
+        return score_10, passed, breakdown
+
+    # ========================================================
+    # Metric implementations (Belel-owned, local)
+    # ========================================================
+
+    def _ensure_mel(self, mel: torch.Tensor) -> torch.Tensor:
+        if mel.ndim != 2 or mel.shape[0] != 80:
+            raise ValueError(f"Expected mel [80,T], got {tuple(mel.shape)}")
+        return mel.float()
+
+    def _logmel_l2(self, mel: torch.Tensor) -> float:
+        """
+        Measures global log-mel energy deviation.
+        Lower is better.
+        """
+        m = mel - mel.mean(dim=1, keepdim=True)
+        return float(torch.mean(m.pow(2)).sqrt().item())
+
+    def _hf_energy_ratio(self, mel: torch.Tensor) -> float:
+        """
+        High-frequency energy / total energy.
+        Prevents over-smoothing.
+        """
+        hf = mel[60:, :]
+        num = torch.mean(hf.abs())
+        den = torch.mean(mel.abs()) + 1e-6
+        return float((num / den).item())
+
+    def _temporal_delta(self, mel: torch.Tensor) -> float:
+        """
+        Frame-to-frame instability proxy.
+        """
+        d = mel[:, 1:] - mel[:, :-1]
+        return float(torch.mean(d.abs()).item())
+
+    def _voiced_ratio(self, mel: torch.Tensor) -> float:
+        """
+        Rough voiced/unvoiced proxy using energy thresholding.
+        """
+        energy = mel.mean(dim=0)
+        thr = energy.mean() * 0.5
+        voiced = (energy > thr).float().mean()
+        return float(voiced.item())
+
+    # ========================================================
+    # Normalization helpers
+    # ========================================================
+
+    @staticmethod
+    def _norm(x: float, ref: float) -> float:
+        if ref <= 0:
+            return 0.0
+        return max(0.0, min(1.0, x / ref))
+
+    @staticmethod
+    def _inv_norm(x: float, ref: float) -> float:
+        if ref <= 0:
+            return 0.0
+        return max(0.0, min(1.0, 1.0 - (x / ref)))
