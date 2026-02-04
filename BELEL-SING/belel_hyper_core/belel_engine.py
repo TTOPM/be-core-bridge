@@ -1,13 +1,12 @@
 # BELEL-SING/belel-sing-gen/belel_hyper_core/belel_engine.py
 from __future__ import annotations
 
-import os
 import json
 import time
 import hashlib
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional, Dict, Any, Tuple
+from typing import Optional, Dict, Any
 
 import torch
 
@@ -18,9 +17,9 @@ from .belel_solver import BelelLowStepSolver
 from .belel_presets import BelelInferenceDefaults
 
 
-# ----------------------------
+# ============================================================
 # Config + Request
-# ----------------------------
+# ============================================================
 
 @dataclass
 class BelelHyperConfig:
@@ -30,12 +29,12 @@ class BelelHyperConfig:
     seed: Optional[int] = None
     deterministic: bool = False  # if True: stricter determinism (can be slower)
 
-    # inference defaults
+    # inference defaults (engine-level)
     steps: int = 2
     guidance: float = 6.0
-    preset: str = "ultra2"  # "ultra2" recommended; tags metadata
+    preset: str = "ultra2"  # metadata tag only (engine will enforce ultra2 when steps==2)
 
-    # 2-step stability controls (consumed by solver)
+    # stability controls (solver-consumed)
     clamp_pred: float = 10.0
     cfg_rescale: float = 0.7
 
@@ -60,7 +59,8 @@ class BelelHyperConfig:
     codec_ckpt: Optional[str] = None
     denoiser_ckpt: Optional[str] = None
 
-    # sidecars (ALWAYS WRITTEN by this engine)
+    # sidecars
+    # HARD RULE: this engine ALWAYS writes mel.pt + wav.json (prompt/lyrics/meta included)
     write_sidecars: bool = True
 
     # optional automation (air-gapped)
@@ -70,6 +70,13 @@ class BelelHyperConfig:
     store_breakdown: bool = False
     evolution_root: str = "logs/belel_evolution"
     score_config_json: Optional[str] = None  # optional override JSON for score config
+
+    # gating / enforcement knobs
+    # if True: request cannot override ultra2 parameters for 2-step (recommended)
+    lock_ultra2: bool = True
+    # guidance safety bounds (engine-level); ultra2 may override these when locked
+    guidance_min: float = 1.0
+    guidance_max: float = 7.5
 
 
 @dataclass
@@ -82,12 +89,13 @@ class BelelHyperRequest:
     # optional overrides
     steps: Optional[int] = None
     guidance: Optional[float] = None
+    seed: Optional[int] = None
     extra: Optional[Dict[str, Any]] = None
 
 
-# ----------------------------
+# ============================================================
 # Helpers
-# ----------------------------
+# ============================================================
 
 def _torch_dtype(dtype_name: str):
     return {
@@ -101,8 +109,28 @@ def _utc_now() -> str:
     return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
 
 
-def _sha1(s: str) -> str:
+def _sha1_str(s: str) -> str:
     return hashlib.sha1((s or "").encode("utf-8")).hexdigest()
+
+
+def _sha1_file(path: Optional[str]) -> str:
+    """
+    Robust sha1 of a file on disk. Returns "" if missing.
+    This is used for provenance (ckpt hashes).
+    """
+    if not path:
+        return ""
+    p = Path(path)
+    if not p.exists() or not p.is_file():
+        return ""
+    h = hashlib.sha1()
+    try:
+        with p.open("rb") as f:
+            for chunk in iter(lambda: f.read(1024 * 1024), b""):
+                h.update(chunk)
+        return h.hexdigest()
+    except Exception:
+        return ""
 
 
 def _ensure_dir(p: str) -> None:
@@ -149,16 +177,37 @@ def _set_determinism(enabled: bool) -> None:
         pass
 
 
-# ----------------------------
+def _clamp_guidance(g: float, gmin: float, gmax: float) -> float:
+    try:
+        gv = float(g)
+    except Exception:
+        gv = float(gmin)
+    return float(max(float(gmin), min(float(gmax), gv)))
+
+
+# ============================================================
 # Engine
-# ----------------------------
+# ============================================================
 
 class BelelHyperEngine:
+    """
+    Core guarantees:
+      - If steps == 2: enforce BelelInferenceDefaults.ultra2() as the canonical preset (locked)
+      - Always write:
+          (1) mel sidecar .pt = {"mel": tensor, "prompt": str, "lyrics": str, "meta": {...}}
+          (2) wav sidecar .json = provenance + steps/guidance/seed/ckpt hashes + hashes + utc
+      - Optional: auto-score + auto-log (air-gapped)
+    """
+
     def __init__(self, cfg: BelelHyperConfig):
         self.cfg = cfg
 
-        # locked preset object for 2-step
-        self.preset2 = BelelInferenceDefaults.ultra2()
+        # canonical ultra2 preset (locked 2-step)
+        self.ultra2 = BelelInferenceDefaults.ultra2()
+
+        # cached ckpt hashes for provenance
+        self.codec_ckpt_sha1 = _sha1_file(cfg.codec_ckpt)
+        self.denoiser_ckpt_sha1 = _sha1_file(cfg.denoiser_ckpt)
 
         # core modules
         self.codec = BelelDeepCompressor(mel_bins=cfg.mel_bins, latent_ch=cfg.latent_ch)
@@ -209,41 +258,94 @@ class BelelHyperEngine:
 
         return self
 
+    # ---------- enforcement: resolve effective inference params
+
+    def _resolve_effective_params(self, req: BelelHyperRequest) -> Dict[str, Any]:
+        """
+        Produces the final effective inference parameters after applying:
+          - request overrides
+          - engine ceilings
+          - ultra2 lock (steps==2 => enforce ultra2)
+          - guidance clamping
+        """
+        # requested (fallback to cfg)
+        steps_req = int(req.steps) if req.steps is not None else int(self.cfg.steps)
+        guidance_req = float(req.guidance) if req.guidance is not None else float(self.cfg.guidance)
+
+        if steps_req not in (2, 4, 6):
+            raise ValueError("BelelHyperEngine steps must be one of: 2, 4, 6")
+
+        # final seed: request overrides engine seed (for reproducibility)
+        seed_eff: Optional[int]
+        if req.seed is not None:
+            seed_eff = int(req.seed)
+        elif self.cfg.seed is not None:
+            seed_eff = int(self.cfg.seed)
+        else:
+            seed_eff = None
+
+        # lock ultra2 for steps==2
+        if int(steps_req) == 2 and bool(self.cfg.lock_ultra2):
+            steps_eff = 2
+            guidance_eff = float(self.ultra2.guidance)
+            clamp_pred_eff = float(self.ultra2.clamp_pred)
+            cfg_rescale_eff = float(self.ultra2.cfg_rescale)
+            preset_tag = "ultra2"
+            preset_meta = self.ultra2.as_meta()
+            # ultra2 lock uses its own guidance, but we still clamp to global safety
+            guidance_eff = _clamp_guidance(guidance_eff, float(self.cfg.guidance_min), float(self.cfg.guidance_max))
+        else:
+            steps_eff = int(steps_req)
+            guidance_eff = _clamp_guidance(guidance_req, float(self.cfg.guidance_min), float(self.cfg.guidance_max))
+            clamp_pred_eff = float(self.cfg.clamp_pred)
+            cfg_rescale_eff = float(self.cfg.cfg_rescale) if steps_eff == 2 else 0.0
+            preset_tag = str(self.cfg.preset or "custom")
+            preset_meta = {}
+
+        return {
+            "steps": int(steps_eff),
+            "guidance": float(guidance_eff),
+            "seed": None if seed_eff is None else int(seed_eff),
+            "clamp_pred": float(clamp_pred_eff),
+            "cfg_rescale": float(cfg_rescale_eff),
+            "preset_tag": str(preset_tag),
+            "preset_meta": dict(preset_meta) if isinstance(preset_meta, dict) else {},
+        }
+
     # ---------- generation
 
     @torch.inference_mode()
-    def generate_mel(self, req: BelelHyperRequest) -> torch.Tensor:
-        if self.cfg.seed is not None:
-            torch.manual_seed(int(self.cfg.seed))
+    def generate_mel(self, req: BelelHyperRequest, eff: Dict[str, Any]) -> torch.Tensor:
+        seed_eff = eff.get("seed", None)
+
+        if seed_eff is not None:
+            torch.manual_seed(int(seed_eff))
             if str(self.cfg.device).startswith("cuda") and torch.cuda.is_available():
                 try:
-                    torch.cuda.manual_seed_all(int(self.cfg.seed))
+                    torch.cuda.manual_seed_all(int(seed_eff))
                 except Exception:
                     pass
 
-        steps = int(req.steps) if req.steps is not None else int(self.cfg.steps)
-        guidance = float(req.guidance) if req.guidance is not None else float(self.cfg.guidance)
-
-        if steps not in (2, 4, 6):
-            raise ValueError("BelelHyperEngine steps must be one of: 2, 4, 6")
+        steps = int(eff["steps"])
+        guidance = float(eff["guidance"])
 
         device = self.cfg.device
         dt = _torch_dtype(self.cfg.dtype)
 
-        # conditioning: must run on device
+        # conditioning
         cond = self.cond(req.prompt, req.lyrics, device=device)
 
-        # latent length heuristic (consistent with earlier code)
+        # latent length heuristic (consistent and deterministic)
         frames = max(64, int((self.cfg.sample_rate * int(req.duration_sec)) / self.cfg.hop_length))
         latent_T = max(64, frames // 4)
 
         x = torch.randn(1, int(self.cfg.latent_ch), int(latent_T), device=device, dtype=dt)
 
         # solver stability controls
-        clamp_pred = float(self.cfg.clamp_pred)
-        cfg_rescale = float(self.cfg.cfg_rescale) if steps == 2 else 0.0
+        clamp_pred = float(eff["clamp_pred"])
+        cfg_rescale = float(eff["cfg_rescale"]) if steps == 2 else 0.0
 
-        preset = self.preset2 if steps == 2 else None
+        preset = self.ultra2 if (steps == 2 and bool(self.cfg.lock_ultra2)) else None
 
         x = self.solver.generate(
             x,
@@ -262,6 +364,7 @@ class BelelHyperEngine:
     @torch.inference_mode()
     def mel_to_waveform(self, mel: torch.Tensor) -> torch.Tensor:
         # Uses your existing entrypoint in BELEL-SING/belel-sing-gen/infer.py
+        # Keep import local to avoid import-time side effects.
         from infer import synthesize_audio_from_mel
 
         wav = synthesize_audio_from_mel(mel, device=self.cfg.device)
@@ -269,9 +372,13 @@ class BelelHyperEngine:
         if isinstance(wav, torch.Tensor):
             return wav.unsqueeze(0) if wav.ndim == 1 else wav
 
-        import numpy as np
-        if isinstance(wav, np.ndarray):
-            return torch.from_numpy(wav[None, :] if wav.ndim == 1 else wav)
+        # numpy fallback
+        try:
+            import numpy as np
+            if isinstance(wav, np.ndarray):
+                return torch.from_numpy(wav[None, :] if wav.ndim == 1 else wav)
+        except Exception:
+            pass
 
         raise TypeError("vocoder returned unsupported type")
 
@@ -333,16 +440,22 @@ class BelelHyperEngine:
         wavp = Path(wav_path)
         sidecar = wavp.with_suffix(".json")
 
+        # minimal + strict provenance at top-level; full meta preserved under "meta"
         payload: Dict[str, Any] = {
-            "utc": _utc_now(),
+            "utc": meta.get("utc", _utc_now()),
+            "preset": str(meta.get("preset", self.cfg.preset)),
             "steps": int(meta.get("steps", self.cfg.steps)),
             "guidance": float(meta.get("guidance", self.cfg.guidance)),
-            "seed": None if self.cfg.seed is None else int(self.cfg.seed),
-            "preset": str(meta.get("preset", self.cfg.preset)),
+            "seed": meta.get("seed", None),
+            "dtype": str(meta.get("dtype", self.cfg.dtype)),
+            "tf32": bool(meta.get("tf32", self.cfg.tf32)),
+            "compile": bool(meta.get("compile", self.cfg.compile)),
             "codec_ckpt": str(self.cfg.codec_ckpt or ""),
             "denoiser_ckpt": str(self.cfg.denoiser_ckpt or ""),
-            "prompt_hash": _sha1(prompt),
-            "lyrics_hash": _sha1(lyrics) if (lyrics or "") else "",
+            "codec_ckpt_sha1": str(self.codec_ckpt_sha1 or ""),
+            "denoiser_ckpt_sha1": str(self.denoiser_ckpt_sha1 or ""),
+            "prompt_hash": _sha1_str(prompt),
+            "lyrics_hash": _sha1_str(lyrics) if (lyrics or "") else "",
             "prompt": str(prompt or ""),
             "lyrics": str(lyrics or ""),
             "meta": dict(meta or {}),
@@ -365,7 +478,6 @@ class BelelHyperEngine:
         if not (self.cfg.auto_score or self.cfg.auto_log):
             return None
 
-        # air-gapped scoring tools
         from belel_hyper_core.metrics.belel_audio_metrics import compute_belel_audio_metrics
         from belel_hyper_core.metrics.belel_score import BelelScoreConfig, belel_auto_score
         from belel_hyper_core.distill.belel_evolution_tracker import BelelEvolutionTracker
@@ -394,9 +506,10 @@ class BelelHyperEngine:
             if p.exists():
                 try:
                     obj = json.loads(p.read_text(encoding="utf-8"))
-                    for k, v in obj.items():
-                        if hasattr(cfg, k):
-                            setattr(cfg, k, v)
+                    if isinstance(obj, dict):
+                        for k, v in obj.items():
+                            if hasattr(cfg, k):
+                                setattr(cfg, k, v)
                 except Exception:
                     pass
 
@@ -406,8 +519,8 @@ class BelelHyperEngine:
         out: Dict[str, Any] = {
             "score10": float(score10),
             "metrics": {
-                "sr": int(metrics.sr),
-                "duration_sec": float(metrics.duration_sec),
+                "sr": int(getattr(metrics, "sr", sr)),
+                "duration_sec": float(getattr(metrics, "duration_sec", 0.0)),
             },
         }
         if self.cfg.store_breakdown:
@@ -427,6 +540,9 @@ class BelelHyperEngine:
                     "auto_score": True,
                     "auto_log": True,
                     "min_score": float(self.cfg.min_score),
+                    "preset": str(meta.get("preset", self.cfg.preset)),
+                    "codec_ckpt_sha1": str(self.codec_ckpt_sha1 or ""),
+                    "denoiser_ckpt_sha1": str(self.denoiser_ckpt_sha1 or ""),
                     **({"breakdown": breakdown} if self.cfg.store_breakdown else {}),
                 },
             )
@@ -449,35 +565,44 @@ class BelelHyperEngine:
 
         t0 = time.time()
 
-        steps = int(req.steps) if req.steps is not None else int(self.cfg.steps)
-        guidance = float(req.guidance) if req.guidance is not None else float(self.cfg.guidance)
+        # resolve effective params (includes ultra2 enforcement)
+        eff = self._resolve_effective_params(req)
+        steps = int(eff["steps"])
+        guidance = float(eff["guidance"])
 
         # build meta once, reuse across sidecars
         meta: Dict[str, Any] = {
             "utc": _utc_now(),
-            "preset": str(self.cfg.preset or "custom"),
+            "preset": str(eff.get("preset_tag", self.cfg.preset or "custom")),
             "steps": int(steps),
             "guidance": float(guidance),
-            "seed": None if self.cfg.seed is None else int(self.cfg.seed),
+            "seed": eff.get("seed", None),
             "dtype": str(self.cfg.dtype),
             "tf32": bool(self.cfg.tf32),
             "compile": bool(self.cfg.compile),
             "codec_ckpt": str(self.cfg.codec_ckpt or ""),
             "denoiser_ckpt": str(self.cfg.denoiser_ckpt or ""),
-            "clamp_pred": float(self.cfg.clamp_pred),
-            "cfg_rescale": float(self.cfg.cfg_rescale) if steps == 2 else 0.0,
+            "codec_ckpt_sha1": str(self.codec_ckpt_sha1 or ""),
+            "denoiser_ckpt_sha1": str(self.denoiser_ckpt_sha1 or ""),
+            "clamp_pred": float(eff.get("clamp_pred", self.cfg.clamp_pred)),
+            "cfg_rescale": float(eff.get("cfg_rescale", self.cfg.cfg_rescale)) if steps == 2 else 0.0,
+            "guidance_bounds": {"min": float(self.cfg.guidance_min), "max": float(self.cfg.guidance_max)},
+            "lock_ultra2": bool(self.cfg.lock_ultra2),
         }
 
-        # attach locked preset meta for 2-step
-        if steps == 2:
-            meta.update(self.preset2.as_meta())
+        # attach locked ultra2 meta (canonical, when enforced)
+        preset_meta = eff.get("preset_meta", {})
+        if isinstance(preset_meta, dict) and preset_meta:
+            meta.update(preset_meta)
 
         if req.extra and isinstance(req.extra, dict):
             meta["extra"] = dict(req.extra)
 
-        mel = self.generate_mel(req)
+        # generate
+        mel = self.generate_mel(req, eff)
         wav = self.mel_to_waveform(mel)
 
+        # persist
         base_name = req.filename or self._default_name()
         if not base_name.lower().endswith(".wav"):
             base_name += ".wav"
@@ -504,11 +629,9 @@ class BelelHyperEngine:
         elapsed = time.time() - t0
         meta["elapsed_sec"] = float(elapsed)
 
-        peak_gb = None
         if str(self.cfg.device).startswith("cuda") and torch.cuda.is_available():
             try:
-                peak_gb = float(torch.cuda.max_memory_allocated() / (1024**3))
-                meta["peak_vram_gb"] = peak_gb
+                meta["peak_vram_gb"] = float(torch.cuda.max_memory_allocated() / (1024 ** 3))
             except Exception:
                 pass
 
