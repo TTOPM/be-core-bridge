@@ -1,0 +1,4 @@
+cd belel-sing-gen
+git submodule add https://github.com/huggingface/diffusers diffusers-submodule  # for DiT inspiration
+git submodule add https://github.com/state-spaces/mamba mamba-submodule        # for SSM turbo
+git submodule update --init --recursive
