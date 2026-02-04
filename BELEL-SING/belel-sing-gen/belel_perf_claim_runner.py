@@ -2,162 +2,214 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import platform
 import subprocess
-import sys
 import time
-import hashlib
+from dataclasses import asdict
 from pathlib import Path
-from typing import Dict, Any, Optional, List
+from typing import Dict, Any, List, Optional, Tuple
 
 import torch
 
+from belel_hyper_core.belel_engine import (
+    BelelHyperEngine,
+    BelelHyperConfig,
+    BelelHyperRequest,
+)
+
+from belel_hyper_core.metrics.belel_benchmark_protocol import (
+    BelelBenchmarkProtocol,
+    BelelBenchmarkGates,
+    BelelBenchmarkWeights,
+)
+
 
 # ============================================================
-# Helpers
+# Utilities
 # ============================================================
 
-def _utc() -> str:
+def _utc_now() -> str:
     return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
 
 
-def _now_tag() -> str:
+def _now_utc_tag() -> str:
     return time.strftime("%Y%m%d_%H%M%S", time.gmtime())
 
 
-def _ensure_dir(p: Path) -> None:
-    p.mkdir(parents=True, exist_ok=True)
+def _ensure_dir(p: str) -> None:
+    Path(p).mkdir(parents=True, exist_ok=True)
+
+
+def _write_json(path: str, obj: Dict[str, Any]) -> None:
+    Path(path).parent.mkdir(parents=True, exist_ok=True)
+    Path(path).write_text(json.dumps(obj, indent=2, ensure_ascii=False), encoding="utf-8")
+
+
+def _write_text(path: str, s: str) -> None:
+    Path(path).parent.mkdir(parents=True, exist_ok=True)
+    Path(path).write_text(s, encoding="utf-8")
+
+
+def _cuda_sync(device: str) -> None:
+    if str(device).startswith("cuda") and torch.cuda.is_available():
+        torch.cuda.synchronize()
+
+
+def _reset_peak_vram(device: str) -> None:
+    if str(device).startswith("cuda") and torch.cuda.is_available():
+        torch.cuda.reset_peak_memory_stats()
+
+
+def _peak_vram_gb(device: str) -> float:
+    if str(device).startswith("cuda") and torch.cuda.is_available():
+        return float(torch.cuda.max_memory_allocated() / (1024 ** 3))
+    return 0.0
 
 
 def _sha256_file(path: str) -> str:
+    p = Path(path)
     h = hashlib.sha256()
-    with open(path, "rb") as f:
+    with p.open("rb") as f:
         for chunk in iter(lambda: f.read(1024 * 1024), b""):
             h.update(chunk)
     return h.hexdigest()
 
 
-def _write_json(path: Path, obj: Dict[str, Any]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(obj, ensure_ascii=False, indent=2), encoding="utf-8")
-
-
-def _read_json(path: Path) -> Dict[str, Any]:
-    if not path.exists():
-        return {}
+def _try_git_rev() -> str:
     try:
-        obj = json.loads(path.read_text(encoding="utf-8"))
-        return obj if isinstance(obj, dict) else {}
+        out = subprocess.check_output(["git", "rev-parse", "HEAD"], stderr=subprocess.DEVNULL)
+        return out.decode("utf-8").strip()
     except Exception:
-        return {}
+        return ""
 
 
-def _find_latest_benchmark_summary(root: Path) -> Optional[Path]:
-    if not root.exists():
-        return None
-    # newest folder first
-    dirs = sorted([p for p in root.iterdir() if p.is_dir()], key=lambda p: p.name, reverse=True)
-    for d in dirs:
-        summ = d / "benchmark_summary.json"
-        if summ.exists():
-            return summ
-    return None
+def _try_git_dirty() -> bool:
+    try:
+        out = subprocess.check_output(["git", "status", "--porcelain"], stderr=subprocess.DEVNULL)
+        return bool(out.decode("utf-8").strip())
+    except Exception:
+        return False
 
 
-def _torch_env_snapshot() -> Dict[str, Any]:
-    snap: Dict[str, Any] = {
-        "utc": _utc(),
-        "platform": platform.platform(),
+def _device_fingerprint(device: str) -> Dict[str, Any]:
+    fp: Dict[str, Any] = {
+        "device": str(device),
+        "torch_version": torch.__version__,
         "python": platform.python_version(),
-        "torch": getattr(torch, "__version__", ""),
-        "cuda_available": bool(torch.cuda.is_available()),
-        "cuda": getattr(torch.version, "cuda", "") if hasattr(torch, "version") else "",
-        "cudnn": torch.backends.cudnn.version() if torch.backends.cudnn.is_available() else "",
+        "platform": platform.platform(),
+        "machine": platform.machine(),
+        "processor": platform.processor(),
+        "utc": _utc_now(),
     }
-    if torch.cuda.is_available():
+
+    # CUDA facts
+    fp["cuda_available"] = bool(torch.cuda.is_available())
+    fp["cuda_version"] = str(torch.version.cuda) if torch.version.cuda else ""
+    fp["cudnn_version"] = int(torch.backends.cudnn.version()) if torch.backends.cudnn.is_available() else 0
+
+    if str(device).startswith("cuda") and torch.cuda.is_available():
         try:
-            snap["gpu_name"] = torch.cuda.get_device_name(0)
-            prop = torch.cuda.get_device_properties(0)
-            snap["gpu_total_vram_gb"] = float(prop.total_memory / (1024 ** 3))
+            idx = torch.cuda.current_device()
+            props = torch.cuda.get_device_properties(idx)
+            fp["gpu"] = {
+                "name": torch.cuda.get_device_name(idx),
+                "index": int(idx),
+                "total_vram_gb": float(props.total_memory / (1024 ** 3)),
+                "sm_count": int(props.multi_processor_count),
+                "major": int(props.major),
+                "minor": int(props.minor),
+            }
         except Exception:
-            pass
-    return snap
+            fp["gpu"] = {"name": torch.cuda.get_device_name(0) if torch.cuda.is_available() else ""}
+
+    # determinism toggles (informational)
+    fp["tf32_matmul_allow"] = bool(getattr(torch.backends.cuda.matmul, "allow_tf32", False)) if torch.cuda.is_available() else False
+    fp["tf32_cudnn_allow"] = bool(getattr(torch.backends.cudnn, "allow_tf32", False)) if torch.backends.cudnn.is_available() else False
+
+    fp["git_commit"] = _try_git_rev()
+    fp["git_dirty"] = _try_git_dirty()
+
+    return fp
 
 
-def _git_snapshot() -> Dict[str, Any]:
-    """
-    Best-effort git metadata. Does not fail the run if git is unavailable.
-    """
-    def run(cmd: List[str]) -> str:
-        try:
-            out = subprocess.check_output(cmd, stderr=subprocess.STDOUT).decode("utf-8", "ignore").strip()
-            return out
-        except Exception:
-            return ""
+def _stats(xs: List[float]) -> Dict[str, float]:
+    if not xs:
+        return {"avg": 0.0, "p50": 0.0, "p90": 0.0, "min": 0.0, "max": 0.0}
+    ys = sorted(xs)
+    n = len(ys)
+
+    def q(p: float) -> float:
+        i = int(round((n - 1) * p))
+        i = max(0, min(n - 1, i))
+        return ys[i]
 
     return {
-        "git_commit": run(["git", "rev-parse", "HEAD"]),
-        "git_branch": run(["git", "rev-parse", "--abbrev-ref", "HEAD"]),
-        "git_dirty": bool(run(["git", "status", "--porcelain"])),
-        "git_remote": run(["git", "config", "--get", "remote.origin.url"]),
+        "avg": float(sum(ys) / n),
+        "p50": float(q(0.50)),
+        "p90": float(q(0.90)),
+        "min": float(ys[0]),
+        "max": float(ys[-1]),
     }
 
 
-def _checkpoint_hashes(codec_ckpt: str, denoiser_ckpt: str) -> Dict[str, Any]:
-    out: Dict[str, Any] = {}
-    if codec_ckpt and Path(codec_ckpt).exists():
-        out["codec_ckpt"] = str(codec_ckpt)
-        out["codec_sha256"] = _sha256_file(codec_ckpt)
-    else:
-        out["codec_ckpt"] = str(codec_ckpt or "")
-        out["codec_sha256"] = ""
-    if denoiser_ckpt and Path(denoiser_ckpt).exists():
-        out["denoiser_ckpt"] = str(denoiser_ckpt)
-        out["denoiser_sha256"] = _sha256_file(denoiser_ckpt)
-    else:
-        out["denoiser_ckpt"] = str(denoiser_ckpt or "")
-        out["denoiser_sha256"] = ""
-    return out
+def _make_public_claim_block(claim: Dict[str, Any]) -> str:
+    # Keep it assertive, reproducible, and backed by hashes + protocol gate.
+    env = claim["environment"]
+    run = claim["run"]
+    proto = claim["protocol"]
+    hw = env.get("gpu", {})
+    gpu_name = hw.get("name", env.get("device", ""))
+    dur = run["duration_sec"]
+    steps = run["steps"]
+    guidance = run["guidance"]
+    n = run["runs"]
 
+    t = claim["measured"]["time_sec"]
+    v = claim["measured"]["peak_vram_gb"]
+    s = claim["measured"]["score_10"]
+    pass_rate = claim["measured"]["pass_rate"]
 
-def _parse_benchmark_results(summary: Dict[str, Any]) -> Dict[str, Any]:
-    """
-    Extracts a stable performance + quality claim payload from your benchmark_summary.json.
-    """
-    results = summary.get("results", {}) if isinstance(summary, dict) else {}
-    best: Dict[str, Any] = {"best_steps": None, "best_key": None, "best": {}}
+    ck = claim["checkpoints"]
+    den = ck.get("denoiser_ckpt", {})
+    cod = ck.get("codec_ckpt", {})
 
-    # Prefer 2-step for "end-to-end performance" claim; fallback to best avg time.
-    if "2" in results:
-        best["best_steps"] = 2
-        best["best_key"] = "2"
-        best["best"] = results["2"]
-        return best
-
-    # Otherwise select minimal avg time
-    best_avg = None
-    for k, v in results.items():
-        try:
-            avg = float(v.get("time_sec", {}).get("avg", 1e9))
-        except Exception:
-            avg = 1e9
-        if best_avg is None or avg < best_avg:
-            best_avg = avg
-            best["best_steps"] = int(v.get("steps", int(k)))
-            best["best_key"] = str(k)
-            best["best"] = v
-
-    return best
-
-
-def _format_claim_sentence(*, duration_sec: int, best_steps: int, avg_time: float, p50: float, p90: float, gpu: str) -> str:
-    # “Publicly stated end-to-end performance claim”
-    return (
-        f"BELEL Ultra2 generated {duration_sec}s audio in avg {avg_time:.2f}s "
-        f"(p50 {p50:.2f}s, p90 {p90:.2f}s) at {best_steps} steps on {gpu}."
+    lines = []
+    lines.append("# BELEL-SING — End-to-End Performance Claim (Reproducible)\n")
+    lines.append(f"- UTC: {claim.get('utc','')}")
+    lines.append(f"- GPU: {gpu_name}")
+    lines.append(f"- Torch: {env.get('torch_version','')} | CUDA: {env.get('cuda_version','')}")
+    if env.get("git_commit"):
+        lines.append(f"- Git: {env.get('git_commit')} (dirty={env.get('git_dirty')})")
+    lines.append("")
+    lines.append("## Claim")
+    lines.append(
+        f"Generated **{dur}s** of audio end-to-end in **{t['avg']:.3f}s avg** "
+        f"(p50={t['p50']:.3f}s, p90={t['p90']:.3f}s) at **{steps} steps** and guidance={guidance:.2f} "
+        f"over **{n} measured runs**."
     )
+    lines.append(
+        f"Peak VRAM: **{v['avg']:.3f} GB avg** (p90={v['p90']:.3f} GB)."
+    )
+    lines.append(
+        f"Protocol score: **{s['avg']:.2f}/10 avg** with **pass-rate={pass_rate:.2f}** "
+        f"against locked BelelBenchmark gates."
+    )
+    lines.append("")
+    lines.append("## Integrity")
+    lines.append(f"- codec_ckpt: {cod.get('path','')} sha256={cod.get('sha256','')}")
+    lines.append(f"- denoiser_ckpt: {den.get('path','')} sha256={den.get('sha256','')}")
+    lines.append("")
+    lines.append("## Protocol (locked)")
+    lines.append(f"- gates: {json.dumps(proto.get('gates',{}), ensure_ascii=False)}")
+    lines.append(f"- weights: {json.dumps(proto.get('weights',{}), ensure_ascii=False)}")
+    lines.append("")
+    lines.append("## Reproduce")
+    lines.append("Run this file with the same checkpoints and prompt/lyrics. The JSON artifact contains full run metadata.")
+
+    return "\n".join(lines) + "\n"
 
 
 # ============================================================
@@ -167,215 +219,217 @@ def _format_claim_sentence(*, duration_sec: int, best_steps: int, avg_time: floa
 def main():
     ap = argparse.ArgumentParser()
 
-    # --- claim run parameters (locked defaults are “industry-leading”)
-    ap.add_argument("--prompt", default="A clean, modern, radio-ready pop hook with tight drums and clear vocal presence.")
+    # Content
+    ap.add_argument("--prompt", required=True)
     ap.add_argument("--lyrics", default="")
-    ap.add_argument("--duration", type=int, default=240, help="Seconds of audio to generate for the claim")
-    ap.add_argument("--steps", default="2", help="Claim steps list, default '2' (Ultra2)")
-    ap.add_argument("--runs", type=int, default=3)
-    ap.add_argument("--warmup", type=int, default=1)
+    ap.add_argument("--duration", type=int, default=60)
 
-    # --- engine config
-    ap.add_argument("--device", default=os.environ.get("BELEL_DEVICE", "cuda"))
-    ap.add_argument("--dtype", default=os.environ.get("BELEL_DTYPE", "float16"))
-    ap.add_argument("--guidance", type=float, default=float(os.environ.get("BELEL_GUIDANCE", "6.0")))
-    ap.add_argument("--seed", type=int, default=None)
+    # Runtime
+    ap.add_argument("--device", default="cuda")
+    ap.add_argument("--dtype", default="float16")
+    ap.add_argument("--guidance", type=float, default=6.0)
+    ap.add_argument("--steps", type=int, default=2, choices=[2, 4, 6])
+    ap.add_argument("--seed", type=int, default=1234)
 
-    # --- checkpoints (prefer env, allow flags)
-    ap.add_argument("--codec_ckpt", default=os.environ.get("BELEL_CODEC_CKPT", ""))
-    ap.add_argument("--denoiser_ckpt", default=os.environ.get("BELEL_DENOISER_CKPT", ""))
+    # Checkpoints
+    ap.add_argument("--codec_ckpt", required=True)
+    ap.add_argument("--denoiser_ckpt", required=True)
 
-    # --- output
-    ap.add_argument("--out_dir", default="benchmarks/belel_claims")
+    # Measurement
+    ap.add_argument("--runs", type=int, default=5)
+    ap.add_argument("--warmup", type=int, default=2)
+    ap.add_argument("--save_outputs", action="store_true")
+
+    # Output
+    ap.add_argument("--out_dir", default="benchmarks/belel_perf_claim")
     ap.add_argument("--tag", default=None)
-    ap.add_argument("--keep_outputs", action="store_true", help="Keep wav/mel outputs for the claim run")
-    ap.add_argument("--no_benchmark_run", action="store_true", help="Only build a claim artifact from latest benchmark summary")
+
+    # Protocol config (optional overrides)
+    ap.add_argument("--gates_json", default=None, help="Optional JSON override for BelelBenchmarkGates")
+    ap.add_argument("--weights_json", default=None, help="Optional JSON override for BelelBenchmarkWeights")
 
     args = ap.parse_args()
 
-    out_dir = Path(args.out_dir)
-    _ensure_dir(out_dir)
+    tag = args.tag or _now_utc_tag()
+    run_root = str(Path(args.out_dir) / tag)
+    _ensure_dir(run_root)
 
-    tag = args.tag or _now_tag()
-    run_dir = out_dir / tag
-    _ensure_dir(run_dir)
+    # Environment capture
+    env = _device_fingerprint(args.device)
 
-    # --------------------------------------------------------
-    # Preflight
-    # --------------------------------------------------------
-    if not args.no_benchmark_run:
-        if not args.codec_ckpt or not Path(args.codec_ckpt).exists():
-            raise FileNotFoundError(f"--codec_ckpt not found: {args.codec_ckpt}")
-        if not args.denoiser_ckpt or not Path(args.denoiser_ckpt).exists():
-            raise FileNotFoundError(f"--denoiser_ckpt not found: {args.denoiser_ckpt}")
+    # Checkpoint hashing (integrity anchor)
+    codec_sha = _sha256_file(args.codec_ckpt)
+    denoiser_sha = _sha256_file(args.denoiser_ckpt)
 
-    env = _torch_env_snapshot()
-    git = _git_snapshot()
-    ckpts = _checkpoint_hashes(args.codec_ckpt, args.denoiser_ckpt)
+    ckpts = {
+        "codec_ckpt": {"path": str(Path(args.codec_ckpt).resolve()), "sha256": codec_sha},
+        "denoiser_ckpt": {"path": str(Path(args.denoiser_ckpt).resolve()), "sha256": denoiser_sha},
+    }
 
-    # --------------------------------------------------------
-    # Run benchmark (claim run)
-    # --------------------------------------------------------
-    bench_root = run_dir / "bench"
-    _ensure_dir(bench_root)
-
-    bench_summary_path: Optional[Path] = None
-
-    if not args.no_benchmark_run:
-        # We run your existing benchmark script as a subprocess to avoid import path issues.
-        # This produces: benchmarks/belel_ultra/<tag>/benchmark_summary.json
-        # But we want it inside claim folder, so we set --out_dir to our run folder.
-        cmd = [
-            sys.executable,
-            str(Path(__file__).resolve().parent / "belel_benchmark_ultra.py"),
-            "--prompt", str(args.prompt),
-            "--lyrics", str(args.lyrics),
-            "--duration", str(int(args.duration)),
-            "--steps", str(args.steps),
-            "--runs", str(int(args.runs)),
-            "--warmup", str(int(args.warmup)),
-            "--device", str(args.device),
-            "--dtype", str(args.dtype),
-            "--guidance", str(float(args.guidance)),
-            "--codec_ckpt", str(args.codec_ckpt),
-            "--denoiser_ckpt", str(args.denoiser_ckpt),
-            "--out_dir", str(bench_root),
-            "--tag", "claim_bench",
-        ]
-        if args.keep_outputs:
-            cmd.append("--save_outputs")
-
-        t0 = time.perf_counter()
-        proc = subprocess.run(cmd, capture_output=True, text=True)
-        t1 = time.perf_counter()
-
-        bench_run_elapsed = float(t1 - t0)
-
-        # Store logs
-        (run_dir / "benchmark_stdout.txt").write_text(proc.stdout or "", encoding="utf-8")
-        (run_dir / "benchmark_stderr.txt").write_text(proc.stderr or "", encoding="utf-8")
-
-        if proc.returncode != 0:
-            raise RuntimeError(
-                "Benchmark subprocess failed.\n"
-                f"Return code: {proc.returncode}\n"
-                f"stderr (tail): {(proc.stderr or '')[-2000:]}"
-            )
-
-        # Locate summary file
-        bench_summary_path = bench_root / "claim_bench" / "benchmark_summary.json"
-        if not bench_summary_path.exists():
-            # fallback: find latest
-            bench_summary_path = _find_latest_benchmark_summary(bench_root)
-
-        if bench_summary_path is None or not bench_summary_path.exists():
-            raise FileNotFoundError("Could not locate benchmark_summary.json after claim run.")
-
-    else:
-        # build claim from latest benchmark summary under benchmarks/belel_ultra
-        bench_summary_path = _find_latest_benchmark_summary(Path("benchmarks/belel_ultra"))
-        if bench_summary_path is None:
-            raise FileNotFoundError("No existing benchmark summary found to build a claim from.")
-
-    summary = _read_json(Path(bench_summary_path))
-
-    # --------------------------------------------------------
-    # Build claim artifact
-    # --------------------------------------------------------
-    best = _parse_benchmark_results(summary)
-    best_steps = int(best.get("best_steps") or 2)
-    best_block = best.get("best") or {}
-
-    time_sec = best_block.get("time_sec", {}) if isinstance(best_block, dict) else {}
-    score_10 = best_block.get("score_10", {}) if isinstance(best_block, dict) else {}
-    pass_rate = float(best_block.get("pass_rate", 0.0)) if isinstance(best_block, dict) else 0.0
-
-    avg_time = float(time_sec.get("avg", 0.0) or 0.0)
-    p50 = float(time_sec.get("p50", 0.0) or 0.0)
-    p90 = float(time_sec.get("p90", 0.0) or 0.0)
-
-    avg_score = float(score_10.get("avg", 0.0) or 0.0) if isinstance(score_10, dict) else 0.0
-
-    gpu_name = str(env.get("gpu_name", "") or ("cuda" if env.get("cuda_available") else "cpu"))
-    claim_sentence = _format_claim_sentence(
-        duration_sec=int(args.duration),
-        best_steps=int(best_steps),
-        avg_time=float(avg_time),
-        p50=float(p50),
-        p90=float(p90),
-        gpu=gpu_name,
+    # Build engine (end-to-end)
+    cfg = BelelHyperConfig(
+        device=args.device,
+        dtype=args.dtype,
+        steps=6,  # ceiling; actual steps set per request
+        guidance=float(args.guidance),
+        seed=int(args.seed),
+        out_dir=str(Path(run_root) / "outputs"),
+        codec_ckpt=args.codec_ckpt,
+        denoiser_ckpt=args.denoiser_ckpt,
     )
 
+    engine = BelelHyperEngine(cfg)
+    engine.load_checkpoints()
+    engine.to_device()
+
+    # Protocol (authoritative judge)
+    gates = BelelBenchmarkGates()
+    weights = BelelBenchmarkWeights()
+
+    # Optional overrides from JSON
+    if args.gates_json:
+        p = Path(args.gates_json)
+        if p.exists():
+            obj = json.loads(p.read_text(encoding="utf-8"))
+            for k, v in obj.items():
+                if hasattr(gates, k):
+                    setattr(gates, k, v)
+
+    if args.weights_json:
+        p = Path(args.weights_json)
+        if p.exists():
+            obj = json.loads(p.read_text(encoding="utf-8"))
+            for k, v in obj.items():
+                if hasattr(weights, k):
+                    setattr(weights, k, v)
+
+    protocol = BelelBenchmarkProtocol(gates=gates, weights=weights)
+
+    # Run settings
+    runs = int(args.runs)
+    warmup = int(args.warmup)
+    if runs < 1:
+        raise ValueError("--runs must be >= 1")
+    if warmup < 0:
+        raise ValueError("--warmup must be >= 0")
+
+    # Warmup
+    for wi in range(warmup):
+        req = BelelHyperRequest(
+            prompt=args.prompt,
+            lyrics=args.lyrics,
+            duration_sec=int(args.duration),
+            filename=f"warmup_{wi}.wav",
+            steps=int(args.steps),
+            guidance=float(args.guidance),
+            extra={"perf_claim": True, "warmup": True},
+        )
+        _reset_peak_vram(args.device)
+        _cuda_sync(args.device)
+        engine.run(req)
+        _cuda_sync(args.device)
+
+    # Measured runs
+    times: List[float] = []
+    vrams: List[float] = []
+    scores: List[float] = []
+    passes: List[bool] = []
+    output_rows: List[Dict[str, Any]] = []
+
+    for ri in range(runs):
+        name = f"claim_s{int(args.steps)}_r{ri}.wav" if args.save_outputs else f"tmp_s{int(args.steps)}_r{ri}.wav"
+        req = BelelHyperRequest(
+            prompt=args.prompt,
+            lyrics=args.lyrics,
+            duration_sec=int(args.duration),
+            filename=name,
+            steps=int(args.steps),
+            guidance=float(args.guidance),
+            extra={"perf_claim": True, "warmup": False, "run_index": ri},
+        )
+
+        _reset_peak_vram(args.device)
+        _cuda_sync(args.device)
+        t0 = time.perf_counter()
+        out = engine.run(req)
+        _cuda_sync(args.device)
+        t1 = time.perf_counter()
+
+        dt = float(t1 - t0)
+        times.append(dt)
+        vrams.append(_peak_vram_gb(args.device))
+
+        # Load mel from sidecar pt
+        mel_obj = torch.load(out["mel_path"], map_location="cpu")
+        mel = mel_obj["mel"] if isinstance(mel_obj, dict) and "mel" in mel_obj else mel_obj
+
+        # NOTE: alignment_score is a placeholder until your Belel aligner module is plugged in.
+        # Keep it explicit: we score acoustic proxies + gates now; alignment gets enforced when aligner lands.
+        alignment_score = float(out["meta"].get("alignment_score", 0.0))
+
+        score10, passed, breakdown = protocol.evaluate(mel, alignment_score=alignment_score)
+
+        scores.append(float(score10))
+        passes.append(bool(passed))
+
+        row = {
+            "run_index": ri,
+            "time_sec": dt,
+            "peak_vram_gb": vrams[-1],
+            "score_10": float(score10),
+            "passed": bool(passed),
+            "breakdown": breakdown,
+            "wav_path": out["wav_path"] if args.save_outputs else "",
+            "mel_path": out["mel_path"] if args.save_outputs else "",
+        }
+        output_rows.append(row)
+
+    # Aggregate
+    measured = {
+        "time_sec": _stats(times),
+        "peak_vram_gb": _stats(vrams),
+        "score_10": _stats(scores),
+        "pass_rate": float(sum(passes) / max(1, len(passes))),
+    }
+
     claim: Dict[str, Any] = {
-        "utc": _utc(),
-        "tag": tag,
-        "claim": {
-            "sentence": claim_sentence,
+        "utc": _utc_now(),
+        "environment": env,
+        "checkpoints": ckpts,
+        "run": {
+            "prompt": args.prompt,
+            "lyrics_present": bool((args.lyrics or "").strip()),
             "duration_sec": int(args.duration),
-            "steps": int(best_steps),
+            "steps": int(args.steps),
             "guidance": float(args.guidance),
             "dtype": str(args.dtype),
             "device": str(args.device),
-            "runs": int(args.runs),
-            "warmup": int(args.warmup),
-            "pass_rate": float(pass_rate),
-            "avg_score_10": float(avg_score),
-            "timing_sec": {
-                "avg": float(avg_time),
-                "p50": float(p50),
-                "p90": float(p90),
-            },
+            "seed": int(args.seed),
+            "runs": runs,
+            "warmup": warmup,
         },
-        "benchmark_summary_path": str(Path(bench_summary_path).resolve()),
-        "env": env,
-        "git": git,
-        "checkpoints": ckpts,
-        "inputs": {
-            "prompt": str(args.prompt),
-            "lyrics_present": bool(str(args.lyrics or "").strip()),
-            "lyrics_hash": hashlib.sha1((args.lyrics or "").encode("utf-8")).hexdigest() if (args.lyrics or "").strip() else "",
-            "prompt_hash": hashlib.sha1((args.prompt or "").encode("utf-8")).hexdigest(),
+        "protocol": {
+            "gates": asdict(gates),
+            "weights": asdict(weights),
         },
-        "publication": {
-            "rule": "Publish claim only with claim.json + benchmark_summary.json + checkpoint sha256.",
-            "note": "This artifact is BELEL-generated and locally verifiable.",
-        },
+        "measured": measured,
+        "outputs": output_rows,
     }
 
-    # Attach protocol info if present
-    if isinstance(summary, dict) and "protocol" in summary:
-        claim["protocol"] = summary.get("protocol", {})
+    # Write artifacts
+    claim_json_path = str(Path(run_root) / "perf_claim.json")
+    claim_md_path = str(Path(run_root) / "perf_claim.md")
 
-    # --------------------------------------------------------
-    # Write claim files
-    # --------------------------------------------------------
-    claim_path = run_dir / "claim.json"
-    _write_json(claim_path, claim)
+    _write_json(claim_json_path, claim)
+    _write_text(claim_md_path, _make_public_claim_block(claim))
 
-    # Convenience copy of benchmark summary
-    try:
-        copy_path = run_dir / "benchmark_summary.json"
-        copy_path.write_text(Path(bench_summary_path).read_text(encoding="utf-8"), encoding="utf-8")
-    except Exception:
-        pass
-
-    # Minimal public snippet
-    snippet = {
-        "sentence": claim_sentence,
-        "pass_rate": float(pass_rate),
-        "avg_score_10": float(avg_score),
-        "avg_time_sec": float(avg_time),
-        "p90_time_sec": float(p90),
-        "gpu": gpu_name,
-        "duration_sec": int(args.duration),
-        "steps": int(best_steps),
-    }
-    _write_json(run_dir / "claim_public_snippet.json", snippet)
-
-    print("✔ wrote:", str(claim_path))
-    print("✔ wrote:", str(run_dir / "claim_public_snippet.json"))
-    print("✔ benchmark_summary:", str(Path(bench_summary_path).resolve()))
-    print("CLAIM:", claim_sentence)
+    print("saved:", claim_json_path)
+    print("saved:", claim_md_path)
+    print(
+        f"[CLAIM] avg_time={measured['time_sec']['avg']:.3f}s | "
+        f"avg_peak_vram={measured['peak_vram_gb']['avg']:.3f}GB | "
+        f"avg_score={measured['score_10']['avg']:.2f} | pass_rate={measured['pass_rate']:.2f}"
+    )
 
 
 if __name__ == "__main__":
