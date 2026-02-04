@@ -1,0 +1,147 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BELEL Editing Suite</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>BELEL Editing Suite</h1>
+      <p class="sub">
+        Repaint · Retake · Extend · Lyric Edit — provenance locked (wav.json + mel.pt)
+      </p>
+    </header>
+
+    <section class="card">
+      <h2>Language</h2>
+      <div class="row">
+        <label>Language</label>
+        <select id="language"></select>
+        <span id="langCount" class="muted"></span>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="card">
+        <h2>Generate (Source)</h2>
+        <div class="row">
+          <label>Prompt</label>
+          <textarea id="genPrompt" rows="3" placeholder="Describe the track..."></textarea>
+        </div>
+        <div class="row">
+          <label>Lyrics</label>
+          <textarea id="genLyrics" rows="3" placeholder="Optional lyrics..."></textarea>
+        </div>
+        <div class="row">
+          <label>Duration (sec)</label>
+          <input id="genDuration" type="number" value="60" min="5" />
+        </div>
+        <div class="row">
+          <label>Steps</label>
+          <input id="genSteps" type="number" value="2" min="2" max="6" />
+        </div>
+        <div class="row">
+          <label>Guidance</label>
+          <input id="genGuidance" type="number" value="6.0" step="0.1" />
+        </div>
+        <button id="btnGenerate">Generate</button>
+
+        <div class="result" id="genResult"></div>
+      </div>
+
+      <div class="card">
+        <h2>Edit</h2>
+
+        <div class="row">
+          <label>Mode</label>
+          <select id="mode">
+            <option value="repaint">Repaint (preserve outside)</option>
+            <option value="retake">Retake (stronger repaint)</option>
+            <option value="extend">Extend (append)</option>
+            <option value="lyric_edit">Lyric Edit (region)</option>
+          </select>
+        </div>
+
+        <div class="row">
+          <label>Upload source WAV</label>
+          <input id="sourceWav" type="file" accept=".wav" />
+        </div>
+        <div class="row">
+          <label>Upload wav.json sidecar (optional)</label>
+          <input id="sourceJson" type="file" accept=".json" />
+        </div>
+
+        <div class="row">
+          <label>t_start (sec)</label>
+          <input id="tStart" type="number" value="0" step="0.01" />
+        </div>
+        <div class="row">
+          <label>t_end (sec)</label>
+          <input id="tEnd" type="number" value="0" step="0.01" />
+        </div>
+
+        <div class="row">
+          <label>Extend (sec)</label>
+          <input id="extendSec" type="number" value="0" step="1" />
+        </div>
+
+        <div class="row">
+          <label>Prompt (optional override)</label>
+          <textarea id="editPrompt" rows="2" placeholder="If empty, uses prompt from sidecar if present."></textarea>
+        </div>
+        <div class="row">
+          <label>Lyrics (optional override)</label>
+          <textarea id="editLyrics" rows="2" placeholder="If empty, uses lyrics from sidecar if present."></textarea>
+        </div>
+        <div class="row">
+          <label>New lyrics (lyric_edit only)</label>
+          <textarea id="newLyrics" rows="2" placeholder="New lyric line/segment"></textarea>
+        </div>
+
+        <div class="row">
+          <label>Steps</label>
+          <input id="editSteps" type="number" value="2" min="2" max="6" />
+        </div>
+        <div class="row">
+          <label>Guidance</label>
+          <input id="editGuidance" type="number" value="6.0" step="0.1" />
+        </div>
+        <div class="row">
+          <label>Crossfade (ms)</label>
+          <input id="crossfadeMs" type="number" value="60" step="10" />
+        </div>
+        <div class="row">
+          <label>Repaint strength (0..1)</label>
+          <input id="repaintStrength" type="number" value="0.65" step="0.05" min="0" max="1" />
+        </div>
+
+        <button id="btnEdit">Run Edit</button>
+
+        <div class="result" id="editResult"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Downloads</h2>
+      <div class="row">
+        <label>Last Job ID</label>
+        <input id="lastJob" type="text" readonly />
+      </div>
+      <div class="row">
+        <a id="dlWav" href="#" target="_blank">Download WAV</a>
+        <a id="dlJson" href="#" target="_blank">Download wav.json</a>
+        <a id="dlMel" href="#" target="_blank">Download mel.pt</a>
+      </div>
+    </section>
+
+    <footer class="muted">
+      <div>BELEL Editing Suite v1 — UI + pipeline are BELEL-owned modules.</div>
+    </footer>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
