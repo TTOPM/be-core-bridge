@@ -1,437 +1,532 @@
-import argparse
+# BELEL-SING/belel-sing-gen/belel_hyper_core/belel_engine.py
+from __future__ import annotations
+
+import os
 import json
-import hashlib
 import time
+import hashlib
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Any, Optional, List, Tuple, Set
+from typing import Optional, Dict, Any, Tuple
 
-import numpy as np
+import torch
 
-from belel_hyper_core.metrics.belel_audio_metrics import compute_belel_audio_metrics
-from belel_hyper_core.metrics.belel_score import BelelScoreConfig, belel_auto_score
-from belel_hyper_core.distill.belel_evolution_tracker import BelelEvolutionTracker
+from .belel_latent_codec import BelelDeepCompressor
+from .belel_conditioner import BelelConditioner
+from .belel_denoiser import BelelDenoiser1D
+from .belel_solver import BelelLowStepSolver
+from .belel_presets import BelelInferenceDefaults
+
+
+# ----------------------------
+# Config + Request
+# ----------------------------
+
+@dataclass
+class BelelHyperConfig:
+    # device/runtime
+    device: str = "cuda"
+    dtype: str = "float16"  # float16 | bfloat16 | float32
+    seed: Optional[int] = None
+    deterministic: bool = False  # if True: stricter determinism (can be slower)
+
+    # inference defaults
+    steps: int = 2
+    guidance: float = 6.0
+    preset: str = "ultra2"  # "ultra2" recommended; tags metadata
+
+    # 2-step stability controls (consumed by solver)
+    clamp_pred: float = 10.0
+    cfg_rescale: float = 0.7
+
+    # performance toggles
+    tf32: bool = True
+    compile: bool = True
+
+    # vocoder contract
+    sample_rate: int = 22050
+    hop_length: int = 256
+    win_length: int = 1024
+    mel_bins: int = 80
+
+    # latent + conditioning
+    latent_ch: int = 32
+    cond_dim: int = 1024
+
+    # outputs
+    out_dir: str = "outputs/belel_ultra"
+
+    # checkpoints
+    codec_ckpt: Optional[str] = None
+    denoiser_ckpt: Optional[str] = None
+
+    # sidecars (ALWAYS WRITTEN by this engine)
+    write_sidecars: bool = True
+
+    # optional automation (air-gapped)
+    auto_score: bool = False
+    auto_log: bool = False
+    min_score: float = 7.5
+    store_breakdown: bool = False
+    evolution_root: str = "logs/belel_evolution"
+    score_config_json: Optional[str] = None  # optional override JSON for score config
+
+
+@dataclass
+class BelelHyperRequest:
+    prompt: str
+    lyrics: str = ""
+    duration_sec: int = 240
+    filename: Optional[str] = None
+
+    # optional overrides
+    steps: Optional[int] = None
+    guidance: Optional[float] = None
+    extra: Optional[Dict[str, Any]] = None
 
 
 # ----------------------------
 # Helpers
 # ----------------------------
 
-def _sha1_bytes(b: bytes) -> str:
-    return hashlib.sha1(b).hexdigest()
+def _torch_dtype(dtype_name: str):
+    return {
+        "float16": torch.float16,
+        "bfloat16": torch.bfloat16,
+        "float32": torch.float32,
+    }.get(str(dtype_name).lower(), torch.float32)
 
 
-def _sha1_text(s: str) -> str:
-    return hashlib.sha1(s.encode("utf-8")).hexdigest()
+def _utc_now() -> str:
+    return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
 
 
-def _read_json(path: Path) -> Optional[Dict[str, Any]]:
-    if not path.exists():
-        return None
-    try:
-        return json.loads(path.read_text(encoding="utf-8"))
-    except Exception:
-        return None
+def _sha1(s: str) -> str:
+    return hashlib.sha1((s or "").encode("utf-8")).hexdigest()
 
 
-def _write_json(path: Path, obj: Dict[str, Any]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(obj, ensure_ascii=False, indent=2), encoding="utf-8")
+def _ensure_dir(p: str) -> None:
+    Path(p).mkdir(parents=True, exist_ok=True)
 
 
-def _append_jsonl(path: Path, obj: Dict[str, Any]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("a", encoding="utf-8") as f:
-        f.write(json.dumps(obj, ensure_ascii=False) + "\n")
-
-
-def _load_wav(path: Path) -> Tuple[np.ndarray, int]:
-    # Prefer soundfile; fallback to scipy
-    try:
-        import soundfile as sf
-        x, sr = sf.read(str(path), always_2d=False)
-        return np.asarray(x), int(sr)
-    except Exception:
-        from scipy.io import wavfile
-        sr, x = wavfile.read(str(path))
-        # normalize int16/int32
-        if np.issubdtype(x.dtype, np.integer):
-            mx = float(np.iinfo(x.dtype).max)
-            x = x.astype(np.float32) / mx
-        else:
-            x = x.astype(np.float32)
-        return np.asarray(x), int(sr)
-
-
-def _wav_content_hash(x: np.ndarray, sr: int) -> str:
-    """
-    Hash normalized float audio + sr. This dedupes even if filename changes.
-    We keep it cheap: clip, float32, mono reduction if needed.
-    """
-    y = np.asarray(x)
-    if y.ndim > 1:
-        y = y.mean(axis=-1)
-    y = y.astype(np.float32)
-    y = np.clip(y, -1.0, 1.0)
-    header = f"sr={int(sr)}|n={int(y.shape[0])}|".encode("utf-8")
-    return _sha1_bytes(header + y.tobytes())
-
-
-def _read_mel_sidecar(mel_pt: Path) -> Dict[str, Any]:
-    """
-    Reads mel .pt saved by generator.
-    Accepts:
-      {"mel": tensor, "prompt": str, "lyrics": str, "meta": {...}} or {"mel": tensor}
-    """
-    import torch
-    if not mel_pt.exists():
-        return {"prompt": "", "lyrics": "", "meta": {}}
-
-    obj = torch.load(str(mel_pt), map_location="cpu")
+def _load_ckpt_state_dict(path: str) -> dict:
+    obj = torch.load(path, map_location="cpu")
+    if isinstance(obj, dict) and "state_dict" in obj and isinstance(obj["state_dict"], dict):
+        return obj["state_dict"]
     if isinstance(obj, dict):
-        meta = obj.get("meta", {})
-        if not isinstance(meta, dict):
-            meta = {}
-        return {
-            "prompt": str(obj.get("prompt", "") or ""),
-            "lyrics": str(obj.get("lyrics", "") or ""),
-            "meta": meta,
-        }
-    return {"prompt": "", "lyrics": "", "meta": {}}
+        return obj
+    raise ValueError(f"Unsupported checkpoint format at: {path}")
 
 
-def _patch_mel_meta_if_missing(mel_pt: Path, meta_patch: Dict[str, Any]) -> bool:
+def _safe_json_dump(path: Path, payload: Dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def belel_minmax_to_range(x: torch.Tensor, lo: float = -4.0, hi: float = 4.0, eps: float = 1e-8) -> torch.Tensor:
     """
-    If mel sidecar exists and has a dict format, inject missing meta keys.
-    Returns True if patched.
+    Min-max normalize per-sample to [lo,hi] and clamp.
+    Input: [B, mel_bins, T]
     """
-    import torch
-    if not mel_pt.exists():
-        return False
-    obj = torch.load(str(mel_pt), map_location="cpu")
-    if not isinstance(obj, dict):
-        return False
-
-    meta = obj.get("meta", {})
-    if not isinstance(meta, dict):
-        meta = {}
-
-    changed = False
-    for k, v in meta_patch.items():
-        if k not in meta:
-            meta[k] = v
-            changed = True
-
-    if changed:
-        obj["meta"] = meta
-        torch.save(obj, str(mel_pt))
-    return changed
+    x_min = x.amin(dim=(1, 2), keepdim=True)
+    x_max = x.amax(dim=(1, 2), keepdim=True)
+    x01 = (x - x_min) / (x_max - x_min + eps)
+    y = x01 * (hi - lo) + lo
+    return y.clamp(lo, hi)
 
 
-def _infer_steps_guidance_seed(
-    default_steps: int,
-    default_guidance: float,
-    default_seed: Optional[int],
-    mel_meta: Dict[str, Any],
-    wav_meta: Optional[Dict[str, Any]],
-) -> Tuple[int, float, Optional[int]]:
-    """
-    Priority:
-      1) wav sidecar json (same stem .json)
-      2) mel sidecar meta dict (if present)
-      3) CLI defaults
-    """
-    steps = int(default_steps)
-    guidance = float(default_guidance)
-    seed = default_seed
-
-    # wav meta first
-    if wav_meta:
-        if "steps" in wav_meta:
-            try:
-                steps = int(wav_meta["steps"])
-            except Exception:
-                pass
-        if "guidance" in wav_meta:
-            try:
-                guidance = float(wav_meta["guidance"])
-            except Exception:
-                pass
-        if "seed" in wav_meta:
-            try:
-                seed = None if wav_meta["seed"] is None else int(wav_meta["seed"])
-            except Exception:
-                pass
-
-    # mel meta next
-    mm = mel_meta.get("meta", {}) if isinstance(mel_meta, dict) else {}
-    if isinstance(mm, dict):
-        if "steps" in mm and (wav_meta is None or "steps" not in wav_meta):
-            try:
-                steps = int(mm["steps"])
-            except Exception:
-                pass
-        if "guidance" in mm and (wav_meta is None or "guidance" not in wav_meta):
-            try:
-                guidance = float(mm["guidance"])
-            except Exception:
-                pass
-        if "seed" in mm and (wav_meta is None or "seed" not in wav_meta):
-            try:
-                seed = None if mm["seed"] is None else int(mm["seed"])
-            except Exception:
-                pass
-
-    # enforce Belel ceiling
-    if steps < 1 or steps > 6:
-        steps = max(1, min(6, int(default_steps)))
-
-    return int(steps), float(guidance), seed
-
-
-def _ensure_wav_sidecar(
-    wav_path: Path,
-    *,
-    steps: int,
-    guidance: float,
-    seed: Optional[int],
-    prompt: str,
-    lyrics: str,
-    allow_write: bool,
-) -> Optional[Path]:
-    """
-    Recommended upgrade: guarantee a .json sidecar exists beside every wav.
-    If missing and allow_write=True, create it.
-    """
-    sidecar = wav_path.with_suffix(".json")
-    if sidecar.exists():
-        return sidecar
-
-    if not allow_write:
-        return None
-
-    payload = {
-        "steps": int(steps),
-        "guidance": float(guidance),
-        "seed": seed if seed is None else int(seed),
-        "prompt_hash": _sha1_text(prompt or ""),
-        "lyrics_hash": _sha1_text(lyrics or "") if (lyrics or "") else "",
-        # keep full text locally if you want complete provenance
-        "prompt": str(prompt or ""),
-        "lyrics": str(lyrics or ""),
-        "utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-    }
-    _write_json(sidecar, payload)
-    return sidecar
-
-
-def _load_scored_set(manifest_jsonl: Path) -> Set[str]:
-    """
-    Returns a set of content hashes already processed (dedupe).
-    """
-    done: Set[str] = set()
-    if not manifest_jsonl.exists():
-        return done
-    for line in manifest_jsonl.read_text(encoding="utf-8").splitlines():
-        try:
-            obj = json.loads(line)
-            h = str(obj.get("audio_hash", "") or "")
-            if h:
-                done.add(h)
-        except Exception:
-            continue
-    return done
+def _set_determinism(enabled: bool) -> None:
+    if not enabled:
+        return
+    try:
+        torch.use_deterministic_algorithms(True)
+    except Exception:
+        pass
+    try:
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
+    except Exception:
+        pass
 
 
 # ----------------------------
-# Main
+# Engine
 # ----------------------------
 
-def main():
-    ap = argparse.ArgumentParser()
+class BelelHyperEngine:
+    def __init__(self, cfg: BelelHyperConfig):
+        self.cfg = cfg
 
-    ap.add_argument("--out_dir", required=True, help="Directory containing wavs and a mels/ folder")
-    ap.add_argument("--min_score", type=float, default=7.5, help="Only log items >= this score")
+        # locked preset object for 2-step
+        self.preset2 = BelelInferenceDefaults.ultra2()
 
-    ap.add_argument("--steps", type=int, default=4, help="Default steps tag (overridden by sidecars if present)")
-    ap.add_argument("--guidance", type=float, default=6.5, help="Default guidance tag (overridden by sidecars if present)")
-    ap.add_argument("--seed", type=int, default=None, help="Default seed tag (overridden by sidecars if present)")
+        # core modules
+        self.codec = BelelDeepCompressor(mel_bins=cfg.mel_bins, latent_ch=cfg.latent_ch)
+        self.cond = BelelConditioner(embed_dim=cfg.cond_dim)
+        self.denoiser = BelelDenoiser1D(channels=cfg.latent_ch, cond_dim=cfg.cond_dim)
+        self.solver = BelelLowStepSolver(self.denoiser)
 
-    ap.add_argument("--limit", type=int, default=500, help="Max wav files to scan")
-    ap.add_argument("--evolution_root", default="logs/belel_evolution", help="Evolution tracker root dir")
+        # outputs
+        _ensure_dir(cfg.out_dir)
+        _ensure_dir(str(Path(cfg.out_dir) / "mels"))
 
-    # output behaviour
-    ap.add_argument("--manifest_name", default="score_manifest.jsonl", help="Written to out_dir/")
-    ap.add_argument("--dedupe", action="store_true", help="Skip audio already scored (hash-based)")
-    ap.add_argument("--write_best_index", action="store_true", help="Write best_of.json with top N entries")
-    ap.add_argument("--best_n", type=int, default=64)
-    ap.add_argument("--store_breakdown", action="store_true", help="Store full breakdown in manifest+tracker (bigger files)")
+    # ---------- lifecycle
 
-    # recommended: guarantee provenance sidecars
-    ap.add_argument("--ensure_sidecars", action="store_true", help="Create wav .json sidecars if missing")
-    ap.add_argument("--patch_mel_meta", action="store_true", help="Inject steps/guidance/seed into mel .pt meta if missing")
+    def load_checkpoints(self) -> None:
+        if self.cfg.codec_ckpt:
+            sd = _load_ckpt_state_dict(self.cfg.codec_ckpt)
+            self.codec.load_state_dict(sd, strict=True)
 
-    # score config override (optional)
-    ap.add_argument("--score_config", default=None, help="Optional path to JSON for BelelScoreConfig override")
+        if self.cfg.denoiser_ckpt:
+            sd = _load_ckpt_state_dict(self.cfg.denoiser_ckpt)
+            self.denoiser.load_state_dict(sd, strict=True)
 
-    args = ap.parse_args()
+    def to_device(self) -> "BelelHyperEngine":
+        _set_determinism(self.cfg.deterministic)
 
-    out_dir = Path(args.out_dir)
-    if not out_dir.exists():
-        raise SystemExit(f"out_dir not found: {out_dir}")
+        # tf32
+        if self.cfg.tf32 and str(self.cfg.device).startswith("cuda"):
+            try:
+                torch.backends.cuda.matmul.allow_tf32 = True
+                torch.backends.cudnn.allow_tf32 = True
+                torch.set_float32_matmul_precision("high")
+            except Exception:
+                pass
 
-    mels_dir = out_dir / "mels"
-    manifest_path = out_dir / str(args.manifest_name)
+        dt = _torch_dtype(self.cfg.dtype)
 
-    # dedupe set (hash-based)
-    already_hashes = _load_scored_set(manifest_path) if args.dedupe else set()
+        self.codec.to(self.cfg.device, dtype=dt)
+        self.denoiser.to(self.cfg.device, dtype=dt)
+        self.cond.to(self.cfg.device)
 
-    # load score config overrides if provided
-    cfg = BelelScoreConfig()
-    if args.score_config:
-        scp = Path(args.score_config)
-        if not scp.exists():
-            raise SystemExit(f"score_config not found: {scp}")
-        try:
-            obj = json.loads(scp.read_text(encoding="utf-8"))
-            for k, v in obj.items():
-                if hasattr(cfg, k):
-                    setattr(cfg, k, v)
-        except Exception as e:
-            raise SystemExit(f"Failed to parse score_config JSON: {e}")
+        # compile denoiser (best-effort)
+        if self.cfg.compile:
+            try:
+                self.denoiser = torch.compile(self.denoiser)  # type: ignore
+                self.solver.denoiser = self.denoiser
+            except Exception:
+                pass
 
-    tracker = BelelEvolutionTracker(root=args.evolution_root)
+        return self
 
-    wavs = sorted([p for p in out_dir.glob("*.wav")])[: int(args.limit)]
+    # ---------- generation
 
-    scanned = 0
-    scored = 0
-    logged = 0
-    skipped = 0
-    patched_mels = 0
-    created_sidecars = 0
+    @torch.inference_mode()
+    def generate_mel(self, req: BelelHyperRequest) -> torch.Tensor:
+        if self.cfg.seed is not None:
+            torch.manual_seed(int(self.cfg.seed))
+            if str(self.cfg.device).startswith("cuda") and torch.cuda.is_available():
+                try:
+                    torch.cuda.manual_seed_all(int(self.cfg.seed))
+                except Exception:
+                    pass
 
-    best_rows: List[Dict[str, Any]] = []
+        steps = int(req.steps) if req.steps is not None else int(self.cfg.steps)
+        guidance = float(req.guidance) if req.guidance is not None else float(self.cfg.guidance)
 
-    for wav_path in wavs:
-        scanned += 1
+        if steps not in (2, 4, 6):
+            raise ValueError("BelelHyperEngine steps must be one of: 2, 4, 6")
 
-        # optional wav sidecar json (same stem)
-        wav_sidecar_path = wav_path.with_suffix(".json")
-        wav_sidecar = _read_json(wav_sidecar_path)
+        device = self.cfg.device
+        dt = _torch_dtype(self.cfg.dtype)
 
-        # mel sidecar
-        mel_pt = mels_dir / wav_path.name.replace(".wav", ".pt")
-        mel_meta = _read_mel_sidecar(mel_pt)
+        # conditioning: must run on device
+        cond = self.cond(req.prompt, req.lyrics, device=device)
 
-        # infer tags
-        steps, guidance, seed = _infer_steps_guidance_seed(
-            args.steps, args.guidance, args.seed, mel_meta, wav_sidecar
+        # latent length heuristic (consistent with earlier code)
+        frames = max(64, int((self.cfg.sample_rate * int(req.duration_sec)) / self.cfg.hop_length))
+        latent_T = max(64, frames // 4)
+
+        x = torch.randn(1, int(self.cfg.latent_ch), int(latent_T), device=device, dtype=dt)
+
+        # solver stability controls
+        clamp_pred = float(self.cfg.clamp_pred)
+        cfg_rescale = float(self.cfg.cfg_rescale) if steps == 2 else 0.0
+
+        preset = self.preset2 if steps == 2 else None
+
+        x = self.solver.generate(
+            x,
+            cond,
+            steps=steps,
+            guidance=guidance,
+            preset=preset,
+            clamp_pred=clamp_pred,
+            cfg_rescale=cfg_rescale,
         )
 
-        # recommended: ensure wav sidecar exists (writes if missing)
-        sidecar_created = False
-        if args.ensure_sidecars and (wav_sidecar is None):
-            sc = _ensure_wav_sidecar(
-                wav_path,
-                steps=steps,
-                guidance=guidance,
-                seed=seed,
-                prompt=mel_meta.get("prompt", "") or "",
-                lyrics=mel_meta.get("lyrics", "") or "",
-                allow_write=True,
-            )
-            if sc is not None and sc.exists():
-                sidecar_created = True
-                created_sidecars += 1
+        mel = self.codec.decode(x.float())
+        mel = belel_minmax_to_range(mel, -4.0, 4.0)
+        return mel
 
-        # recommended: patch mel meta with steps/guidance/seed (if missing)
-        if args.patch_mel_meta and mel_pt.exists():
-            changed = _patch_mel_meta_if_missing(
-                mel_pt,
-                {"steps": int(steps), "guidance": float(guidance), "seed": seed},
-            )
-            if changed:
-                patched_mels += 1
-                # refresh mel_meta after patch
-                mel_meta = _read_mel_sidecar(mel_pt)
+    @torch.inference_mode()
+    def mel_to_waveform(self, mel: torch.Tensor) -> torch.Tensor:
+        # Uses your existing entrypoint in BELEL-SING/belel-sing-gen/infer.py
+        from infer import synthesize_audio_from_mel
 
-        # load wav -> compute content hash
-        x, sr = _load_wav(wav_path)
-        audio_hash = _wav_content_hash(x, sr)
+        wav = synthesize_audio_from_mel(mel, device=self.cfg.device)
 
-        if args.dedupe and audio_hash in already_hashes:
-            skipped += 1
-            continue
+        if isinstance(wav, torch.Tensor):
+            return wav.unsqueeze(0) if wav.ndim == 1 else wav
 
-        # score
-        metrics = compute_belel_audio_metrics(x, sr)
-        score10, breakdown = belel_auto_score(metrics, cfg=cfg)
-        scored += 1
+        import numpy as np
+        if isinstance(wav, np.ndarray):
+            return torch.from_numpy(wav[None, :] if wav.ndim == 1 else wav)
 
-        wav_abs = str(wav_path.resolve())
-        mel_abs = str(mel_pt.resolve()) if mel_pt.exists() else ""
+        raise TypeError("vocoder returned unsupported type")
 
-        row: Dict[str, Any] = {
-            "wav_path": wav_abs,
-            "mel_path": mel_abs,
-            "audio_hash": audio_hash,
-            "score": float(score10),
-            "steps": int(steps),
-            "guidance": float(guidance),
-            "seed": seed if seed is None else int(seed),
-            "sr": int(metrics.sr),
-            "duration_sec": float(metrics.duration_sec),
-            "prompt": mel_meta.get("prompt", "") or "",
-            "lyrics": mel_meta.get("lyrics", "") or "",
+    # ---------- persistence (wav + mel + sidecars)
+
+    def _default_name(self) -> str:
+        ts = time.strftime("%Y%m%d_%H%M%S", time.gmtime())
+        return f"belel_ultra_{ts}.wav"
+
+    def save_wav(self, wav: torch.Tensor, filename: str) -> str:
+        if not filename.lower().endswith(".wav"):
+            filename += ".wav"
+        path = str(Path(self.cfg.out_dir) / filename)
+
+        wav_cpu = wav.detach().float().cpu()
+        try:
+            import soundfile as sf
+            sf.write(path, wav_cpu.squeeze(0).numpy(), int(self.cfg.sample_rate))
+        except Exception:
+            from scipy.io.wavfile import write as wavwrite
+            x = wav_cpu.squeeze(0).numpy()
+            peak = float(abs(x).max()) if x.size else 1.0
+            peak = peak if peak > 1e-8 else 1.0
+            x = (x / peak * 0.98)
+            wavwrite(path, int(self.cfg.sample_rate), (x * 32767.0).astype("int16"))
+
+        return path
+
+    def save_mel_sidecar_pt(
+        self,
+        mel: torch.Tensor,
+        base_wav_name: str,
+        *,
+        prompt: str,
+        lyrics: str,
+        meta: Dict[str, Any],
+    ) -> str:
+        pt_name = base_wav_name.replace(".wav", ".pt")
+        mel_path = str(Path(self.cfg.out_dir) / "mels" / pt_name)
+        torch.save(
+            {
+                "mel": mel.detach().float().cpu(),
+                "prompt": str(prompt or ""),
+                "lyrics": str(lyrics or ""),
+                "meta": dict(meta or {}),
+            },
+            mel_path,
+        )
+        return mel_path
+
+    def save_wav_sidecar_json(
+        self,
+        wav_path: str,
+        *,
+        prompt: str,
+        lyrics: str,
+        meta: Dict[str, Any],
+    ) -> str:
+        wavp = Path(wav_path)
+        sidecar = wavp.with_suffix(".json")
+
+        payload: Dict[str, Any] = {
+            "utc": _utc_now(),
+            "steps": int(meta.get("steps", self.cfg.steps)),
+            "guidance": float(meta.get("guidance", self.cfg.guidance)),
+            "seed": None if self.cfg.seed is None else int(self.cfg.seed),
+            "preset": str(meta.get("preset", self.cfg.preset)),
+            "codec_ckpt": str(self.cfg.codec_ckpt or ""),
+            "denoiser_ckpt": str(self.cfg.denoiser_ckpt or ""),
+            "prompt_hash": _sha1(prompt),
+            "lyrics_hash": _sha1(lyrics) if (lyrics or "") else "",
+            "prompt": str(prompt or ""),
+            "lyrics": str(lyrics or ""),
+            "meta": dict(meta or {}),
         }
 
-        if args.store_breakdown:
-            row["breakdown"] = breakdown
+        _safe_json_dump(sidecar, payload)
+        return str(sidecar)
 
-        _append_jsonl(manifest_path, row)
-        already_hashes.add(audio_hash)
+    # ---------- optional automation: score + evolution log
 
-        # evolution log only above threshold
-        if float(score10) >= float(args.min_score):
+    def _auto_score_and_log(
+        self,
+        *,
+        wav_path: str,
+        mel_path: str,
+        prompt: str,
+        lyrics: str,
+        meta: Dict[str, Any],
+    ) -> Optional[Dict[str, Any]]:
+        if not (self.cfg.auto_score or self.cfg.auto_log):
+            return None
+
+        # air-gapped scoring tools
+        from belel_hyper_core.metrics.belel_audio_metrics import compute_belel_audio_metrics
+        from belel_hyper_core.metrics.belel_score import BelelScoreConfig, belel_auto_score
+        from belel_hyper_core.distill.belel_evolution_tracker import BelelEvolutionTracker
+
+        # load wav (prefer soundfile)
+        import numpy as np
+        try:
+            import soundfile as sf
+            x, sr = sf.read(str(wav_path), always_2d=False)
+            x = np.asarray(x, dtype=np.float32)
+            sr = int(sr)
+        except Exception:
+            from scipy.io import wavfile
+            sr, x = wavfile.read(str(wav_path))
+            if np.issubdtype(x.dtype, np.integer):
+                mx = float(np.iinfo(x.dtype).max)
+                x = x.astype(np.float32) / mx
+            else:
+                x = x.astype(np.float32)
+            sr = int(sr)
+
+        # score config override
+        cfg = BelelScoreConfig()
+        if self.cfg.score_config_json:
+            p = Path(self.cfg.score_config_json)
+            if p.exists():
+                try:
+                    obj = json.loads(p.read_text(encoding="utf-8"))
+                    for k, v in obj.items():
+                        if hasattr(cfg, k):
+                            setattr(cfg, k, v)
+                except Exception:
+                    pass
+
+        metrics = compute_belel_audio_metrics(x, sr)
+        score10, breakdown = belel_auto_score(metrics, cfg=cfg)
+
+        out: Dict[str, Any] = {
+            "score10": float(score10),
+            "metrics": {
+                "sr": int(metrics.sr),
+                "duration_sec": float(metrics.duration_sec),
+            },
+        }
+        if self.cfg.store_breakdown:
+            out["breakdown"] = breakdown
+
+        if self.cfg.auto_log and float(score10) >= float(self.cfg.min_score):
+            tracker = BelelEvolutionTracker(root=self.cfg.evolution_root)
             tracker.log(
-                prompt=row["prompt"],
-                lyrics=row["lyrics"],
-                wav_path=row["wav_path"],
-                mel_path=row["mel_path"],
+                prompt=str(prompt or ""),
+                lyrics=str(lyrics or ""),
+                wav_path=str(Path(wav_path).resolve()),
+                mel_path=str(Path(mel_path).resolve()) if mel_path else "",
                 score=float(score10),
-                steps=int(steps),
-                guidance=float(guidance),
+                steps=int(meta.get("steps", self.cfg.steps)),
+                guidance=float(meta.get("guidance", self.cfg.guidance)),
                 extra={
                     "auto_score": True,
-                    "engine": "belel_engine_scorelog",
-                    "audio_hash": audio_hash,
-                    "sidecar_created": bool(sidecar_created),
-                    "mel_meta_patched": bool(args.patch_mel_meta and mel_pt.exists()),
-                    **({"breakdown": breakdown} if args.store_breakdown else {}),
+                    "auto_log": True,
+                    "min_score": float(self.cfg.min_score),
+                    **({"breakdown": breakdown} if self.cfg.store_breakdown else {}),
                 },
             )
-            logged += 1
-            best_rows.append(row)
+            out["evolution_logged"] = True
+            out["evolution_log"] = str(Path(self.cfg.evolution_root) / "evolution.jsonl")
+        else:
+            out["evolution_logged"] = False
 
-    print("scanned_wavs:", scanned)
-    print("scored_wavs:", scored)
-    print("skipped_deduped:", skipped)
-    print("logged_items:", logged)
-    print("manifest:", str(manifest_path))
-    print("evolution_log:", str(Path(args.evolution_root) / "evolution.jsonl"))
-    if args.ensure_sidecars:
-        print("sidecars_created:", created_sidecars)
-    if args.patch_mel_meta:
-        print("mels_patched:", patched_mels)
+        return out
 
-    # best-of index
-    if args.write_best_index and best_rows:
-        best_rows = sorted(best_rows, key=lambda r: float(r["score"]), reverse=True)[: int(args.best_n)]
-        best_index_path = out_dir / "best_of.json"
-        best_index_path.write_text(json.dumps(best_rows, indent=2, ensure_ascii=False), encoding="utf-8")
-        print("best_of:", str(best_index_path))
+    # ---------- main run
 
+    def run(self, req: BelelHyperRequest) -> Dict[str, Any]:
+        # optional VRAM reset
+        if str(self.cfg.device).startswith("cuda") and torch.cuda.is_available():
+            try:
+                torch.cuda.reset_peak_memory_stats()
+            except Exception:
+                pass
 
-if __name__ == "__main__":
-    main()
+        t0 = time.time()
+
+        steps = int(req.steps) if req.steps is not None else int(self.cfg.steps)
+        guidance = float(req.guidance) if req.guidance is not None else float(self.cfg.guidance)
+
+        # build meta once, reuse across sidecars
+        meta: Dict[str, Any] = {
+            "utc": _utc_now(),
+            "preset": str(self.cfg.preset or "custom"),
+            "steps": int(steps),
+            "guidance": float(guidance),
+            "seed": None if self.cfg.seed is None else int(self.cfg.seed),
+            "dtype": str(self.cfg.dtype),
+            "tf32": bool(self.cfg.tf32),
+            "compile": bool(self.cfg.compile),
+            "codec_ckpt": str(self.cfg.codec_ckpt or ""),
+            "denoiser_ckpt": str(self.cfg.denoiser_ckpt or ""),
+            "clamp_pred": float(self.cfg.clamp_pred),
+            "cfg_rescale": float(self.cfg.cfg_rescale) if steps == 2 else 0.0,
+        }
+
+        # attach locked preset meta for 2-step
+        if steps == 2:
+            meta.update(self.preset2.as_meta())
+
+        if req.extra and isinstance(req.extra, dict):
+            meta["extra"] = dict(req.extra)
+
+        mel = self.generate_mel(req)
+        wav = self.mel_to_waveform(mel)
+
+        base_name = req.filename or self._default_name()
+        if not base_name.lower().endswith(".wav"):
+            base_name += ".wav"
+
+        wav_path = self.save_wav(wav, base_name)
+
+        # ALWAYS write mel sidecar .pt (prompt/lyrics/meta inside)
+        mel_path = self.save_mel_sidecar_pt(
+            mel,
+            base_name,
+            prompt=req.prompt,
+            lyrics=req.lyrics,
+            meta=meta,
+        )
+
+        # ALWAYS write wav sidecar .json (prompt/lyrics/meta inside)
+        wav_sidecar = self.save_wav_sidecar_json(
+            wav_path,
+            prompt=req.prompt,
+            lyrics=req.lyrics,
+            meta=meta,
+        )
+
+        elapsed = time.time() - t0
+        meta["elapsed_sec"] = float(elapsed)
+
+        peak_gb = None
+        if str(self.cfg.device).startswith("cuda") and torch.cuda.is_available():
+            try:
+                peak_gb = float(torch.cuda.max_memory_allocated() / (1024**3))
+                meta["peak_vram_gb"] = peak_gb
+            except Exception:
+                pass
+
+        # optional auto-score + auto-log
+        auto = self._auto_score_and_log(
+            wav_path=wav_path,
+            mel_path=mel_path,
+            prompt=req.prompt,
+            lyrics=req.lyrics,
+            meta=meta,
+        )
+
+        return {
+            "mel": mel,
+            "wav": wav,
+            "wav_path": wav_path,
+            "mel_path": mel_path,
+            "wav_sidecar": wav_sidecar,
+            "meta": meta,
+            "auto": auto,
+        }
