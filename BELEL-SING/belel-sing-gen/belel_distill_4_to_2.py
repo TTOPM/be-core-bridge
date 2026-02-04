@@ -13,6 +13,10 @@ from belel_hyper_core.distill.belel_cfg_collapse import (
     belel_guidance_schedule,
     belel_guidance_dropout,
 )
+from belel_hyper_core.distill.belel_cond_cache import (
+    BelelConditionCache,
+    BelelCondCacheConfig,
+)
 
 
 def _load_sd(path: str) -> dict:
@@ -35,9 +39,15 @@ def main():
     # data + checkpoints
     ap.add_argument("--mel_dir", required=True)
     ap.add_argument("--codec_ckpt", required=True)
-    ap.add_argument("--teacher_ckpt", required=True, help="4-step capable denoiser checkpoint")
+    ap.add_argument("--teacher_ckpt", required=True, help="4-step capable denoiser checkpoint (teacher)")
     ap.add_argument("--student_init", default=None, help="Optional init checkpoint for 2-step student")
     ap.add_argument("--out", default="checkpoints/belel_student_2.pt")
+
+    # air-gapped cached embeddings
+    ap.add_argument("--text_model_dir", required=True, help="Local HF model directory (air-gapped, local_files_only)")
+    ap.add_argument("--cond_cache_dir", default="logs/belel_cond_cache")
+    ap.add_argument("--cond_dtype", default="float16", choices=["float16", "bfloat16", "float32"])
+    ap.add_argument("--max_tokens", type=int, default=256)
 
     # runtime
     ap.add_argument("--device", default="cuda")
@@ -51,21 +61,20 @@ def main():
     ap.add_argument("--teacher_steps", type=int, default=4)
     ap.add_argument("--student_steps", type=int, default=2)
 
-    # CFG-collapse (teacher-guided)
+    # conditioning dims
+    ap.add_argument("--cond_dim", type=int, default=1024)
+
+    # CFG collapse (teacher-guided)
     ap.add_argument("--cfg_collapse", action="store_true", help="Enable teacher-guided CFG collapse")
     ap.add_argument("--cfg_weight", type=float, default=1.0, help="Weight for collapse loss term")
     ap.add_argument("--guidance_min", type=float, default=1.0)
     ap.add_argument("--guidance_max", type=float, default=7.5)
     ap.add_argument("--guidance_mode", default="snr", choices=["linear", "cosine", "snr"])
-    ap.add_argument("--guidance_power", type=float, default=2.0, help="Only used for snr mode")
+    ap.add_argument("--guidance_power", type=float, default=2.0, help="Used for snr mode")
     ap.add_argument("--guidance_dropout_p", type=float, default=0.10, help="Drop guidance toward min")
     ap.add_argument("--mix_clamp", type=float, default=10.0, help="Clamp guided target magnitude")
     ap.add_argument("--dynamic_cap", action="store_true", help="Enable dynamic guidance capping")
-    ap.add_argument("--cap_k", type=float, default=3.0, help="Dynamic cap aggressiveness")
-
-    # conditioning (still operational even with zeros)
-    ap.add_argument("--cond_dim", type=int, default=1024, help="Conditioning dimension expected by denoiser")
-    ap.add_argument("--use_zero_cond", action="store_true", help="Use zero conditioning vectors (default).")
+    ap.add_argument("--cap_k", type=float, default=3.0)
 
     args = ap.parse_args()
 
@@ -84,19 +93,32 @@ def main():
         collate_fn=lambda b: b,
     )
 
+    # ---- Initialize air-gapped conditioner cache (cond != uncond)
+    cond_cache = BelelConditionCache(
+        BelelCondCacheConfig(
+            text_model_dir=args.text_model_dir,
+            cache_dir=args.cond_cache_dir,
+            cond_dim=args.cond_dim,
+            device=args.device,
+            dtype=args.cond_dtype,
+            max_tokens=args.max_tokens,
+            use_mean_pool=True,
+        )
+    ).to_device()
+
     # ---- Codec (frozen)
     codec = BelelDeepCompressor(mel_bins=80, latent_ch=32).to(args.device)
     codec.load_state_dict(_load_sd(args.codec_ckpt), strict=True)
     codec.eval()
     _set_requires_grad(codec, False)
 
-    # ---- Teacher (frozen)
+    # ---- Teacher denoiser (frozen, 4-step capable)
     teacher = BelelDenoiser1D(channels=32, cond_dim=args.cond_dim).to(args.device)
     teacher.load_state_dict(_load_sd(args.teacher_ckpt), strict=True)
     teacher.eval()
     _set_requires_grad(teacher, False)
 
-    # ---- Student (trainable)
+    # ---- Student denoiser (trainable, 2-step target)
     student = BelelDenoiser1D(channels=32, cond_dim=args.cond_dim).to(args.device)
     if args.student_init:
         student.load_state_dict(_load_sd(args.student_init), strict=True)
@@ -105,15 +127,9 @@ def main():
 
     optimizer = torch.optim.AdamW(student.parameters(), lr=args.lr)
 
-    # ---- 2-step schedule knots (stable aggressive defaults)
-    # You can later try [1.0, 0.18] once stable.
+    # ---- 2-step schedule knots
+    # Stable aggressive defaults. Once stable you can tune 0.25 -> 0.18.
     t_student = torch.tensor([1.0, 0.25], device=args.device)
-
-    # ---- conditioning buffers (operational baseline)
-    # If you haven't wired real embeddings yet, this still runs and trains the denoiser's core skill.
-    # For CFG collapse to truly matter, cond must differ from uncond; zeros keep plumbing correct.
-    cond_cache = torch.zeros((args.batch, args.cond_dim), device=args.device)
-    uncond_cache = torch.zeros((args.batch, args.cond_dim), device=args.device)
 
     for ep in range(args.epochs):
         student.train()
@@ -130,36 +146,36 @@ def main():
 
         loss_sum = 0.0
         n = 0
-
         pbar = tqdm(loader, desc=f"distill 4->2 ep {ep+1}/{args.epochs} (g={g_epoch:.2f})")
 
         for batch in pbar:
-            mel = collate_mels(batch, device=args.device, pad_value=-4.0)
+            # batch carries text (prompt/lyrics) too
+            mel, prompts, lyrics_list = collate_mels(batch, device=args.device, pad_value=-4.0)
 
-            # real latents
+            # strict real latents
             with torch.no_grad():
                 zq, _, _ = codec.encode(mel)
 
             B = zq.shape[0]
 
-            # conditioning
-            cond = cond_cache[:B]
-            uncond = uncond_cache[:B]
+            # cached embeddings (cpu -> gpu)
+            cond_cpu, uncond_cpu = cond_cache.batch(prompts, lyrics_list)
+            cond = cond_cpu.to(args.device)
+            uncond = uncond_cpu.to(args.device)
 
-            # sample one of 2 student times
+            # choose one of 2 times per sample
             idx = torch.randint(0, 2, (B,), device=args.device)
-            t = t_student[idx]  # [B]
+            t = t_student[idx]
 
             noise = torch.randn_like(zq)
             x = zq + t.view(-1, 1, 1) * noise
 
-            # teacher preds
+            # teacher predictions
             with torch.no_grad():
                 pred_u = teacher(x, t, uncond)
                 pred_c = teacher(x, t, cond)
 
                 if args.cfg_collapse:
-                    # per-sample guidance (dropout + dynamic cap)
                     g = torch.full((B,), float(g_epoch), device=args.device)
                     g = belel_guidance_dropout(g, p=args.guidance_dropout_p, min_guidance=args.guidance_min)
 
@@ -172,7 +188,6 @@ def main():
                         cap_k=args.cap_k,
                     )
 
-                    # "strong" collapse target to internalize high guidance without extra inference passes
                     g_strong = torch.full((B,), float(args.guidance_max), device=args.device)
                     g_strong = belel_guidance_dropout(g_strong, p=args.guidance_dropout_p, min_guidance=args.guidance_min)
 
@@ -188,14 +203,14 @@ def main():
                     teacher_target = pred_c
                     teacher_target_strong = None
 
-            # student single-pass pred
+            # student prediction (single pass)
             student_pred = student(x, t, cond)
 
-            # primary distillation
+            # primary loss: match teacher target
             loss_distill = F.mse_loss(student_pred, teacher_target)
 
             if args.cfg_collapse:
-                # collapse loss pushes student toward strong-guided behavior in one pass
+                # collapse loss: internalize strong guidance behavior into one pass
                 loss_collapse = F.mse_loss(student_pred, teacher_target_strong)
                 loss = loss_distill + float(args.cfg_weight) * loss_collapse
             else:
@@ -221,11 +236,9 @@ def main():
 
     print("✔ 4 → 2 distillation complete")
     print("Student checkpoint:", args.out)
+    print("✔ Cached embeddings:", args.cond_cache_dir)
     if args.cfg_collapse:
         print("✔ Teacher-guided CFG collapse enabled")
-        print("  guidance_mode:", args.guidance_mode, "power:", args.guidance_power)
-        print("  dynamic_cap:", bool(args.dynamic_cap), "cap_k:", args.cap_k)
-        print("  clamp:", args.mix_clamp, "dropout_p:", args.guidance_dropout_p)
 
 
 if __name__ == "__main__":
