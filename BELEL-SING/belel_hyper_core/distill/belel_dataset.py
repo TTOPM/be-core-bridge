@@ -1,243 +1,377 @@
-import argparse
+from __future__ import annotations
+from dataclasses import dataclass
 from pathlib import Path
+from typing import List, Tuple, Iterator, Optional, Dict, Any, Union
+import json
+import hashlib
+
 import torch
-import torch.nn.functional as F
-from torch.utils.data import DataLoader
-from tqdm import tqdm
-
-from belel_hyper_core.belel_latent_codec import BelelDeepCompressor
-from belel_hyper_core.belel_denoiser import BelelDenoiser1D
-from belel_hyper_core.distill.belel_dataset import BelelMelFolder, collate_mels
-from belel_hyper_core.distill.belel_cfg_collapse import (
-    belel_cfg_mix,
-    belel_guidance_schedule,
-    belel_guidance_dropout,
-)
-from belel_hyper_core.distill.belel_cond_cache import (
-    BelelConditionCache,
-    BelelCondCacheConfig,
-)
 
 
-def _load_sd(path: str) -> dict:
-    obj = torch.load(path, map_location="cpu")
-    if isinstance(obj, dict) and "state_dict" in obj:
-        return obj["state_dict"]
-    if isinstance(obj, dict):
-        return obj
-    raise ValueError(f"Unsupported checkpoint format: {path}")
+# ----------------------------
+# Item
+# ----------------------------
+
+@dataclass
+class BelelMelItem:
+    mel_path: str
+    prompt: str
+    lyrics: str
+
+    # extra metadata (safe defaults)
+    sidecar_path: str = ""
+    wav_path: str = ""
+    meta: Dict[str, Any] = None
+
+    # distill tags (optional)
+    steps: int = 0
+    guidance: float = 0.0
+    seed: Optional[int] = None
+    utc: str = ""
+
+    # caching (optional)
+    cache_key: str = ""
+    cond_cache_path: str = ""
 
 
-def _set_requires_grad(m: torch.nn.Module, flag: bool) -> None:
-    for p in m.parameters():
-        p.requires_grad = flag
+# ----------------------------
+# Utilities
+# ----------------------------
+
+def _sha1(s: str) -> str:
+    return hashlib.sha1(s.encode("utf-8")).hexdigest()
 
 
-def main():
-    ap = argparse.ArgumentParser()
-
-    # data + checkpoints
-    ap.add_argument("--mel_dir", required=True)
-    ap.add_argument("--codec_ckpt", required=True)
-    ap.add_argument("--teacher_ckpt", required=True, help="6-step capable denoiser checkpoint (teacher)")
-    ap.add_argument("--student_init", default=None, help="Optional init checkpoint for 4-step student")
-    ap.add_argument("--out", default="checkpoints/belel_student_4.pt")
-
-    # air-gapped cached embeddings
-    ap.add_argument("--text_model_dir", required=True, help="Local HF model directory (air-gapped, local_files_only)")
-    ap.add_argument("--cond_cache_dir", default="logs/belel_cond_cache")
-    ap.add_argument("--cond_dtype", default="float16", choices=["float16", "bfloat16", "float32"])
-    ap.add_argument("--max_tokens", type=int, default=256)
-
-    # runtime
-    ap.add_argument("--device", default="cuda")
-    ap.add_argument("--epochs", type=int, default=8)
-    ap.add_argument("--batch", type=int, default=8)
-    ap.add_argument("--lr", type=float, default=2e-4)
-    ap.add_argument("--max_len", type=int, default=2048)
-    ap.add_argument("--grad_clip", type=float, default=1.0)
-
-    # locked mission
-    ap.add_argument("--teacher_steps", type=int, default=6)
-    ap.add_argument("--student_steps", type=int, default=4)
-
-    # conditioning dims
-    ap.add_argument("--cond_dim", type=int, default=1024)
-
-    # CFG collapse (teacher-guided)
-    ap.add_argument("--cfg_collapse", action="store_true", help="Enable teacher-guided CFG collapse")
-    ap.add_argument("--cfg_weight", type=float, default=1.0, help="Weight for collapse loss term")
-    ap.add_argument("--guidance_min", type=float, default=1.0)
-    ap.add_argument("--guidance_max", type=float, default=7.5)
-    ap.add_argument("--guidance_mode", default="snr", choices=["linear", "cosine", "snr"])
-    ap.add_argument("--guidance_power", type=float, default=2.0, help="Used for snr mode")
-    ap.add_argument("--guidance_dropout_p", type=float, default=0.10, help="Drop guidance toward min")
-    ap.add_argument("--mix_clamp", type=float, default=10.0, help="Clamp guided target magnitude")
-    ap.add_argument("--dynamic_cap", action="store_true", help="Enable dynamic guidance capping")
-    ap.add_argument("--cap_k", type=float, default=3.0)
-
-    args = ap.parse_args()
-
-    if args.teacher_steps != 6 or args.student_steps != 4:
-        raise ValueError("This script is strictly locked to 6 -> 4 distillation.")
-
-    Path("checkpoints").mkdir(exist_ok=True, parents=True)
-
-    # ---- Dataset
-    dataset = list(BelelMelFolder(args.mel_dir, max_len=args.max_len))
-    loader = DataLoader(
-        dataset,
-        batch_size=args.batch,
-        shuffle=True,
-        drop_last=True,
-        collate_fn=lambda b: b,
-    )
-
-    # ---- Initialize air-gapped conditioner cache (cond != uncond)
-    cond_cache = BelelConditionCache(
-        BelelCondCacheConfig(
-            text_model_dir=args.text_model_dir,
-            cache_dir=args.cond_cache_dir,
-            cond_dim=args.cond_dim,
-            device=args.device,
-            dtype=args.cond_dtype,
-            max_tokens=args.max_tokens,
-            use_mean_pool=True,
-        )
-    ).to_device()
-
-    # ---- Codec (frozen)
-    codec = BelelDeepCompressor(mel_bins=80, latent_ch=32).to(args.device)
-    codec.load_state_dict(_load_sd(args.codec_ckpt), strict=True)
-    codec.eval()
-    _set_requires_grad(codec, False)
-
-    # ---- Teacher denoiser (frozen, 6-step capable)
-    teacher = BelelDenoiser1D(channels=32, cond_dim=args.cond_dim).to(args.device)
-    teacher.load_state_dict(_load_sd(args.teacher_ckpt), strict=True)
-    teacher.eval()
-    _set_requires_grad(teacher, False)
-
-    # ---- Student denoiser (trainable, 4-step target)
-    student = BelelDenoiser1D(channels=32, cond_dim=args.cond_dim).to(args.device)
-    if args.student_init:
-        student.load_state_dict(_load_sd(args.student_init), strict=True)
-    student.train()
-    _set_requires_grad(student, True)
-
-    optimizer = torch.optim.AdamW(student.parameters(), lr=args.lr)
-
-    # ---- 4-step schedule knots
-    t_student = torch.tensor([1.0, 0.66, 0.33, 0.10], device=args.device)
-
-    for ep in range(args.epochs):
-        student.train()
-
-        # teacher guidance schedule (epoch-wise)
-        g_epoch = belel_guidance_schedule(
-            epoch=ep,
-            max_epoch=args.epochs,
-            g_min=args.guidance_min,
-            g_max=args.guidance_max,
-            mode=args.guidance_mode,
-            power=args.guidance_power,
-        )
-
-        loss_sum = 0.0
-        n = 0
-        pbar = tqdm(loader, desc=f"distill 6->4 ep {ep+1}/{args.epochs} (g={g_epoch:.2f})")
-
-        for batch in pbar:
-            # batch now carries text (prompt/lyrics) too
-            mel, prompts, lyrics_list = collate_mels(batch, device=args.device, pad_value=-4.0)
-
-            # strict real latents
-            with torch.no_grad():
-                zq, _, _ = codec.encode(mel)
-
-            B = zq.shape[0]
-
-            # cached embeddings (cpu -> gpu)
-            cond_cpu, uncond_cpu = cond_cache.batch(prompts, lyrics_list)
-            cond = cond_cpu.to(args.device)
-            uncond = uncond_cpu.to(args.device)
-
-            # pick one of 4 knots per sample
-            idx = torch.randint(0, 4, (B,), device=args.device)
-            t = t_student[idx]
-
-            noise = torch.randn_like(zq)
-            x = zq + t.view(-1, 1, 1) * noise
-
-            # teacher predictions
-            with torch.no_grad():
-                pred_u = teacher(x, t, uncond)
-                pred_c = teacher(x, t, cond)
-
-                if args.cfg_collapse:
-                    g = torch.full((B,), float(g_epoch), device=args.device)
-                    g = belel_guidance_dropout(g, p=args.guidance_dropout_p, min_guidance=args.guidance_min)
-
-                    teacher_target = belel_cfg_mix(
-                        pred_uncond=pred_u,
-                        pred_cond=pred_c,
-                        guidance=g,
-                        clamp=args.mix_clamp,
-                        dynamic_cap=bool(args.dynamic_cap),
-                        cap_k=args.cap_k,
-                    )
-
-                    g_strong = torch.full((B,), float(args.guidance_max), device=args.device)
-                    g_strong = belel_guidance_dropout(g_strong, p=args.guidance_dropout_p, min_guidance=args.guidance_min)
-
-                    teacher_target_strong = belel_cfg_mix(
-                        pred_uncond=pred_u,
-                        pred_cond=pred_c,
-                        guidance=g_strong,
-                        clamp=args.mix_clamp,
-                        dynamic_cap=bool(args.dynamic_cap),
-                        cap_k=args.cap_k,
-                    )
-                else:
-                    teacher_target = pred_c
-                    teacher_target_strong = None
-
-            # student prediction (single pass)
-            student_pred = student(x, t, cond)
-
-            # primary loss
-            loss_distill = F.mse_loss(student_pred, teacher_target)
-
-            if args.cfg_collapse:
-                loss_collapse = F.mse_loss(student_pred, teacher_target_strong)
-                loss = loss_distill + float(args.cfg_weight) * loss_collapse
-            else:
-                loss_collapse = torch.tensor(0.0, device=args.device)
-                loss = loss_distill
-
-            optimizer.zero_grad(set_to_none=True)
-            loss.backward()
-            torch.nn.utils.clip_grad_norm_(student.parameters(), float(args.grad_clip))
-            optimizer.step()
-
-            loss_sum += float(loss.item())
-            n += 1
-
-            pbar.set_postfix(
-                loss=loss_sum / max(n, 1),
-                distill=float(loss_distill.item()),
-                collapse=float(loss_collapse.item()) if args.cfg_collapse else 0.0,
-            )
-
-        torch.save({"state_dict": student.state_dict(), "epoch": ep + 1}, args.out)
-        print("Saved:", args.out)
-
-    print("✔ 6 → 4 distillation complete")
-    print("Student checkpoint:", args.out)
-    print("✔ Cached embeddings:", args.cond_cache_dir)
-    if args.cfg_collapse:
-        print("✔ Teacher-guided CFG collapse enabled")
+def _read_json(path: Path) -> Dict[str, Any]:
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
 
 
-if __name__ == "__main__":
-    main()
+def _load_mel_pt(path: Path) -> Tuple[torch.Tensor, Dict[str, Any]]:
+    """
+    Accepts:
+      - {"mel": tensor, ...} OR tensor
+    Returns:
+      mel [80, T] float32
+      payload dict (empty if tensor-only)
+    """
+    obj = torch.load(str(path), map_location="cpu")
+    payload: Dict[str, Any] = obj if isinstance(obj, dict) else {}
+    mel = obj["mel"] if isinstance(obj, dict) and "mel" in obj else obj
+
+    if mel.ndim == 3 and mel.shape[0] == 1:
+        mel = mel[0]
+    if mel.ndim != 2 or mel.shape[0] != 80:
+        raise ValueError(f"Bad mel shape in {path}: {tuple(mel.shape)}")
+    return mel.float(), payload
+
+
+def _extract_text_from_mel_payload(payload: Dict[str, Any]) -> Tuple[str, str, Dict[str, Any]]:
+    """
+    Reads optional fields from mel sidecar payload:
+      {"mel": tensor, "prompt": str, "lyrics": str, "meta": {...}}
+    """
+    if not isinstance(payload, dict):
+        return "", "", {}
+    prompt = str(payload.get("prompt", "") or "")
+    lyrics = str(payload.get("lyrics", "") or "")
+    meta = payload.get("meta", {})
+    meta = dict(meta) if isinstance(meta, dict) else {}
+    return prompt, lyrics, meta
+
+
+def _extract_text_and_tags_from_wav_sidecar(side: Dict[str, Any]) -> Tuple[str, str, Dict[str, Any]]:
+    """
+    Reads wav .json sidecar written by your generator.
+    Expected keys (best-effort):
+      prompt, lyrics, steps, guidance, seed, utc, extra
+    """
+    if not isinstance(side, dict):
+        return "", "", {}
+    prompt = str(side.get("prompt", "") or "")
+    lyrics = str(side.get("lyrics", "") or "")
+    return prompt, lyrics, side
+
+
+def _merge_text(prompt_a: str, lyrics_a: str, prompt_b: str, lyrics_b: str) -> Tuple[str, str]:
+    """
+    Priority merge: use A if present, else B.
+    """
+    prompt = prompt_a if (prompt_a or "").strip() else (prompt_b or "")
+    lyrics = lyrics_a if (lyrics_a or "").strip() else (lyrics_b or "")
+    return prompt, lyrics
+
+
+def _sidecar_steps_guidance_seed_utc(side: Dict[str, Any]) -> Tuple[int, float, Optional[int], str, Dict[str, Any]]:
+    steps = 0
+    guidance = 0.0
+    seed: Optional[int] = None
+    utc = ""
+    extra: Dict[str, Any] = {}
+
+    if isinstance(side, dict):
+        if side.get("steps", None) is not None:
+            try:
+                steps = int(side["steps"])
+            except Exception:
+                pass
+        if side.get("guidance", None) is not None:
+            try:
+                guidance = float(side["guidance"])
+            except Exception:
+                pass
+        if side.get("seed", None) is not None:
+            try:
+                seed = int(side["seed"])
+            except Exception:
+                seed = None
+        utc = str(side.get("utc", "") or "")
+        ex = side.get("extra", {})
+        extra = dict(ex) if isinstance(ex, dict) else {}
+
+    return steps, guidance, seed, utc, extra
+
+
+def _default_cache_key(prompt: str, lyrics: str) -> str:
+    return _sha1((prompt or "") + "\n" + (lyrics or ""))
+
+
+def collate_mels(
+    batch: List[BelelMelItem],
+    *,
+    device: str = "cuda",
+    pad_value: float = -4.0,
+    max_len: Optional[int] = None,
+    return_meta: bool = False,
+) -> Union[
+    Tuple[torch.Tensor, List[str], List[str]],
+    Tuple[torch.Tensor, List[str], List[str], List[Dict[str, Any]]],
+]:
+    """
+    Returns (default):
+      mel: [B,80,Tmax] float32
+      prompts: List[str]
+      lyrics: List[str]
+
+    If return_meta=True:
+      returns (mel, prompts, lyrics, metas)
+      metas[i] includes sidecar/meta/steps/guidance/seed/cache_key/cond_cache_path etc.
+    """
+    if not batch:
+        raise ValueError("collate_mels received empty batch")
+
+    mels: List[torch.Tensor] = []
+    prompts: List[str] = []
+    lyrics_list: List[str] = []
+    metas: List[Dict[str, Any]] = []
+
+    for it in batch:
+        mel, payload = _load_mel_pt(Path(it.mel_path))
+        if max_len is not None and mel.shape[-1] > int(max_len):
+            mel = mel[:, : int(max_len)]
+        mels.append(mel)
+
+        prompts.append(str(it.prompt or ""))
+        lyrics_list.append(str(it.lyrics or ""))
+
+        if return_meta:
+            metas.append({
+                "mel_path": it.mel_path,
+                "wav_path": it.wav_path,
+                "sidecar_path": it.sidecar_path,
+                "steps": int(it.steps),
+                "guidance": float(it.guidance),
+                "seed": it.seed,
+                "utc": it.utc,
+                "cache_key": it.cache_key,
+                "cond_cache_path": it.cond_cache_path,
+                "meta": dict(it.meta or {}),
+                "mel_payload_keys": list(payload.keys()) if isinstance(payload, dict) else [],
+            })
+
+    Tmax = max(int(m.shape[-1]) for m in mels)
+    if max_len is not None:
+        Tmax = min(Tmax, int(max_len))
+
+    out = torch.full((len(mels), 80, Tmax), float(pad_value), dtype=torch.float32)
+    for i, m in enumerate(mels):
+        t = min(int(m.shape[-1]), Tmax)
+        out[i, :, :t] = m[:, :t]
+
+    out = out.to(device)
+
+    if return_meta:
+        return out, prompts, lyrics_list, metas
+    return out, prompts, lyrics_list
+
+
+# ----------------------------
+# Dataset
+# ----------------------------
+
+class BelelMelFolder:
+    """
+    Flexible mel dataset with metadata.
+
+    Layouts supported:
+
+    (A) Plain mel folder:
+        mel_dir/*.pt
+      Each .pt must be mel tensor or {"mel": tensor}
+      No prompts/lyrics unless embedded in mel payload.
+
+    (B) Engine output folder:
+        out_dir/
+          *.wav
+          *.json        (wav sidecars with prompt/lyrics/steps/guidance/seed)
+          mels/*.pt     (mel sidecars)
+      This mode triggers automatically if out_dir/mels exists.
+
+    Text priority order:
+      1) mel payload prompt/lyrics if present
+      2) wav sidecar prompt/lyrics
+      3) ""
+
+    Optional: compute cond_cache_path (air-gapped cached embedding file path).
+    """
+
+    def __init__(
+        self,
+        mel_dir: Union[str, Path],
+        *,
+        max_len: int = 2048,
+
+        # filters
+        require_sidecar: bool = False,
+        require_prompt: bool = False,
+        require_lyrics: bool = False,
+        min_steps: Optional[int] = None,
+        max_steps: Optional[int] = None,
+
+        # embedding cache (optional)
+        cond_cache_dir: Optional[Union[str, Path]] = None,
+    ):
+        self.root = Path(mel_dir)
+        if not self.root.exists():
+            raise FileNotFoundError(f"mel_dir not found: {self.root}")
+
+        self.max_len = int(max_len)
+
+        self.require_sidecar = bool(require_sidecar)
+        self.require_prompt = bool(require_prompt)
+        self.require_lyrics = bool(require_lyrics)
+        self.min_steps = None if min_steps is None else int(min_steps)
+        self.max_steps = None if max_steps is None else int(max_steps)
+
+        self.cond_cache_dir = Path(cond_cache_dir) if cond_cache_dir else None
+        if self.cond_cache_dir:
+            self.cond_cache_dir.mkdir(parents=True, exist_ok=True)
+
+        # Detect engine output layout
+        self.mels_dir = self.root / "mels"
+        self.is_engine_layout = self.mels_dir.exists() and self.mels_dir.is_dir()
+
+        self.items: List[BelelMelItem] = []
+        self._index()
+
+    def _accept(self, item: BelelMelItem) -> bool:
+        if self.require_sidecar and not item.sidecar_path:
+            return False
+        if self.require_prompt and not (item.prompt or "").strip():
+            return False
+        if self.require_lyrics and not (item.lyrics or "").strip():
+            return False
+        if self.min_steps is not None and int(item.steps) < int(self.min_steps):
+            return False
+        if self.max_steps is not None and int(item.steps) > int(self.max_steps):
+            return False
+        return True
+
+    def _index(self) -> None:
+        self.items.clear()
+
+        if self.is_engine_layout:
+            # Engine layout: out_dir/mels/*.pt and optional wav sidecars out_dir/*.json
+            for mel_pt in sorted(self.mels_dir.glob("*.pt")):
+                stem = mel_pt.name.replace(".pt", "")
+                wav_path = self.root / f"{stem}.wav"
+                wav_sidecar = self.root / f"{stem}.json"
+
+                side = _read_json(wav_sidecar) if wav_sidecar.exists() else {}
+                side_prompt, side_lyrics, side_full = _extract_text_and_tags_from_wav_sidecar(side)
+
+                mel_tensor, mel_payload = _load_mel_pt(mel_pt)
+                mel_prompt, mel_lyrics, mel_meta = _extract_text_from_mel_payload(mel_payload)
+
+                # merge prompt/lyrics with mel payload priority
+                prompt, lyrics = _merge_text(mel_prompt, mel_lyrics, side_prompt, side_lyrics)
+
+                steps, guidance, seed, utc, extra = _sidecar_steps_guidance_seed_utc(side_full)
+
+                cache_key = _default_cache_key(prompt, lyrics)
+                cond_cache_path = ""
+                if self.cond_cache_dir is not None:
+                    cond_cache_path = str(self.cond_cache_dir / f"{cache_key}.pt")
+
+                item = BelelMelItem(
+                    mel_path=str(mel_pt),
+                    prompt=prompt,
+                    lyrics=lyrics,
+                    sidecar_path=str(wav_sidecar) if wav_sidecar.exists() else "",
+                    wav_path=str(wav_path) if wav_path.exists() else "",
+                    meta={
+                        "mel_meta": mel_meta,
+                        "sidecar": side_full,
+                        "extra": extra,
+                    },
+                    steps=steps,
+                    guidance=guidance,
+                    seed=seed,
+                    utc=utc,
+                    cache_key=cache_key,
+                    cond_cache_path=cond_cache_path,
+                )
+
+                if self._accept(item):
+                    self.items.append(item)
+
+        else:
+            # Plain mel dir: mel_dir/*.pt
+            for mel_pt in sorted(self.root.glob("*.pt")):
+                mel_tensor, payload = _load_mel_pt(mel_pt)
+                mel_prompt, mel_lyrics, mel_meta = _extract_text_from_mel_payload(payload)
+
+                prompt = mel_prompt
+                lyrics = mel_lyrics
+
+                cache_key = _default_cache_key(prompt, lyrics)
+                cond_cache_path = ""
+                if self.cond_cache_dir is not None:
+                    cond_cache_path = str(self.cond_cache_dir / f"{cache_key}.pt")
+
+                item = BelelMelItem(
+                    mel_path=str(mel_pt),
+                    prompt=prompt,
+                    lyrics=lyrics,
+                    sidecar_path="",
+                    wav_path="",
+                    meta={"mel_meta": mel_meta},
+                    steps=0,
+                    guidance=0.0,
+                    seed=None,
+                    utc="",
+                    cache_key=cache_key,
+                    cond_cache_path=cond_cache_path,
+                )
+
+                if self._accept(item):
+                    self.items.append(item)
+
+    def __len__(self) -> int:
+        return len(self.items)
+
+    def __iter__(self) -> Iterator[BelelMelItem]:
+        for it in self.items:
+            yield it
