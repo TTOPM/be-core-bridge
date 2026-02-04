@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from pathlib import Path
 import json
 import time
-from typing import Iterable
+
 
 @dataclass
 class BelelEvolutionItem:
@@ -12,6 +12,7 @@ class BelelEvolutionItem:
     artifact_path: str
     score: float
     utc: str
+
 
 class BelelEvolutionTracker:
     def __init__(self, root: str = "logs/belel_evolution"):
@@ -33,17 +34,16 @@ class BelelEvolutionTracker:
         with self.log_path.open("a", encoding="utf-8") as f:
             f.write(json.dumps(item.__dict__, ensure_ascii=False) + "\n")
 
-    def select(self, min_score: float = 8.0, limit: int = 512) -> list[BelelEvolutionItem]:
+    def select(self, min_score: float = 8.0, limit: int = 256) -> list[BelelEvolutionItem]:
         if not self.log_path.exists():
             return []
-        items: list[BelelEvolutionItem] = []
+        out: list[BelelEvolutionItem] = []
         for line in self.log_path.read_text(encoding="utf-8").splitlines():
             try:
                 obj = json.loads(line)
                 if float(obj.get("score", 0)) >= min_score:
-                    items.append(BelelEvolutionItem(**obj))
+                    out.append(BelelEvolutionItem(**obj))
             except Exception:
                 continue
-        # newest first
-        items = list(reversed(items))
-        return items[:limit]
+        out = list(reversed(out))
+        return out[:limit]
