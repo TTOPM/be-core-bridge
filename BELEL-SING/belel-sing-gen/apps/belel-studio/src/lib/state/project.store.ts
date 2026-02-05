@@ -1,26 +1,30 @@
+"use client";
+
 import { create } from "zustand";
-import { prjId, verId } from "@/lib/utils/id";
-import { nowUtcIso } from "@/lib/utils/time";
 
 export type Benchmark = {
   score_10: number;
   passed: boolean;
-  alignment_pending?: boolean;
-  gate_failures?: Record<string, unknown>;
+  alignment_pending?: boolean | null;
+  gate_failures?: Record<string, unknown> | null;
+  breakdown?: Record<string, unknown> | null;
 };
 
 export type Version = {
   project_id: string;
   version_id: string;
-  utc: string;
   title: string;
-  wav_path?: string;
-  mel_path?: string;
-  wav_sidecar?: string;
+  utc?: string;
+
+  wav_path: string;
+  mel_path: string;
+  wav_sidecar: string;
   receipt?: string;
+
   edit_id?: string;
   edit_type?: string;
-  benchmark?: Benchmark;
+
+  benchmark?: Benchmark | null;
   meta?: Record<string, unknown>;
   committed?: boolean;
 };
@@ -30,17 +34,15 @@ type ProjectState = {
   title: string;
   versions: Version[];
   activeVersionId: string | null;
-  isPlaying: boolean;
 
-  ensureProject: (title?: string) => string;
   setProject: (projectId: string, title: string) => void;
+  loadFromApi: (projectId: string) => Promise<void>;
 
-  appendVersion: (v: Omit<Version, "utc"> & { utc?: string }) => void;
+  initFromGenerate: (v: Version) => void;
+  appendVersion: (v: Version) => void;
   setActiveVersion: (versionId: string) => void;
-  activeVersion: () => Version | null;
 
-  commitActive: () => void;
-  togglePlay: () => void;
+  activeVersion: () => Version | null;
 };
 
 export const useProjectStore = create<ProjectState>((set, get) => ({
@@ -48,50 +50,59 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
   title: "Untitled",
   versions: [],
   activeVersionId: null,
-  isPlaying: false,
 
-  ensureProject: (t) => {
-    const state = get();
-    if (state.projectId) return state.projectId;
-    const id = prjId();
-    set({ projectId: id, title: t ?? "Untitled" });
-    // seed v0 immediately (even before audio exists) so Studio route can be stable
-    const v0: Version = {
-      project_id: id,
-      version_id: verId(0),
-      utc: nowUtcIso(),
-      title: t ?? "Untitled",
-      benchmark: { score_10: 0, passed: false }
-    };
-    set({ versions: [v0], activeVersionId: v0.version_id });
-    return id;
+  setProject: (projectId, title) =>
+    set({ projectId, title: title || "Untitled" }),
+
+  loadFromApi: async (projectId: string) => {
+    const res = await fetch(`/api/projects/${encodeURIComponent(projectId)}`, {
+      cache: "no-store",
+    });
+    const data = await res.json();
+    const title = data?.title ?? "Untitled";
+    const versions: Version[] = (data?.versions ?? []).map((v: any) => ({
+      project_id: v.project_id ?? projectId,
+      version_id: v.version_id,
+      title,
+      utc: v.utc,
+      wav_path: v.wav_path,
+      mel_path: v.mel_path,
+      wav_sidecar: v.wav_sidecar,
+      receipt: v.receipt ?? undefined,
+      edit_id: v.edit_id ?? undefined,
+      edit_type: v.edit_type ?? undefined,
+      benchmark: v.benchmark ?? undefined,
+      meta: v.meta ?? {},
+      committed: Boolean(v.committed),
+    }));
+
+    set({
+      projectId,
+      title,
+      versions,
+      activeVersionId: data?.active_version_id ?? (versions[versions.length - 1]?.version_id ?? null),
+    });
   },
 
-  setProject: (projectId, title) => set({ projectId, title }),
+  initFromGenerate: (v) =>
+    set({
+      projectId: v.project_id,
+      title: v.title || "Untitled",
+      versions: [v],
+      activeVersionId: v.version_id,
+    }),
 
-  appendVersion: (v) => {
-    const utc = v.utc ?? nowUtcIso();
-    const full: Version = { ...v, utc };
-    const next = [...get().versions, full];
-    set({ versions: next, activeVersionId: full.version_id });
-  },
+  appendVersion: (v) =>
+    set((s) => ({
+      versions: [...s.versions, v],
+      activeVersionId: v.version_id,
+    })),
 
   setActiveVersion: (versionId) => set({ activeVersionId: versionId }),
 
   activeVersion: () => {
-    const { versions, activeVersionId } = get();
-    if (!activeVersionId) return null;
-    return versions.find((x) => x.version_id === activeVersionId) ?? null;
+    const s = get();
+    if (!s.activeVersionId) return null;
+    return s.versions.find((v) => v.version_id === s.activeVersionId) ?? null;
   },
-
-  commitActive: () => {
-    const { activeVersionId, versions } = get();
-    if (!activeVersionId) return;
-    const next = versions.map((v) =>
-      v.version_id === activeVersionId ? { ...v, committed: true } : v
-    );
-    set({ versions: next });
-  },
-
-  togglePlay: () => set({ isPlaying: !get().isPlaying })
 }));
