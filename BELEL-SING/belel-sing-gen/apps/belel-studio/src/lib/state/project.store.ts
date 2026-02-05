@@ -2,107 +2,89 @@
 
 import { create } from "zustand";
 
-export type Benchmark = {
+export type ProtocolBenchmark = {
   score_10: number;
   passed: boolean;
-  alignment_pending?: boolean | null;
-  gate_failures?: Record<string, unknown> | null;
-  breakdown?: Record<string, unknown> | null;
+  breakdown?: any;
+  alignment_pending?: boolean;
 };
 
-export type Version = {
-  project_id: string;
+export type VersionRecord = {
   version_id: string;
-  title: string;
-  utc?: string;
+  project_id: string;
 
   wav_path: string;
   mel_path: string;
-  wav_sidecar: string;
+  wav_sidecar?: string;
   receipt?: string;
 
   edit_id?: string;
   edit_type?: string;
 
-  benchmark?: Benchmark | null;
-  meta?: Record<string, unknown>;
-  committed?: boolean;
+  meta?: any;
+  benchmark?: ProtocolBenchmark;
+  utc?: string;
 };
 
 type ProjectState = {
   projectId: string | null;
-  title: string;
-  versions: Version[];
+  title: string | null;
+
+  versions: VersionRecord[];
   activeVersionId: string | null;
 
-  setProject: (projectId: string, title: string) => void;
-  loadFromApi: (projectId: string) => Promise<void>;
+  activeVersion: () => VersionRecord | null;
 
-  initFromGenerate: (v: Version) => void;
-  appendVersion: (v: Version) => void;
+  setProject: (args: { projectId: string; title?: string | null }) => void;
+  resetProject: () => void;
+
+  setVersions: (versions: VersionRecord[]) => void;
+  appendVersion: (v: VersionRecord) => void;
+
   setActiveVersion: (versionId: string) => void;
-
-  activeVersion: () => Version | null;
 };
 
 export const useProjectStore = create<ProjectState>((set, get) => ({
   projectId: null,
-  title: "Untitled",
+  title: null,
+
   versions: [],
   activeVersionId: null,
 
-  setProject: (projectId, title) =>
-    set({ projectId, title: title || "Untitled" }),
+  activeVersion: () => {
+    const id = get().activeVersionId;
+    if (!id) return null;
+    return get().versions.find((v) => v.version_id === id) ?? null;
+  },
 
-  loadFromApi: async (projectId: string) => {
-    const res = await fetch(`/api/projects/${encodeURIComponent(projectId)}`, {
-      cache: "no-store",
-    });
-    const data = await res.json();
-    const title = data?.title ?? "Untitled";
-    const versions: Version[] = (data?.versions ?? []).map((v: any) => ({
-      project_id: v.project_id ?? projectId,
-      version_id: v.version_id,
-      title,
-      utc: v.utc,
-      wav_path: v.wav_path,
-      mel_path: v.mel_path,
-      wav_sidecar: v.wav_sidecar,
-      receipt: v.receipt ?? undefined,
-      edit_id: v.edit_id ?? undefined,
-      edit_type: v.edit_type ?? undefined,
-      benchmark: v.benchmark ?? undefined,
-      meta: v.meta ?? {},
-      committed: Boolean(v.committed),
-    }));
+  setProject: ({ projectId, title }) => set({ projectId, title: title ?? null }),
+
+  resetProject: () =>
+    set({ projectId: null, title: null, versions: [], activeVersionId: null }),
+
+  setVersions: (versions) => {
+    const next = Array.isArray(versions) ? versions : [];
+    const currentActive = get().activeVersionId;
+    const stillExists =
+      currentActive && next.some((v) => v.version_id === currentActive);
 
     set({
-      projectId,
-      title,
-      versions,
-      activeVersionId: data?.active_version_id ?? (versions[versions.length - 1]?.version_id ?? null),
+      versions: next,
+      activeVersionId: stillExists
+        ? currentActive
+        : next.at(-1)?.version_id ?? null,
     });
   },
 
-  initFromGenerate: (v) =>
+  appendVersion: (v) => {
     set({
-      projectId: v.project_id,
-      title: v.title || "Untitled",
-      versions: [v],
+      versions: [...get().versions, v],
       activeVersionId: v.version_id,
-    }),
+    });
+  },
 
-  appendVersion: (v) =>
-    set((s) => ({
-      versions: [...s.versions, v],
-      activeVersionId: v.version_id,
-    })),
-
-  setActiveVersion: (versionId) => set({ activeVersionId: versionId }),
-
-  activeVersion: () => {
-    const s = get();
-    if (!s.activeVersionId) return null;
-    return s.versions.find((v) => v.version_id === s.activeVersionId) ?? null;
+  setActiveVersion: (versionId) => {
+    if (!get().versions.some((v) => v.version_id === versionId)) return;
+    set({ activeVersionId: versionId });
   },
 }));
