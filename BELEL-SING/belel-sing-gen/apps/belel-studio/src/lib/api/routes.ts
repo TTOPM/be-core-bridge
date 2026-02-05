@@ -1,8 +1,12 @@
 export const API = {
+  health: "/api/health",
   generate: "/api/generate",
   edit: "/api/edit",
-  receipt: (versionId: string) => `/api/receipt/${encodeURIComponent(versionId)}`,
+  projects: "/api/projects",
+  project: (projectId: string) => `/api/projects/${encodeURIComponent(projectId)}`,
+  receipt: (projectId: string, versionId: string) =>
+    `/api/receipt/${encodeURIComponent(projectId)}/${encodeURIComponent(versionId)}`,
   perfLatest: "/api/perf/latest",
   langReport: "/api/lang/report",
-  artifacts: (path: string) => `/api/artifacts?path=${encodeURIComponent(path)}`
+  artifacts: (path: string) => `/api/artifacts?path=${encodeURIComponent(path)}`,
 };
