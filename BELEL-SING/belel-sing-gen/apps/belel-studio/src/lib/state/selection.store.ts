@@ -1,31 +1,82 @@
+"use client";
+
 import { create } from "zustand";
-import { clamp } from "@/lib/utils/format";
+
+export type SnapMode = "none" | "0.05s" | "0.10s" | "0.25s" | "0.50s" | "1.00s";
 
 type SelectionState = {
-  startSec: number;
-  endSec: number;
+  startSec: number | null;
+  endSec: number | null;
   isLooping: boolean;
-  setSelection: (a: number, b: number) => void;
-  nudge: (deltaSec: number) => void;
-  toggleLoop: () => void;
+  snap: SnapMode;
+
+  setSelection: (startSec: number | null, endSec: number | null) => void;
+  clearSelection: () => void;
+
+  setLooping: (v: boolean) => void;
+  toggleLooping: () => void;
+
+  setSnap: (s: SnapMode) => void;
+
+  // helpers
+  normalized: () => { startSec: number | null; endSec: number | null; has: boolean };
 };
 
+function clamp01(x: number) {
+  return Math.max(0, Math.min(1, x));
+}
+
+function snapValue(sec: number, mode: SnapMode) {
+  if (mode === "none") return sec;
+  const step =
+    mode === "0.05s" ? 0.05 :
+    mode === "0.10s" ? 0.10 :
+    mode === "0.25s" ? 0.25 :
+    mode === "0.50s" ? 0.50 :
+    1.00;
+  return Math.round(sec / step) * step;
+}
+
 export const useSelectionStore = create<SelectionState>((set, get) => ({
-  startSec: 0,
-  endSec: 5,
+  startSec: null,
+  endSec: null,
   isLooping: false,
+  snap: "0.10s",
+
   setSelection: (a, b) => {
-    const aa = clamp(a, 0, 1e9);
-    const bb = clamp(b, 0, 1e9);
-    const start = Math.min(aa, bb);
-    const end = Math.max(aa, bb);
-    set({ startSec: start, endSec: end });
+    if (a == null || b == null) {
+      set({ startSec: null, endSec: null });
+      return;
+    }
+    const s = get().snap;
+    const aa = snapValue(a, s);
+    const bb = snapValue(b, s);
+
+    // normalize order
+    const startSec = Math.min(aa, bb);
+    const endSec = Math.max(aa, bb);
+
+    // ignore tiny accidental selections
+    if (endSec - startSec < 0.02) {
+      set({ startSec: null, endSec: null });
+      return;
+    }
+    set({ startSec, endSec });
   },
-  nudge: (deltaSec) => {
-    const { startSec, endSec } = get();
-    const len = Math.max(0.01, endSec - startSec);
-    const a = startSec + deltaSec;
-    set({ startSec: Math.max(0, a), endSec: Math.max(0, a) + len });
+
+  clearSelection: () => set({ startSec: null, endSec: null }),
+
+  setLooping: (v) => set({ isLooping: Boolean(v) }),
+  toggleLooping: () => set({ isLooping: !get().isLooping }),
+
+  setSnap: (snap) => set({ snap }),
+
+  normalized: () => {
+    const a = get().startSec;
+    const b = get().endSec;
+    if (a == null || b == null) return { startSec: null, endSec: null, has: false };
+    const startSec = Math.min(a, b);
+    const endSec = Math.max(a, b);
+    return { startSec, endSec, has: endSec > startSec };
   },
-  toggleLoop: () => set({ isLooping: !get().isLooping })
 }));
