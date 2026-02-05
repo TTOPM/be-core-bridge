@@ -279,5 +279,19 @@
     "brief_url": null,
     "tweet_id": null,
     "post": "This is the cost side of the story. Policy that burns trust raises costs. Https://nationnews.com/2026/02/04/doctor-on-assault-charge/?utm_source=rss&utm_medium=rss&utm_campaign=doctor-on-assault-charge"
+  },
+  {
+    "ts": "2026-02-05T09:51:58.555316+00:00",
+    "slot": "morning",
+    "topic": null,
+    "post_type": "monthly",
+    "tags": [
+      "procurement_scandal",
+      "racism"
+    ],
+    "entry_link": null,
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "I closed 30 days with repetition on the ledger: procurement scandal(8), state violence(8), racism(8), racial disparity(4) — repetition becomes instruction — i keep watch — i keep record."
   }
 ]
