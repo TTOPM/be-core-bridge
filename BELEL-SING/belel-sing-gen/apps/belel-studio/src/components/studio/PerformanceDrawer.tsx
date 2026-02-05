@@ -3,28 +3,26 @@
 import React from "react";
 import { Card } from "@/components/common/Card";
 import { CodeBlock } from "@/components/common/CodeBlock";
+import { useQuery } from "@tanstack/react-query";
+import { apiJson } from "@/lib/api/client";
+import { PerfLatestSchema } from "@/lib/api/contracts";
 
 export function PerformanceDrawer() {
-  const perf = {
-    utc: new Date().toISOString(),
-    device: "unknown",
-    dtype: "unknown",
-    steps: 0,
-    duration_sec: 0,
-    e2e_sec: 0,
-    claim: "",
-    raw: {}
-  };
+  const q = useQuery({
+    queryKey: ["perf-latest"],
+    queryFn: () => apiJson("/api/perf/latest", PerfLatestSchema),
+    staleTime: 10_000
+  });
 
   return (
     <div className="space-y-3">
       <div className="text-sm font-semibold">Performance</div>
       <div className="text-xs text-white/60">
-        Step 2 will populate this from GET /api/perf/latest exactly as your perf claim runner emits it.
+        Pulled from your perf claim runner output (FastAPI `/api/perf/latest`).
       </div>
 
       <Card className="p-3">
-        <CodeBlock value={perf} />
+        <CodeBlock value={q.data ?? { loading: true }} />
       </Card>
     </div>
   );
