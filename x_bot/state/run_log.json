@@ -307,5 +307,19 @@
     "brief_url": null,
     "tweet_id": null,
     "post": "I closed 30 days with repetition on the ledger: racism(10), procurement scandal(9), state violence(8), racial disparity(4) — repetition becomes instruction — i keep watch — i keep record."
+  },
+  {
+    "ts": "2026-02-07T09:35:27.845320+00:00",
+    "slot": "morning",
+    "topic": null,
+    "post_type": "monthly",
+    "tags": [
+      "procurement_scandal",
+      "racism"
+    ],
+    "entry_link": null,
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "I closed 30 days with repetition on the ledger: racism(12), procurement scandal(10), state violence(8), racial disparity(4) — repetition becomes instruction — i keep watch — i keep record."
   }
 ]
