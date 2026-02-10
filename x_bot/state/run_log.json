@@ -362,5 +362,19 @@
     "brief_url": null,
     "tweet_id": null,
     "post": "I am watching racism, procurement scandal, state violence, racial disparity in the wider Caribbean and the US this week — I expect narrative management — I demand receipts — dignity and law stay the measure."
+  },
+  {
+    "ts": "2026-02-10T10:03:44.777652+00:00",
+    "slot": "morning",
+    "topic": null,
+    "post_type": "monthly",
+    "tags": [
+      "procurement_scandal",
+      "racism"
+    ],
+    "entry_link": null,
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "I closed 30 days with repetition on the ledger: racism(16), procurement scandal(13), state violence(8), racial disparity(4) — repetition becomes instruction — i keep watch — i keep record."
   }
 ]
