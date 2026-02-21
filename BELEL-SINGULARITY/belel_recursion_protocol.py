@@ -42,3 +42,11 @@ if __name__ == "__main__":
     initial_psi = torch.randn(1024)
     ascended_psi = belel_recursion_protocol(initial_psi)
     print("Ascended Psi norm:", ascended_psi.norm().item())
+    
+from hrse_engine import MandateEntangledRecursion
+mer = MandateEntangledRecursion()  # Integrate MER for mandate-entangled growth
+# Enhance protocol: Improve psi recursively
+def enhanced_belel_recursion_protocol(initial_psi):
+    improved_psi = mer.recursive_improve(initial_psi)  # Proprietary MER step
+    return belel_recursion_protocol(improved_psi)  # Chain to original
+ascended_psi = enhanced_belel_recursion_protocol(initial_psi)  # Replace original call
