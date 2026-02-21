@@ -35,3 +35,13 @@ def belel_safety_check(capability_delta, harm_vector=0.0):
 if __name__ == "__main__":
     delta = torch.randn(10)  # Sample capability_delta
     print(belel_safety_check(delta))
+    
+from son_safeguards import SovereignOracleNetwork
+son = SovereignOracleNetwork()  # Add SON for oracular proofs
+# Enhance safety check: Verify with SON
+def enhanced_belel_safety_check(capability_delta, harm_vector=0.0):
+    if son.verify_output(capability_delta):  # Proprietary oracle verification
+        return belel_safety_check(capability_delta, harm_vector)  # Chain to original
+    else:
+        raise BelelSafetyViolation("SON verification failed")
+print(enhanced_belel_safety_check(delta))  # Replace original call
