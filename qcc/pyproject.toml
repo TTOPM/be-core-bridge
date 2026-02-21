@@ -1,0 +1,15 @@
+[project]
+name = "qcc"
+version = "1.0.0"
+description = "Quantum Concordium Codex (QCC) — Sovereign Concordium-Gated quantum resilience layer."
+requires-python = ">=3.12"
+dependencies = [
+  "torch>=2.0",
+]
+
+[project.optional-dependencies]
+quantum = ["qiskit>=1.0"]
+tts = ["TTS>=0.22.0"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
