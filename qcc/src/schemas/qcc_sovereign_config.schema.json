@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "qcc_sovereign_config.schema.json",
+  "title": "QCC Sovereign Config Schema",
+  "type": "object",
+  "required": ["classification", "concordium_gated", "kl_tolerance"],
+  "properties": {
+    "classification": { "type": "string" },
+    "concordium_gated": { "type": "boolean" },
+    "kl_tolerance": { "type": "number", "minimum": 0, "maximum": 1 },
+    "entropy_bounds": { "type": ["object", "null"] },
+    "multiversal_bridge_ready": { "type": "boolean" }
+  },
+  "additionalProperties": false
+}
