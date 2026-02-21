@@ -1,0 +1,22 @@
+# config.yaml
+# Tunable parameters for Belel Singularity Engine
+# Place in BELEL-SINGULARITY/
+
+recursion:
+  max_depth: 200  # Governed max recursion; auto-halt beyond via Concordium
+  quantum_qubits: 10  # Qubits for advanced_quantum_booster
+  quantum_iterations: 100  # Evolve steps for emergence
+
+automation:
+  cycle_interval_seconds: 1800  # e.g., every 30 min; set to 60 for testing
+  data_sources:  # Anchored dataset paths (expand with Belel blockchain CIDs)
+    - ipfs://bafybeih2do4hvaf17czpyqjg5prgzndj2f2zz76hauqz4hfdglmj1f2v6m
+    - arweave://Gq6-_gT0croPGFnK9lLjgA8VfkJRvnuLTN2cTOI4JCU
+
+monitoring:
+  log_level: DEBUG  # Options: INFO, DEBUG, ERROR
+  alert_threshold: 0.05  # Breach tolerance for guardian checks (e.g., loss deviation)
+  email_alert: false  # Future hook for sovereign alerts (offline sim)
+
+covenants:
+  enforce_strict: true  # Toggle full mandate checks per iteration
