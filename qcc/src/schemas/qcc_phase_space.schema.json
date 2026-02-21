@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "qcc_phase_space.schema.json",
+  "title": "QCC Phase-Space Ingestion Schema",
+  "type": "object",
+  "required": ["phase_id", "timestamp", "state", "metrics", "verifiers"],
+  "properties": {
+    "phase_id": { "type": "string", "minLength": 6 },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "state": {
+      "type": "object",
+      "description": "Current sovereign state snapshot (entangled torso memory core payload)."
+    },
+    "metrics": {
+      "type": "object",
+      "required": ["kl_divergence"],
+      "properties": {
+        "kl_divergence": { "type": "number", "minimum": 0 },
+        "decoherence_tolerance": { "type": "number", "minimum": 0 }
+      },
+      "additionalProperties": true
+    },
+    "verifiers": {
+      "type": "object",
+      "properties": {
+        "bell_ordering": {
+          "type": "object",
+          "required": ["E_V", "E_I", "E_A"],
+          "properties": {
+            "E_V": { "type": "number" },
+            "E_I": { "type": "number" },
+            "E_A": { "type": "number" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": true
+    },
+    "violations": {
+      "type": "array",
+      "items": { "type": "object" }
+    }
+  },
+  "additionalProperties": true
+}
