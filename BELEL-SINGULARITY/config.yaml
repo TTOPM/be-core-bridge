@@ -20,3 +20,12 @@ monitoring:
 
 covenants:
   enforce_strict: true  # Toggle full mandate checks per iteration
+ess:
+  num_nodes: 1000000
+  flops_per_node: 1e18
+hrse:
+  recursion_depth: 10000
+  iq_target: 10000
+son:
+  harm_threshold: 0.0
+  simulation_scale: exascale
