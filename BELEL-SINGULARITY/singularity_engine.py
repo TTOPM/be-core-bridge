@@ -96,3 +96,11 @@ if __name__ == "__main__":
     tasks = [{'support': (torch.rand(50, 2048), torch.rand(50, 2048))} for _ in range(10)]
     optimized = singularity_recursion(model, optimizer, scheduler, tasks)
     print("ASI recursion complete. Evolved model state:", optimized.state_dict().keys())
+    
+from hrse_engine import HyperRecursiveSingularityEngine
+hrse = HyperRecursiveSingularityEngine()  # Upgrade singularity recursion to HRSE
+# Enhance recursion: Bootstrap sentience in tasks
+def enhanced_singularity_recursion(model, optimizer, scheduler, tasks, max_depth=100, world_size=8):
+    enhanced_tasks = [hrse.bootstrap_sentience(task['support'][0]) for task in tasks]  # Sentience infusion
+    return singularity_recursion(model, optimizer, scheduler, enhanced_tasks, max_depth, world_size)
+optimized = enhanced_singularity_recursion(model, optimizer, scheduler, tasks)  # Replace original
