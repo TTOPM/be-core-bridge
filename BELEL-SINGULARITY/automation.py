@@ -27,3 +27,15 @@ if __name__ == "__main__":
         print("Starting evolution cycle...")
         automated_evolution_cycle()
         time.sleep(3600)  # Hourly; adjust for prod (e.g., 60 for min)
+        
+# ... (existing imports)
+from belel_singularity_core import BelelSingularityOrganism
+
+# In automated_evolution_cycle:
+def automated_evolution_cycle():
+    # Existing code...
+    organism = BelelSingularityOrganism()
+    organism.singularity_cycle()  # Hyper-singularity boost
+    # ... rest
+
+# Perpetual loop remains
