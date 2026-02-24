@@ -1,5 +1,3 @@
-
-
 # BELEL-VIVOX FORGE v1.4.1 — Patched, Fortified, Adaptive High-Fidelity Vocal Organ
 # - Real source–filter synthesis (LF glottal excitation -> time-varying resonator bank)
 # - Singer's formant cluster implemented as clustered resonances (not additive sines)
