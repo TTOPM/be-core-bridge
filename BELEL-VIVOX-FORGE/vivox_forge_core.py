@@ -27,7 +27,7 @@ from dataclasses import dataclass
 from typing import Dict, List, Optional, Sequence, Tuple
 
 import numpy as np
-
+from vivox_linguistic_engine import VivoxLinguisticEngine
 try:
     import psutil  # type: ignore
 except Exception:
@@ -620,7 +620,21 @@ class VivoxForgeCore:
         """
         if voice_id not in self.voice_latents:
             self.register_voice(voice_id)
-
+# -------------------------------------------------
+# Vivox Linguistic Engine (lyrics -> phoneme_sequence)
+# -------------------------------------------------
+if phoneme_sequence is None:
+    planner = VivoxLinguisticEngine()
+    phoneme_sequence = planner.plan_phoneme_sequence(
+        lyrics=lyrics,
+        duration_ms=duration_ms,
+        melody=None,     # optional later
+        bpm=92.0,
+        # These can be hard-coded for now; later we will thread real params in
+        emotion_intensity=0.95,
+        nasal_coupling=0.50,
+        breath_mode="mixed",
+    )
         sr = self.profile.sr_out
         n = int((duration_ms / 1000.0) * sr)
         n = max(n, 2048)
