@@ -1,13 +1,43 @@
+cd be-core-bridge
+
+cat > BELEL-SING/hybrid_svs/config.yaml << 'EOF'
+# BELEL-SING :: hybrid_svs config (fortified)
+seed: 1337
+
+audio:
+  sample_rate: 24000
+  n_fft: 1024
+  hop_length: 256
+  win_length: 1024
+  n_mels: 80
+  fmin: 40
+  fmax: 11000
+  preemphasis: 0.0
+
+text:
+  vocab_size: 512
+  bos_id: 1
+  eos_id: 2
+  pad_id: 0
 
 model:
-  d_model: 512
-  num_layers: 12
-  diffusion_steps: 50
-  sample_rate: 24000
-  hop_length: 256
-dataset:
-  processed_dir: processed_data
-trainer:
-  batch_size: 4
-  max_epochs: 20
-  lr: 1.0e-4
+  d_model: 384
+  n_heads: 6
+  n_layers: 6
+  dropout: 0.1
+  diffusion_steps: 20
+
+train:
+  batch_size: 6
+  lr: 2.0e-4
+  weight_decay: 0.01
+  grad_clip: 1.0
+  epochs: 3
+  amp: true
+  log_every: 20
+  save_every: 200
+
+paths:
+  data_npz: "BELEL-SING/ops/datasets/hybrid_svs_train.npz"
+  checkpoints_dir: "BELEL-SING/ops/checkpoints/hybrid_svs"
+EOF
