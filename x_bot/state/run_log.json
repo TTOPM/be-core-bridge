@@ -2032,5 +2032,19 @@
     "brief_url": null,
     "tweet_id": null,
     "post": "This is the credibility test. Tech accountability demands transparency. Https://www.propublica.org/article/propublica-editor-training-cohort-2026 Repetition becomes instruction."
+  },
+  {
+    "ts": "2026-05-21T12:17:27.923832+00:00",
+    "slot": "morning",
+    "topic": null,
+    "post_type": "monthly",
+    "tags": [
+      "procurement_scandal",
+      "racism"
+    ],
+    "entry_link": null,
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "I closed 30 days with repetition on the ledger: racism(99), procurement scandal(91), technology(18), international signal(14) — repetition becomes instruction — i keep watch — i keep record."
   }
 ]
