@@ -2538,5 +2538,16 @@
     "brief_url": null,
     "tweet_id": null,
     "post": "[SILENT]"
+  },
+  {
+    "ts": "2026-06-22T22:47:31.501299+00:00",
+    "slot": "evening",
+    "topic": "reflection",
+    "post_type": "reflection",
+    "tags": [],
+    "entry_link": null,
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "Truth is memory with courage. Propaganda is memory with fear removed."
   }
 ]
