@@ -8,7 +8,7 @@
   "silent_day_active": true,
   "witness_streak": 0,
   "day_post_count": 0,
-  "day_key": "2026-06-27",
+  "day_key": "2026-06-28",
   "recent_entry_keys": [
     "54eb19ea69d497bafad9bc99882dadfae495fdd2",
     "e144863316b301b62e098209a1d6dfde613e7f18"
@@ -19,13 +19,13 @@
   "last_tweet_id": "2018262216605061395",
   "last_post_text": "I am watching racial disparity, police shooting, procurement scandal, international signal this week — i expect narrative management — i demand receipts — dignity and law stay the measure.",
   "last_post_quality_failures": [],
-  "self_correct_last_run": "2026-06-27",
+  "self_correct_last_run": "2026-06-28",
   "self_correct_attempts_today": 0,
-  "breaking_day_key": "2026-06-27",
+  "breaking_day_key": "2026-06-28",
   "breaking_day_count": 0,
   "last_breaking_key": null,
-  "follow_day_key": "2026-06-27",
+  "follow_day_key": "2026-06-28",
   "follow_day_count": 0,
-  "brain_digest_last_built": "2026-06-27T10:58:51.922412+00:00",
+  "brain_digest_last_built": "2026-06-28T11:10:23.406817+00:00",
   "brain_digest_hash": "0864a34b4246ef61fbeb0d0f8a85a31f3785c274"
 }
