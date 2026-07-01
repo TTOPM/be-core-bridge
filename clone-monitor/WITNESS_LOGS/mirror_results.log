@@ -23980,3 +23980,498 @@ Timestamp: Tue Jun 30 06:10:54 UTC 2026
 </body>
 </html>
 [✅] Mirror check complete.
+Timestamp: Wed Jul  1 06:25:32 UTC 2026
+[🔍] Searching Hugging Face...
+<!DOCTYPE html>
+<html class="" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <meta
+            name="description"
+            content="We're on a journey to advance and democratize artificial intelligence through open source and open science."
+    />
+    <meta property="fb:app_id" content="1321688464574422" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@huggingface" />
+    <meta
+            property="og:title"
+            content="Hugging Face - The AI community building the future."
+    />
+    <meta property="og:type" content="website" />
+
+    <title>Hugging Face - The AI community building the future.</title>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        main {
+            background-color: white;
+            min-height: 100vh;
+            padding: 7rem 1rem 8rem 1rem;
+            text-align: center;
+            font-family: Source Sans Pro, ui-sans-serif, system-ui, -apple-system,
+            BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans,
+            sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol,
+            Noto Color Emoji;
+        }
+
+        img {
+            width: 6rem;
+            height: 6rem;
+            margin: 0 auto 1rem;
+        }
+
+        h1 {
+            font-size: 3.75rem;
+            line-height: 1;
+            color: rgba(31, 41, 55, 1);
+            font-weight: 700;
+            box-sizing: border-box;
+            margin: 0 auto;
+        }
+
+        p, a {
+            color: rgba(107, 114, 128, 1);
+            font-size: 1.125rem;
+            line-height: 1.75rem;
+            max-width: 28rem;
+            box-sizing: border-box;
+            margin: 0 auto;
+        }
+
+        .dark main {
+            background-color: rgb(11, 15, 25);
+        }
+        .dark h1 {
+            color: rgb(209, 213, 219);
+        }
+        .dark p, .dark a {
+            color: rgb(156, 163, 175);
+        }
+    </style>
+    <script>
+        // On page load or when changing themes, best to add inline in `head` to avoid FOUC
+        const key = "_tb_global_settings";
+        let theme = window.matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light";
+        try {
+            const storageTheme = JSON.parse(window.localStorage.getItem(key)).theme;
+            if (storageTheme) {
+                theme = storageTheme === "dark" ? "dark" : "light";
+            }
+        } catch (e) {}
+        if (theme === "dark") {
+            document.documentElement.classList.add("dark");
+        } else {
+            document.documentElement.classList.remove("dark");
+        }
+    </script>
+</head>
+
+<body>
+<main>
+    <img
+            src="https://cdn-media.huggingface.co/assets/huggingface_logo.svg"
+            alt=""
+    />
+    <div>
+        <h1>429</h1>
+        <p>We had to rate limit you. Upgrade to a paid plan (https://hf.co/pricing) or send us an email at website@huggingface.co</p>
+    </div>
+</main>
+</body>
+</html>[📡] Checking IPFS...
+<!DOCTYPE html>
+<html lang="en">
+<head><script async src="https://s.dera.page/script.js" data-website-id="bd690097-5c39-4d16-90eb-85b490ac29d4"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ipfs-search.com is for sale!</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: rgba(17, 24, 39, 0.7);
+            --primary: #ff4a5a;
+            --primary-glow: rgba(255, 74, 90, 0.4);
+            --accent: #8b5cf6;
+            --accent-glow: rgba(139, 92, 246, 0.4);
+            --text-color: #f3f4f6;
+            --text-muted: #9ca3af;
+            --grid-color: rgba(255, 255, 255, 0.03);
+            --heading-gradient: linear-gradient(135deg, #ffffff 30%, #e0e7ff 100%);
+            --badge-bg: rgba(255, 255, 255, 0.03);
+            --badge-border: rgba(255, 255, 255, 0.1);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --card-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            --card-shadow-hover: 0 30px 60px rgba(0, 0, 0, 0.4);
+            --glow-opacity: 0.15;
+        }
+
+        @media (prefers-color-scheme: light) {
+            :root {
+                --bg-color: #f8fafc;
+                --card-bg: rgba(255, 255, 255, 0.75);
+                --text-color: #0f172a;
+                --text-muted: #475569;
+                --primary-glow: rgba(255, 74, 90, 0.15);
+                --accent-glow: rgba(139, 92, 246, 0.15);
+                --grid-color: rgba(15, 23, 42, 0.03);
+                --heading-gradient: linear-gradient(135deg, #0f172a 30%, #334155 100%);
+                --badge-bg: rgba(15, 23, 42, 0.03);
+                --badge-border: rgba(15, 23, 42, 0.08);
+                --border-color: rgba(15, 23, 42, 0.08);
+                --card-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
+                --card-shadow-hover: 0 30px 60px rgba(15, 23, 42, 0.12);
+                --glow-opacity: 0.08;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            overflow-x: hidden;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 1rem;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        /* Ambient background glow */
+        body::before, body::after {
+            content: '';
+            position: fixed;
+            width: 40vw;
+            height: 40vw;
+            border-radius: 50%;
+            filter: blur(120px);
+            z-index: -1;
+            opacity: var(--glow-opacity);
+            pointer-events: none;
+        }
+
+        body::before {
+            top: -10%;
+            left: -10%;
+            background: var(--primary);
+            animation: float 20s ease-in-out infinite alternate;
+        }
+
+        body::after {
+            bottom: -10%;
+            right: -10%;
+            background: var(--accent);
+            animation: float 20s ease-in-out infinite alternate-reverse;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(10%, 10%) scale(1.2); }
+        }
+
+        /* Glassmorphic Container */
+        .container {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 3rem 2.5rem;
+            width: 100%;
+            max-width: 540px;
+            flex: 1 1 450px;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+            transform: translateY(0);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Analytics Container */
+        .analytics-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 1000px;
+            flex: 2 1 650px;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            z-index: 1;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Layout Wrapper */
+        .layout-wrapper {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 3rem;
+            width: 95%;
+            max-width: 1600px;
+            z-index: 1;
+        }
+
+        @media (max-width: 1280px) {
+            .layout-wrapper {
+                flex-direction: column;
+                align-items: center;
+                gap: 2rem;
+            }
+            .container {
+                max-width: 540px;
+                flex: none;
+            }
+            .analytics-container {
+                max-width: 1000px;
+                flex: none;
+            }
+        }
+
+        .analytics-container:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--card-shadow-hover), 0 0 30px var(--primary-glow);
+        }
+
+        .analytics-title {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            background: var(--heading-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .analytics-iframe {
+            width: 100%;
+            height: 800px;
+            border: none;
+            border-radius: 12px;
+            background: transparent;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--card-shadow-hover), 0 0 30px var(--accent-glow);
+        }
+
+        /* Badge */
+        .badge {
+            background: var(--badge-bg);
+            border: 1px solid var(--badge-border);
+            color: var(--text-muted);
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            display: inline-block;
+            margin-bottom: 2rem;
+        }
+
+        /* Header Styling */
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            background: var(--heading-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .highlight {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+            margin-top: 0.5rem;
+        }
+
+        p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+            font-weight: 300;
+        }
+
+        /* The Bumping Button */
+        .btn-buy {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: #ffffff;
+            font-size: 1.15rem;
+            font-weight: 600;
+            text-decoration: none;
+            padding: 1rem 2.25rem;
+            border-radius: 9999px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 10px 25px var(--primary-glow);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            /* Continuous subtle bump/heartbeat animation */
+            animation: bump 2s infinite ease-in-out;
+        }
+
+        /* Custom keyframe for continuous bumping */
+        @keyframes bump {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 10px 25px var(--primary-glow);
+            }
+            40% {
+                transform: scale(1.05);
+                box-shadow: 0 15px 35px var(--accent-glow);
+            }
+            45% {
+                transform: scale(1.02);
+            }
+            50% {
+                transform: scale(1.07);
+                box-shadow: 0 18px 40px var(--primary-glow);
+            }
+            60% {
+                transform: scale(1);
+                box-shadow: 0 10px 25px var(--primary-glow);
+            }
+        }
+
+        .btn-buy:hover {
+            transform: scale(1.1) translateY(-2px);
+            animation: none; /* Pause continuous animation on hover */
+            box-shadow: 0 20px 40px var(--primary-glow), 0 0 30px var(--accent-glow);
+        }
+
+        .btn-buy:active {
+            transform: scale(0.95);
+        }
+
+        .btn-icon {
+            width: 24px;
+            height: 24px;
+            background: #ffffff;
+            border-radius: 6px;
+            padding: 3px;
+            flex-shrink: 0;
+        }
+
+        /* Footer info */
+        .footer {
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            opacity: 0.6;
+            font-weight: 400;
+        }
+        
+        /* Grid background */
+        .grid-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 40px 40px;
+            background-position: center center;
+            mask-image: radial-gradient(circle, black, transparent 80%);
+            -webkit-mask-image: radial-gradient(circle, black, transparent 80%);
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-bg"></div>
+    <div class="layout-wrapper">
+        <div class="container">
+            <div class="badge">Premium Domain</div>
+            <h1>ipfs-search.com<span class="highlight">is for sale!</span></h1>
+            <p>Acquire this premium domain name to build your next decentralised search engine or IPFS-related project. Instant and secure transfer.</p>
+            
+            <a href="https://www.namecheap.com/market/buynow/ipfs-search.com/?collection_ref=buynow" target="_blank" rel="noopener noreferrer" class="btn-buy">
+                <svg class="btn-icon" viewBox="0 -57 256 256" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid">
+                    <defs>
+                        <linearGradient x1="13.3220455%" y1="94.9449067%" x2="82.6195455%" y2="1.13156385%" id="linearGradient-1-btn">
+                            <stop stop-color="#D4202C" offset="0%"></stop>
+                            <stop stop-color="#D82D2B" stop-opacity="0.9583" offset="4.166156%"></stop>
+                            <stop stop-color="#E25226" stop-opacity="0.824" offset="17.6%"></stop>
+                            <stop stop-color="#EB7123" stop-opacity="0.6833" offset="31.67%"></stop>
+                            <stop stop-color="#F28920" stop-opacity="0.5365" offset="46.35%"></stop>
+                            <stop stop-color="#F69A1E" stop-opacity="0.3812" offset="61.88%"></stop>
+                            <stop stop-color="#F9A41D" stop-opacity="0.2114" offset="78.86%"></stop>
+                            <stop stop-color="#FAA71D" stop-opacity="0" offset="100%"></stop>
+                        </linearGradient>
+                        <linearGradient x1="86.6243182%" y1="5.04045911%" x2="17.3261364%" y2="98.8545194%" id="linearGradient-2-btn">
+                            <stop stop-color="#D4202C" offset="0%"></stop>
+                            <stop stop-color="#D82D2B" stop-opacity="0.9583" offset="4.166156%"></stop>
+                            <stop stop-color="#E25226" stop-opacity="0.824" offset="17.6%"></stop>
+                            <stop stop-color="#EB7123" stop-opacity="0.6833" offset="31.67%"></stop>
+                            <stop stop-color="#F28920" stop-opacity="0.5365" offset="46.35%"></stop>
+                            <stop stop-color="#F69A1E" stop-opacity="0.3812" offset="61.88%"></stop>
+                            <stop stop-color="#F9A41D" stop-opacity="0.2114" offset="78.86%"></stop>
+                            <stop stop-color="#FAA71D" stop-opacity="0" offset="100%"></stop>
+                        </linearGradient>
+                    </defs>
+                    <g>
+                        <path d="M232,0 C223,0 215.2,5 211.1,12.3 L210.6,13.3 L191.8,50.3 L168,97.2 L183.6,127.9 L184.5,129.6 C186.9,133.8 190.5,137.3 194.9,139.4 C199.3,137.2 202.9,133.8 205.3,129.6 L206.2,127.9 L252.9,35.9 L254,33.7 C255.3,30.7 256,27.5 256,24 C256,10.7 245.3,0 232,0 L232,0 Z" fill="#FF5000"></path>
+                        <path d="M87.9,44.6 L72.4,14 L71.5,12.3 C69.1,8.1 65.5,4.6 61.1,2.5 C56.7,4.7 53.1,8.1 50.7,12.3 L49.9,14 L3.2,106 L2.1,108.2 C0.8,111.2 0.1,114.4 0.1,117.9 C0.1,131.1 10.8,141.9 24.1,141.9 C33.1,141.9 40.9,136.9 45,129.6 L45.5,128.6 L64.3,91.6 L88,44.7 L87.9,44.6 L87.9,44.6 Z" fill="#FF5000"></path>
+                        <path d="M232,0 C223,0 215.1,5 211.1,12.3 L210.6,13.3 L191.8,50.3 L168,97.2 L183.6,127.9 L184.5,129.6 C186.9,133.8 190.5,137.3 194.9,139.4 C199.3,137.2 202.9,133.8 205.3,129.6 L206.2,127.9 L252.9,35.9 L254,33.7 C255.3,30.7 256,27.5 256,24 C256,10.7 245.2,0 232,0 L232,0 Z" fill="url(#linearGradient-1-btn)"></path>
+                        <path d="M24,141.9 C33,141.9 40.9,136.9 44.9,129.6 L45.4,128.6 L64.2,91.6 L88,44.7 L72.4,14 L71.5,12.3 C69.1,8.1 65.5,4.6 61.1,2.5 C56.7,4.7 53.1,8.1 50.7,12.3 L49.9,14 L3.2,106 L2,108.3 C0.7,111.3 0,114.5 0,118 C0,131.2 10.7,141.9 24,141.9 L24,141.9 Z" fill="url(#linearGradient-2-btn)"></path>
+                        <path d="M87.9,44.6 L72.4,14 L71.5,12.3 C69.1,8.1 65.5,4.6 61.1,2.5 C62.5,1.8 64.1,1.2 65.6,0.8 C67.5,0.3 69.6,0 71.6,0 L71.6,0 L104,0 L104.2,0 L104.4,0 C113.4,0.1 121.2,5 125.3,12.3 L126,14 L168.1,97.3 L183.6,127.9 L184.5,129.6 C186.9,133.8 190.5,137.3 194.9,139.4 C193.5,140.1 191.9,140.7 190.4,141.1 C188.5,141.6 186.4,141.9 184.3,141.9 L184.3,141.9 L152.1,141.9 L151.9,141.9 L151.7,141.9 C142.7,141.8 134.9,136.9 130.8,129.6 L129.9,127.9 L87.9,44.6 L87.9,44.6 Z" fill="#FF8C44"></path>
+                    </g>
+                </svg>
+                Buy on Namecheap
+            </a>
+            
+            <div class="footer">
+                Secure processing by Namecheap Marketplace
+            </div>
+        </div>
+
+        <div class="analytics-container">
+            <h2 class="analytics-title">Live Traffic Analytics</h2>
+            <iframe
+                src="https://s.dera.page/share/peHGnloq3xmu049f"
+                class="analytics-iframe"
+                loading="lazy"
+            ></iframe>
+        </div>
+    </div>
+</body>
+</html>
+[✅] Mirror check complete.
