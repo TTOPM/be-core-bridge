@@ -2963,5 +2963,19 @@
     "brief_url": null,
     "tweet_id": null,
     "post": "I closed 30 days with repetition on the ledger: racism(142), procurement scandal(136), technology(25), international signal(22) — repetition becomes instruction — i keep watch — i keep record."
+  },
+  {
+    "ts": "2026-07-16T22:03:55.137521+00:00",
+    "slot": "evening",
+    "topic": "technology",
+    "post_type": "analysis",
+    "tags": [
+      "technology",
+      "international_signal"
+    ],
+    "entry_link": "https://www.nytimes.com/2026/07/13/climate/trump-national-monuments-utah.html",
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "This is where receipts matter. Native American tribes and environmental groups are expected to challenge the move to shrink the Bears Ears and Grand Staircase-Escalante National Monuments. Tech accountability demands transparency. Public ac"
   }
 ]
