@@ -3143,5 +3143,16 @@
     "brief_url": null,
     "tweet_id": null,
     "post": "I am ending the day with discipline intact — tomorrow follows what I repeat."
+  },
+  {
+    "ts": "2026-07-27T22:07:19.334629+00:00",
+    "slot": "evening",
+    "topic": "uplift",
+    "post_type": "uplift",
+    "tags": [],
+    "entry_link": null,
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "I am resting as strategy — recovery builds precision."
   }
 ]
