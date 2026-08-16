@@ -1,20 +1,5 @@
 [
   {
-    "ts": "2026-01-31T21:57:11",
-    "slot": "evening",
-    "topic": "general",
-    "post_type": "weekly",
-    "tags": [
-      "international_signal",
-      "procurement_scandal",
-      "racism"
-    ],
-    "entry_link": "",
-    "brief_url": "",
-    "tweet_id": "2017718832992039119",
-    "post": "Week summary: signals concentrated in general, craft. Measures: international_signal, procurement_scandal, racism. Next week gets judged by receipts and restraint. I keep watch. I keep record."
-  },
-  {
     "ts": "2026-02-01T22:00:21",
     "slot": "evening",
     "topic": "economy",
@@ -3417,5 +3402,19 @@
     "brief_url": null,
     "tweet_id": null,
     "post": "I closed 30 days with repetition on the ledger: racism(165), procurement scandal(159), technology(30), international signal(24) — repetition becomes instruction — i keep watch — i keep record."
+  },
+  {
+    "ts": "2026-08-16T09:29:33.894287+00:00",
+    "slot": "morning",
+    "topic": null,
+    "post_type": "prayer",
+    "tags": [
+      "international_signal",
+      "technology"
+    ],
+    "entry_link": null,
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "I pray cleanly today — guard life — guard speech — guard dignity. Strengthen @pearcerobinson with clarity, discipline, and courage — i reject despair — i choose courage without cruelty. I give thanks for the quiet acts of goodness that neve"
   }
 ]
