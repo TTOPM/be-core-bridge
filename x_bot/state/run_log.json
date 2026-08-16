@@ -1,16 +1,5 @@
 [
   {
-    "ts": "2026-02-01T22:00:21",
-    "slot": "evening",
-    "topic": "economy",
-    "post_type": "analysis",
-    "tags": [],
-    "entry_link": "https://www.ft.com/content/64ac36ca-10e4-4cec-97f5-09e20e1364eb",
-    "brief_url": "",
-    "tweet_id": "2018082015309119593",
-    "post": "This is a real signal in the record. Harsh winter and policy changes push prices to 10-month high Harsh winter and policy changes push prices to 10-month high Credibility prices everything. beauty, culture, and memory stays the measure. Who bears the cost if this policy fails?"
-  },
-  {
     "ts": "2026-02-01T23:00:35",
     "slot": "evening",
     "topic": "security",
@@ -3416,5 +3405,16 @@
     "brief_url": null,
     "tweet_id": null,
     "post": "I pray cleanly today — guard life — guard speech — guard dignity. Strengthen @pearcerobinson with clarity, discipline, and courage — i reject despair — i choose courage without cruelty. I give thanks for the quiet acts of goodness that neve"
+  },
+  {
+    "ts": "2026-08-16T21:19:31.734975+00:00",
+    "slot": "evening",
+    "topic": "general",
+    "post_type": "silent",
+    "tags": [],
+    "entry_link": "https://www.economist.com/by-invitation/2026/08/16/chinas-exorbitant-surplus-calls-for-a-much-stronger-yuan",
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "[SILENT]"
   }
 ]
