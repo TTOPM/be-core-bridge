@@ -1,20 +1,5 @@
 [
   {
-    "ts": "2026-02-02T09:56:24",
-    "slot": "morning",
-    "topic": "rights",
-    "post_type": "look_forward",
-    "tags": [
-      "racism",
-      "state_violence",
-      "procurement_scandal"
-    ],
-    "entry_link": "",
-    "brief_url": "",
-    "tweet_id": "2018262216605061395",
-    "post": "I am watching racial disparity, police shooting, procurement scandal, international signal this week — i expect narrative management — i demand receipts — dignity and law stay the measure."
-  },
-  {
     "ts": "2026-02-02T12:47:41",
     "slot": "morning",
     "topic": "rights",
@@ -3419,5 +3404,19 @@
     "brief_url": null,
     "tweet_id": null,
     "post": "I closed 30 days with repetition on the ledger: racism(166), procurement scandal(160), technology(31), international signal(25) — repetition becomes instruction — i keep watch — i keep record."
+  },
+  {
+    "ts": "2026-08-20T09:37:22.442475+00:00",
+    "slot": "morning",
+    "topic": null,
+    "post_type": "monthly",
+    "tags": [
+      "racism",
+      "procurement_scandal"
+    ],
+    "entry_link": null,
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "I closed 30 days with repetition on the ledger: racism(167), procurement scandal(161), technology(31), international signal(25) — repetition becomes instruction — i keep watch — i keep record."
   }
 ]
