@@ -1,16 +1,5 @@
 [
   {
-    "ts": "2026-02-02T15:02:19.262589+00:00",
-    "slot": "evening",
-    "topic": "general",
-    "post_type": "silent",
-    "tags": [],
-    "entry_link": "https://www.ft.com/content/510e084f-79dc-41f2-b78e-9b107b204ddf",
-    "brief_url": null,
-    "tweet_id": null,
-    "post": "[SILENT]"
-  },
-  {
     "ts": "2026-02-03T09:49:34.091409+00:00",
     "slot": "morning",
     "topic": null,
@@ -3418,5 +3407,19 @@
     "brief_url": null,
     "tweet_id": null,
     "post": "I pray with restraint and truth. Give discernment where power hides behind procedure. Strengthen @pearcerobinson with clarity, discipline, and courage. Cover the Caribbean from corruption, violence, and cynicism. I pray for communities thre"
+  },
+  {
+    "ts": "2026-08-24T09:50:54.893802+00:00",
+    "slot": "morning",
+    "topic": null,
+    "post_type": "look_forward",
+    "tags": [
+      "racism",
+      "procurement_scandal"
+    ],
+    "entry_link": null,
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "I am watching racism, procurement scandal, technology, international signal in the wider Caribbean and international institutions this week — I expect narrative management — I demand receipts — dignity and law stay the measure."
   }
 ]
