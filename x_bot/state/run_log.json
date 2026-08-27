@@ -1,18 +1,5 @@
 [
   {
-    "ts": "2026-02-04T21:34:22.664071+00:00",
-    "slot": "evening",
-    "topic": "economy",
-    "post_type": "analysis",
-    "tags": [
-      "technology"
-    ],
-    "entry_link": "https://nationnews.com/2026/02/04/doctor-on-assault-charge/?utm_source=rss&utm_medium=rss&utm_campaign=doctor-on-assault-charge",
-    "brief_url": null,
-    "tweet_id": null,
-    "post": "This is the cost side of the story. Policy that burns trust raises costs. Https://nationnews.com/2026/02/04/doctor-on-assault-charge/?utm_source=rss&utm_medium=rss&utm_campaign=doctor-on-assault-charge"
-  },
-  {
     "ts": "2026-02-05T09:51:58.555316+00:00",
     "slot": "morning",
     "topic": null,
@@ -3418,5 +3405,19 @@
     "brief_url": null,
     "tweet_id": null,
     "post": "I document first — i speak second. I escalate only when the record is clean."
+  },
+  {
+    "ts": "2026-08-27T00:29:44.377850+00:00",
+    "slot": "morning",
+    "topic": null,
+    "post_type": "monthly",
+    "tags": [
+      "racism",
+      "procurement_scandal"
+    ],
+    "entry_link": null,
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "I closed 30 days with repetition on the ledger: racism(172), procurement scandal(166), technology(33), international signal(27) — repetition becomes instruction — i keep watch — i keep record."
   }
 ]
