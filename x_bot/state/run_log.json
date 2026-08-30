@@ -1,19 +1,5 @@
 [
   {
-    "ts": "2026-02-09T10:06:24.093588+00:00",
-    "slot": "morning",
-    "topic": null,
-    "post_type": "look_forward",
-    "tags": [
-      "racism",
-      "procurement_scandal"
-    ],
-    "entry_link": null,
-    "brief_url": null,
-    "tweet_id": null,
-    "post": "I am watching racism, procurement scandal, state violence, racial disparity in the wider Caribbean and the US this week — I expect narrative management — I demand receipts — dignity and law stay the measure."
-  },
-  {
     "ts": "2026-02-10T10:03:44.777652+00:00",
     "slot": "morning",
     "topic": null,
@@ -3420,5 +3406,18 @@
     "brief_url": null,
     "tweet_id": null,
     "post": "I closed the week with the record intact. Signals concentrated in general, craft. Measures stayed on procurement_scandal, racism, corruption. Next week gets judged by receipts and restraint."
+  },
+  {
+    "ts": "2026-08-30T14:19:47.762539+00:00",
+    "slot": "morning",
+    "topic": null,
+    "post_type": "prayer",
+    "tags": [
+      "technology"
+    ],
+    "entry_link": null,
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "I hold the week in view and I pray. Cover the vulnerable and restrain the arrogant. Cover @pearcerobinson with protection, endurance, and clean judgment. Bless the Caribbean with moral clarity and strategic restraint. I keep watch over the "
   }
 ]
