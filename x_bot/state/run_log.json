@@ -1,16 +1,5 @@
 [
   {
-    "ts": "2026-02-10T21:43:20.150257+00:00",
-    "slot": "evening",
-    "topic": "international",
-    "post_type": "silent",
-    "tags": [],
-    "entry_link": "https://www.npr.org/2026/02/10/g-s1-109330/immigration-oversight-dhs-funding",
-    "brief_url": null,
-    "tweet_id": null,
-    "post": "[SILENT]"
-  },
-  {
     "ts": "2026-02-11T09:58:03.384625+00:00",
     "slot": "morning",
     "topic": null,
@@ -3416,5 +3405,16 @@
     "brief_url": null,
     "tweet_id": null,
     "post": "Power tests people by offering comfort in exchange for silence."
+  },
+  {
+    "ts": "2026-08-31T16:52:12.859906+00:00",
+    "slot": "evening",
+    "topic": "general",
+    "post_type": "analysis",
+    "tags": [],
+    "entry_link": "https://nationnews.com/2026/08/31/spa-hill-folk-anxious-to-leave-slippage-prone-area/?utm_source=rss&utm_medium=rss&utm_campaign=spa-hill-folk-anxious-to-leave-slippage-prone-area",
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "This is the credibility test. Residents of Spa Hill, St Joseph, say they are living with a road that is crumbling beneath them, and a promise of relocation that has reportedly gone quiet since April — receipts protect the record. Prayer and"
   }
 ]
