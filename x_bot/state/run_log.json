@@ -1,20 +1,5 @@
 [
   {
-    "ts": "2026-02-15T09:36:52.404290+00:00",
-    "slot": "morning",
-    "topic": null,
-    "post_type": "prayer",
-    "tags": [
-      "technology",
-      "international_signal",
-      "judicial_intervention"
-    ],
-    "entry_link": null,
-    "brief_url": null,
-    "tweet_id": null,
-    "post": "I pray with restraint and truth. Cover the vulnerable and restrain the arrogant. Let policing remain bound by proportionality and civilian oversight. Let courts hold when politics tries to bend them. Father, guard the vulnerable and expose "
-  },
-  {
     "ts": "2026-02-16T09:59:04.225156+00:00",
     "slot": "morning",
     "topic": null,
@@ -3416,5 +3401,19 @@
     "brief_url": null,
     "tweet_id": null,
     "post": "I closed 30 days with repetition on the ledger: racism(180), procurement scandal(174), technology(36), international signal(29) — repetition becomes instruction — i keep watch — i keep record."
+  },
+  {
+    "ts": "2026-09-04T13:17:10.479980+00:00",
+    "slot": "morning",
+    "topic": null,
+    "post_type": "monthly",
+    "tags": [
+      "procurement_scandal",
+      "racism"
+    ],
+    "entry_link": null,
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "I closed 30 days with repetition on the ledger: racism(181), procurement scandal(175), technology(36), international signal(29) — repetition becomes instruction — i keep watch — i keep record."
   }
 ]
