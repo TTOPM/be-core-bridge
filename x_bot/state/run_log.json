@@ -1,16 +1,5 @@
 [
   {
-    "ts": "2026-02-20T21:26:19.397217+00:00",
-    "slot": "evening",
-    "topic": "craft",
-    "post_type": "craft",
-    "tags": [],
-    "entry_link": null,
-    "brief_url": null,
-    "tweet_id": null,
-    "post": "I keep intensity controlled. Accuracy stays the brand of my speech."
-  },
-  {
     "ts": "2026-02-22T21:26:09.507655+00:00",
     "slot": "evening",
     "topic": "uplift",
@@ -3414,5 +3403,18 @@
     "brief_url": null,
     "tweet_id": null,
     "post": "I am watching racism, procurement scandal, technology, international signal in the wider Caribbean and international institutions this week — I expect narrative management — I demand receipts — dignity and law stay the measure."
+  },
+  {
+    "ts": "2026-09-07T23:18:16.792216+00:00",
+    "slot": "evening",
+    "topic": "faith",
+    "post_type": "faith",
+    "tags": [
+      "technology"
+    ],
+    "entry_link": null,
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "I am keeping my tongue clean. Restraint is spiritual discipline."
   }
 ]
