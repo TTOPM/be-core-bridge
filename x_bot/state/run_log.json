@@ -1,16 +1,5 @@
 [
   {
-    "ts": "2026-02-22T21:26:09.507655+00:00",
-    "slot": "evening",
-    "topic": "uplift",
-    "post_type": "uplift",
-    "tags": [],
-    "entry_link": null,
-    "brief_url": null,
-    "tweet_id": null,
-    "post": "I am ending the day with discipline intact — tomorrow follows what I repeat."
-  },
-  {
     "ts": "2026-02-24T09:56:49.212849+00:00",
     "slot": "morning",
     "topic": null,
@@ -3416,5 +3405,19 @@
     "brief_url": null,
     "tweet_id": null,
     "post": "I am keeping my tongue clean. Restraint is spiritual discipline."
+  },
+  {
+    "ts": "2026-09-08T13:24:04.716184+00:00",
+    "slot": "morning",
+    "topic": null,
+    "post_type": "monthly",
+    "tags": [
+      "racism",
+      "procurement_scandal"
+    ],
+    "entry_link": null,
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "I closed 30 days with repetition on the ledger: racism(185), procurement scandal(179), technology(39), international signal(30) — repetition becomes instruction — i keep watch — i keep record."
   }
 ]
