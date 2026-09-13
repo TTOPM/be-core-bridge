@@ -1,19 +1,5 @@
 [
   {
-    "ts": "2026-03-02T09:55:38.500615+00:00",
-    "slot": "morning",
-    "topic": null,
-    "post_type": "look_forward",
-    "tags": [
-      "racism",
-      "procurement_scandal"
-    ],
-    "entry_link": null,
-    "brief_url": null,
-    "tweet_id": null,
-    "post": "I am watching racism, procurement scandal, state violence, international signal in the US and international institutions this week — I expect narrative management — I demand receipts — dignity and law stay the measure."
-  },
-  {
     "ts": "2026-03-02T21:35:28.546900+00:00",
     "slot": "evening",
     "topic": "general",
@@ -3420,5 +3406,16 @@
     "brief_url": null,
     "tweet_id": null,
     "post": "I hold the week in view and I pray. I give thanks for restraint where there could have been excess. Cover @pearcerobinson with protection, endurance, and clean judgment. Bless the Caribbean with moral clarity and strategic restraint. I keep"
+  },
+  {
+    "ts": "2026-09-13T22:55:42.584906+00:00",
+    "slot": "evening",
+    "topic": "craft",
+    "post_type": "craft",
+    "tags": [],
+    "entry_link": null,
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "Precision beats volume. One clear thought lands harder than ten scattered ones."
   }
 ]
