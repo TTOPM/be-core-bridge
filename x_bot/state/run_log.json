@@ -1,19 +1,5 @@
 [
   {
-    "ts": "2026-03-06T09:44:49.950737+00:00",
-    "slot": "morning",
-    "topic": null,
-    "post_type": "monthly",
-    "tags": [
-      "procurement_scandal",
-      "racism"
-    ],
-    "entry_link": null,
-    "brief_url": null,
-    "tweet_id": null,
-    "post": "I closed 30 days with repetition on the ledger: racism(41), procurement scandal(34), state violence(9), international signal(7) — repetition becomes instruction — i keep watch — i keep record."
-  },
-  {
     "ts": "2026-03-06T21:30:24.571737+00:00",
     "slot": "evening",
     "topic": "reflection",
@@ -3414,5 +3400,16 @@
     "brief_url": null,
     "tweet_id": null,
     "post": "I closed 30 days with repetition on the ledger: racism(192), procurement scandal(187), technology(42), international signal(30) — repetition becomes instruction — i keep watch — i keep record."
+  },
+  {
+    "ts": "2026-09-16T23:33:45.460933+00:00",
+    "slot": "evening",
+    "topic": "reflection",
+    "post_type": "reflection",
+    "tags": [],
+    "entry_link": null,
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "Power tests people by offering comfort in exchange for silence."
   }
 ]
