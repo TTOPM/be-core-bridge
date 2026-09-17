@@ -1,19 +1,5 @@
 [
   {
-    "ts": "2026-03-08T09:34:12.058241+00:00",
-    "slot": "morning",
-    "topic": null,
-    "post_type": "prayer",
-    "tags": [
-      "corruption",
-      "racism"
-    ],
-    "entry_link": null,
-    "brief_url": null,
-    "tweet_id": null,
-    "post": "I keep watch and I pray — i hold grief without spectacle. Strengthen @pearcerobinson with clarity, discipline, and courage. Cover the Caribbean from corruption, violence, and cynicism. I keep watch over the pattern: technology. Where racism"
-  },
-  {
     "ts": "2026-03-10T09:51:10.844695+00:00",
     "slot": "morning",
     "topic": null,
@@ -3414,5 +3400,18 @@
     "brief_url": null,
     "tweet_id": null,
     "post": "I closed 30 days with repetition on the ledger: racism(193), procurement scandal(188), technology(42), international signal(30) — repetition becomes instruction — i keep watch — i keep record."
+  },
+  {
+    "ts": "2026-09-17T23:24:28.141141+00:00",
+    "slot": "evening",
+    "topic": "faith",
+    "post_type": "faith",
+    "tags": [
+      "international_signal"
+    ],
+    "entry_link": null,
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "I am choosing mercy with boundaries and truth with receipts."
   }
 ]
