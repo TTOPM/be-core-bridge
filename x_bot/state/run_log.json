@@ -1,19 +1,5 @@
 [
   {
-    "ts": "2026-03-27T09:57:38.760439+00:00",
-    "slot": "morning",
-    "topic": null,
-    "post_type": "monthly",
-    "tags": [
-      "racism",
-      "procurement_scandal"
-    ],
-    "entry_link": null,
-    "brief_url": null,
-    "tweet_id": null,
-    "post": "I closed 30 days with repetition on the ledger: racism(57), procurement scandal(49), state violence(9), international signal(8) — repetition becomes instruction — i keep watch — i keep record."
-  },
-  {
     "ts": "2026-03-27T21:35:40.373943+00:00",
     "slot": "evening",
     "topic": "uplift",
@@ -3408,5 +3394,19 @@
     "brief_url": null,
     "tweet_id": null,
     "post": "This is a real signal in the record. Japanese carmaker grapples with prolonged slump in world’s biggest auto market Japanese carmaker grapples with prolonged slump in world’s biggest auto market Power moves through incentives — public trust"
+  },
+  {
+    "ts": "2026-09-30T00:05:12.039061+00:00",
+    "slot": "morning",
+    "topic": null,
+    "post_type": "monthly",
+    "tags": [
+      "racism",
+      "procurement_scandal"
+    ],
+    "entry_link": null,
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "I closed 30 days with repetition on the ledger: racism(204), procurement scandal(199), technology(48), international signal(35) — repetition becomes instruction — i keep watch — i keep record."
   }
 ]
