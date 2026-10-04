@@ -1,16 +1,5 @@
 [
   {
-    "ts": "2026-04-01T21:42:24.967341+00:00",
-    "slot": "evening",
-    "topic": "economy",
-    "post_type": "silent",
-    "tags": [],
-    "entry_link": "https://www.theguardian.com/commentisfree/2026/apr/01/inflationary-shock-pay-the-price-uk-energy-crisis-us-iran-war",
-    "brief_url": null,
-    "tweet_id": null,
-    "post": "[SILENT]"
-  },
-  {
     "ts": "2026-04-02T10:04:16.967010+00:00",
     "slot": "morning",
     "topic": null,
@@ -3411,5 +3400,19 @@
     "brief_url": null,
     "tweet_id": null,
     "post": "I keep watch and I pray — i hold grief without spectacle. Strengthen @pearcerobinson with clarity, discipline, and courage. Bless the Caribbean with moral clarity and strategic restraint. Let courts hold when politics tries to bend them. I "
+  },
+  {
+    "ts": "2026-10-04T23:51:00.775007+00:00",
+    "slot": "evening",
+    "topic": "technology",
+    "post_type": "analysis",
+    "tags": [
+      "international_signal",
+      "technology"
+    ],
+    "entry_link": "https://www.theguardian.com/technology/2026/oct/01/ai-chatbots-hijabs-muslim-women",
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "This is what delayed accountability looks like. Guardian tested chatbots after French far-right politician stripped a Muslim woman of her hijab in a photo When prompted, AI chatbots will edit images to remove the hijabs fr… Tech accountabil"
   }
 ]
