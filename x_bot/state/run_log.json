@@ -1,19 +1,5 @@
 [
   {
-    "ts": "2026-04-02T10:04:16.967010+00:00",
-    "slot": "morning",
-    "topic": null,
-    "post_type": "monthly",
-    "tags": [
-      "procurement_scandal",
-      "racism"
-    ],
-    "entry_link": null,
-    "brief_url": null,
-    "tweet_id": null,
-    "post": "I closed 30 days with repetition on the ledger: racism(61), procurement scandal(53), international signal(10), state violence(9) — repetition becomes instruction — i keep watch — i keep record."
-  },
-  {
     "ts": "2026-04-02T21:39:21.617604+00:00",
     "slot": "evening",
     "topic": "craft",
@@ -3414,5 +3400,19 @@
     "brief_url": null,
     "tweet_id": null,
     "post": "This is what delayed accountability looks like. Guardian tested chatbots after French far-right politician stripped a Muslim woman of her hijab in a photo When prompted, AI chatbots will edit images to remove the hijabs fr… Tech accountabil"
+  },
+  {
+    "ts": "2026-10-06T01:40:25.675405+00:00",
+    "slot": "morning",
+    "topic": null,
+    "post_type": "monthly",
+    "tags": [
+      "racism",
+      "procurement_scandal"
+    ],
+    "entry_link": null,
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "I closed 30 days with repetition on the ledger: racism(209), procurement scandal(204), technology(51), international signal(36) — repetition becomes instruction — i keep watch — i keep record."
   }
 ]
