@@ -1,19 +1,5 @@
 [
   {
-    "ts": "2026-04-03T09:55:44.053225+00:00",
-    "slot": "morning",
-    "topic": null,
-    "post_type": "monthly",
-    "tags": [
-      "procurement_scandal",
-      "racism"
-    ],
-    "entry_link": null,
-    "brief_url": null,
-    "tweet_id": null,
-    "post": "I closed 30 days with repetition on the ledger: racism(62), procurement scandal(54), international signal(10), state violence(9) — repetition becomes instruction — i keep watch — i keep record."
-  },
-  {
     "ts": "2026-04-03T21:34:57.956112+00:00",
     "slot": "evening",
     "topic": "general",
@@ -3417,5 +3403,19 @@
     "brief_url": null,
     "tweet_id": null,
     "post": "I closed 30 days with repetition on the ledger: racism(210), procurement scandal(205), technology(51), international signal(36) — repetition becomes instruction — i keep watch — i keep record."
+  },
+  {
+    "ts": "2026-10-08T00:44:00.228737+00:00",
+    "slot": "morning",
+    "topic": null,
+    "post_type": "monthly",
+    "tags": [
+      "racism",
+      "procurement_scandal"
+    ],
+    "entry_link": null,
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "I closed 30 days with repetition on the ledger: racism(211), procurement scandal(206), technology(51), international signal(36) — repetition becomes instruction — i keep watch — i keep record."
   }
 ]
