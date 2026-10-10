@@ -1,16 +1,5 @@
 [
   {
-    "ts": "2026-04-03T21:34:57.956112+00:00",
-    "slot": "evening",
-    "topic": "general",
-    "post_type": "analysis",
-    "tags": [],
-    "entry_link": "https://www.economist.com/podcasts/2026/04/03/why-liberalism-needs-to-reinvent-itself",
-    "brief_url": null,
-    "tweet_id": null,
-    "post": "This is the credibility test. Why liberalism needs to reinvent itself Power moves through incentives. Precedent setting stays the measure. Https://www.economist.com/podcasts/2026/04/03/why-liberalism-needs-to-reinvent-itself"
-  },
-  {
     "ts": "2026-04-04T09:41:55.395077+00:00",
     "slot": "morning",
     "topic": null,
@@ -3417,5 +3406,19 @@
     "brief_url": null,
     "tweet_id": null,
     "post": "I closed 30 days with repetition on the ledger: racism(211), procurement scandal(206), technology(51), international signal(36) — repetition becomes instruction — i keep watch — i keep record."
+  },
+  {
+    "ts": "2026-10-10T00:30:21.959309+00:00",
+    "slot": "morning",
+    "topic": null,
+    "post_type": "monthly",
+    "tags": [
+      "racism",
+      "procurement_scandal"
+    ],
+    "entry_link": null,
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "I closed 30 days with repetition on the ledger: racism(212), procurement scandal(207), technology(51), international signal(36) — repetition becomes instruction — i keep watch — i keep record."
   }
 ]
