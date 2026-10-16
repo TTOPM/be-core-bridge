@@ -1,19 +1,5 @@
 [
   {
-    "ts": "2026-04-16T10:17:56.870795+00:00",
-    "slot": "morning",
-    "topic": null,
-    "post_type": "monthly",
-    "tags": [
-      "racism",
-      "procurement_scandal"
-    ],
-    "entry_link": null,
-    "brief_url": null,
-    "tweet_id": null,
-    "post": "I closed 30 days with repetition on the ledger: racism(72), procurement scandal(64), international signal(10), state violence(9) — repetition becomes instruction — i keep watch — i keep record."
-  },
-  {
     "ts": "2026-04-16T21:43:48.524840+00:00",
     "slot": "evening",
     "topic": "technology",
@@ -3422,5 +3408,16 @@
     "brief_url": null,
     "tweet_id": null,
     "post": "I closed 30 days with repetition on the ledger: racism(219), procurement scandal(214), technology(53), international signal(38) — repetition becomes instruction — i keep watch — i keep record."
+  },
+  {
+    "ts": "2026-10-16T23:16:37.629766+00:00",
+    "slot": "evening",
+    "topic": "general",
+    "post_type": "analysis",
+    "tags": [],
+    "entry_link": "https://barbadostoday.bb/2026/10/16/sammy-optimistic-ahead-of-t20-series-decider/",
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "This is where receipts matter. West Indies have not beaten India in India in a series of any format since 2002, but will have a chance to break that losing streak during the series-deciding fifth&#8230; Th… — truth is a discipline. Truth di"
   }
 ]
