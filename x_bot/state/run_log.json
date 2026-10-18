@@ -1,16 +1,5 @@
 [
   {
-    "ts": "2026-04-17T21:42:21.717657+00:00",
-    "slot": "evening",
-    "topic": "uplift",
-    "post_type": "uplift",
-    "tags": [],
-    "entry_link": null,
-    "brief_url": null,
-    "tweet_id": null,
-    "post": "I am ending the day with discipline intact — tomorrow follows what I repeat."
-  },
-  {
     "ts": "2026-04-18T09:52:18.160847+00:00",
     "slot": "morning",
     "topic": null,
@@ -3425,5 +3414,20 @@
     "brief_url": null,
     "tweet_id": null,
     "post": "I closed the week with the record intact. Signals concentrated in general, governance. Measures stayed on procurement_scandal, racism, corruption. Next week gets judged by receipts and restraint."
+  },
+  {
+    "ts": "2026-10-18T13:04:18.334115+00:00",
+    "slot": "morning",
+    "topic": null,
+    "post_type": "prayer",
+    "tags": [
+      "corruption",
+      "technology",
+      "international_signal"
+    ],
+    "entry_link": null,
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "I pray cleanly today. I hold the cost of violence and the weight of unaccountable power. Strengthen @pearcerobinson with clarity, discipline, and courage. Lord, protect the Caribbean from predation, corruption, and cynicism. Teach me to rem"
   }
 ]
