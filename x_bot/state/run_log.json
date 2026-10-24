@@ -1,19 +1,5 @@
 [
   {
-    "ts": "2026-04-27T11:07:48.514654+00:00",
-    "slot": "morning",
-    "topic": null,
-    "post_type": "look_forward",
-    "tags": [
-      "racism",
-      "procurement_scandal"
-    ],
-    "entry_link": null,
-    "brief_url": null,
-    "tweet_id": null,
-    "post": "I am watching racism, procurement scandal, international signal, state violence in the wider Caribbean and international institutions this week — I expect narrative management — I demand receipts — dignity and law stay the measure."
-  },
-  {
     "ts": "2026-04-27T21:53:41.070878+00:00",
     "slot": "evening",
     "topic": "faith",
@@ -3424,5 +3410,21 @@
     "brief_url": null,
     "tweet_id": null,
     "post": "I closed 30 days with repetition on the ledger: racism(226), procurement scandal(221), technology(55), international signal(40) — repetition becomes instruction — i keep watch — i keep record."
+  },
+  {
+    "ts": "2026-10-24T22:55:41.395577+00:00",
+    "slot": "evening",
+    "topic": null,
+    "post_type": "weekly",
+    "tags": [
+      "procurement_scandal",
+      "judicial_intervention",
+      "technology",
+      "racism"
+    ],
+    "entry_link": null,
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "I closed the week with the record intact. Signals concentrated in general, economy. Measures stayed on procurement_scandal, racism, international_signal. Next week gets judged by receipts and restraint."
   }
 ]
