@@ -1,0 +1,6 @@
+# Optional. This service does NOT run when repository files are uploaded.
+# Install only after reviewing pretrained/model licensing and Python version compatibility.
+numpy>=1.26,<3
+openwakeword>=0.6,<1
+websockets>=13.1,<14
+opuslib>=3.0.1,<4
