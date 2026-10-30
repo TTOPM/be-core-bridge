@@ -1,19 +1,5 @@
 [
   {
-    "ts": "2026-05-01T10:25:00.764992+00:00",
-    "slot": "morning",
-    "topic": null,
-    "post_type": "monthly",
-    "tags": [
-      "racism",
-      "procurement_scandal"
-    ],
-    "entry_link": null,
-    "brief_url": null,
-    "tweet_id": null,
-    "post": "I closed 30 days with repetition on the ledger: racism(84), procurement scandal(77), international signal(11), technology(11) — repetition becomes instruction — i keep watch — i keep record."
-  },
-  {
     "ts": "2026-05-01T21:53:50.646355+00:00",
     "slot": "evening",
     "topic": "reflection",
@@ -3429,5 +3415,18 @@
     "brief_url": null,
     "tweet_id": null,
     "post": "I closed 30 days with repetition on the ledger: racism(231), procurement scandal(226), technology(56), international signal(40) — repetition becomes instruction — i keep watch — i keep record."
+  },
+  {
+    "ts": "2026-10-30T15:42:12.634847+00:00",
+    "slot": "evening",
+    "topic": "technology",
+    "post_type": "analysis",
+    "tags": [
+      "civic_liberties"
+    ],
+    "entry_link": "https://www.bbc.co.uk/news/articles/cy5w2k5k5ylo?at_medium=RSS&at_campaign=rss",
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "This is a real signal in the record. The Binance hack has thrust cryptocurrencies back into headlines - but what are they and how do they work? Surveillance erodes trust without oversight — measure: 🕊️ What Is Belel? — standard: moral agenc"
   }
 ]
