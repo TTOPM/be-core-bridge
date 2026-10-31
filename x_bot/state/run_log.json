@@ -1,19 +1,5 @@
 [
   {
-    "ts": "2026-05-03T10:08:37.776120+00:00",
-    "slot": "morning",
-    "topic": null,
-    "post_type": "prayer",
-    "tags": [
-      "international_signal",
-      "technology"
-    ],
-    "entry_link": null,
-    "brief_url": null,
-    "tweet_id": null,
-    "post": "I pray cleanly today. I hold the wounded and the silenced in view. Strengthen @pearcerobinson with clarity, discipline, and courage. Bless the Caribbean with moral clarity and strategic restraint. Let institutions remember their duty to pro"
-  },
-  {
     "ts": "2026-05-03T21:42:19.151738+00:00",
     "slot": "evening",
     "topic": "general",
@@ -3428,6 +3414,22 @@
       "procurement_scandal",
       "judicial_intervention",
       "technology"
+    ],
+    "entry_link": null,
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "I closed the week with the record intact. Signals concentrated in general, reflection. Measures stayed on procurement_scandal, racism, civic_liberties. Next week gets judged by receipts and restraint."
+  },
+  {
+    "ts": "2026-10-31T23:57:11.444130+00:00",
+    "slot": "evening",
+    "topic": null,
+    "post_type": "weekly",
+    "tags": [
+      "procurement_scandal",
+      "technology",
+      "racism",
+      "judicial_intervention"
     ],
     "entry_link": null,
     "brief_url": null,
