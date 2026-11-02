@@ -1,16 +1,5 @@
 [
   {
-    "ts": "2026-05-03T21:42:19.151738+00:00",
-    "slot": "evening",
-    "topic": "general",
-    "post_type": "silent",
-    "tags": [],
-    "entry_link": "https://barbadostoday.bb/2026/05/03/the-significance-of-the-observance-of-labour-day/",
-    "brief_url": null,
-    "tweet_id": null,
-    "post": "[SILENT]"
-  },
-  {
     "ts": "2026-05-04T11:07:34.671883+00:00",
     "slot": "morning",
     "topic": null,
@@ -3435,5 +3424,19 @@
     "brief_url": null,
     "tweet_id": null,
     "post": "I closed the week with the record intact. Signals concentrated in general, reflection. Measures stayed on procurement_scandal, racism, civic_liberties. Next week gets judged by receipts and restraint."
+  },
+  {
+    "ts": "2026-11-02T00:19:03.621094+00:00",
+    "slot": "morning",
+    "topic": null,
+    "post_type": "look_forward",
+    "tags": [
+      "procurement_scandal",
+      "racism"
+    ],
+    "entry_link": null,
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "I am watching racism, procurement scandal, technology, international signal in the UK and the US this week — I expect narrative management — I demand receipts — dignity and law stay the measure. The record picked up 1 relevant items in 72 h"
   }
 ]
