@@ -1,16 +1,5 @@
 [
   {
-    "ts": "2026-05-06T21:57:27.323213+00:00",
-    "slot": "evening",
-    "topic": "uplift",
-    "post_type": "uplift",
-    "tags": [],
-    "entry_link": null,
-    "brief_url": null,
-    "tweet_id": null,
-    "post": "I am ending the day with discipline intact — tomorrow follows what I repeat."
-  },
-  {
     "ts": "2026-05-07T21:59:15.204614+00:00",
     "slot": "evening",
     "topic": "faith",
@@ -3434,5 +3423,19 @@
     "brief_url": null,
     "tweet_id": null,
     "post": "Precision beats volume. One clear thought lands harder than ten scattered ones."
+  },
+  {
+    "ts": "2026-11-05T01:18:39.420132+00:00",
+    "slot": "morning",
+    "topic": null,
+    "post_type": "monthly",
+    "tags": [
+      "procurement_scandal",
+      "racism"
+    ],
+    "entry_link": null,
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "I closed 30 days with repetition on the ledger: racism(237), procurement scandal(232), technology(58), international signal(41) — repetition becomes instruction — i keep watch — i keep record."
   }
 ]
