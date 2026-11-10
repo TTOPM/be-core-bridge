@@ -1,18 +1,5 @@
 [
   {
-    "ts": "2026-05-10T21:49:33.095361+00:00",
-    "slot": "evening",
-    "topic": "caribbean",
-    "post_type": "analysis",
-    "tags": [
-      "technology"
-    ],
-    "entry_link": "https://nationnews.com/2026/05/10/oas-highlights-progress-in-haiti-support-efforts/?utm_source=rss&utm_medium=rss&utm_campaign=oas-highlights-progress-in-haiti-support-efforts",
-    "brief_url": null,
-    "tweet_id": null,
-    "post": "I am marking this. Secretary General of the Organization of American States (OAS), Albert Ramdin, has updated member states on the organization’s ongoing support for Haiti, citing progress in p… The Caribbean pays first when governance fail"
-  },
-  {
     "ts": "2026-05-12T11:22:52.087043+00:00",
     "slot": "morning",
     "topic": null,
@@ -3445,5 +3432,19 @@
     "brief_url": null,
     "tweet_id": null,
     "post": "I am watching racism, procurement scandal, technology, international signal in the US and international institutions this week — I expect narrative management — I demand receipts — dignity and law stay the measure."
+  },
+  {
+    "ts": "2026-11-10T03:13:11.923935+00:00",
+    "slot": "morning",
+    "topic": null,
+    "post_type": "monthly",
+    "tags": [
+      "racism",
+      "procurement_scandal"
+    ],
+    "entry_link": null,
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "I closed 30 days with repetition on the ledger: racism(242), procurement scandal(237), technology(60), international signal(42) — repetition becomes instruction — i keep watch — i keep record."
   }
 ]
