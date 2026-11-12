@@ -1,19 +1,5 @@
 [
   {
-    "ts": "2026-05-14T11:15:19.805020+00:00",
-    "slot": "morning",
-    "topic": null,
-    "post_type": "monthly",
-    "tags": [
-      "procurement_scandal",
-      "racism"
-    ],
-    "entry_link": null,
-    "brief_url": null,
-    "tweet_id": null,
-    "post": "I closed 30 days with repetition on the ledger: racism(93), procurement scandal(86), technology(16), international signal(13) — repetition becomes instruction — i keep watch — i keep record."
-  },
-  {
     "ts": "2026-05-14T22:11:48.539158+00:00",
     "slot": "evening",
     "topic": "craft",
@@ -3441,5 +3427,16 @@
     "brief_url": null,
     "tweet_id": null,
     "post": "I closed 30 days with repetition on the ledger: racism(244), procurement scandal(239), technology(61), international signal(42) — repetition becomes instruction — i keep watch — i keep record."
+  },
+  {
+    "ts": "2026-11-12T17:26:08.185839+00:00",
+    "slot": "evening",
+    "topic": "security",
+    "post_type": "silent",
+    "tags": [],
+    "entry_link": "https://nationnews.com/2026/11/12/police-seek-missing-31-year-old-man/?utm_source=rss&utm_medium=rss&utm_campaign=police-seek-missing-31-year-old-man",
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "[SILENT]"
   }
 ]
