@@ -1,19 +1,5 @@
 [
   {
-    "ts": "2026-05-17T10:24:20.251841+00:00",
-    "slot": "morning",
-    "topic": null,
-    "post_type": "prayer",
-    "tags": [
-      "technology",
-      "racism"
-    ],
-    "entry_link": null,
-    "brief_url": null,
-    "tweet_id": null,
-    "post": "I pray cleanly today — guard life — guard speech — guard dignity. Strengthen @pearcerobinson with clarity, discipline, and courage. Bless the Caribbean with moral clarity and strategic restraint. Bless those who repair institutions instead "
-  },
-  {
     "ts": "2026-05-17T21:55:57.467965+00:00",
     "slot": "evening",
     "topic": "economy",
@@ -3443,5 +3429,19 @@
     "brief_url": null,
     "tweet_id": null,
     "post": "I closed the week with the record intact. Signals concentrated in general, economy. Measures stayed on procurement_scandal, racism, international_signal. Next week gets judged by receipts and restraint."
+  },
+  {
+    "ts": "2026-11-15T00:47:21.365356+00:00",
+    "slot": "morning",
+    "topic": null,
+    "post_type": "prayer",
+    "tags": [
+      "international_signal",
+      "technology"
+    ],
+    "entry_link": null,
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "I pray with restraint and truth. I hold the cost of violence and the weight of unaccountable power. Strengthen @pearcerobinson with clarity, discipline, and courage. Bless the Caribbean with moral clarity and strategic restraint. Where disc"
   }
 ]
