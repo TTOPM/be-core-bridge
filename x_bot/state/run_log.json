@@ -1,19 +1,5 @@
 [
   {
-    "ts": "2026-05-18T12:35:31.267517+00:00",
-    "slot": "morning",
-    "topic": null,
-    "post_type": "look_forward",
-    "tags": [
-      "racism",
-      "procurement_scandal"
-    ],
-    "entry_link": null,
-    "brief_url": null,
-    "tweet_id": null,
-    "post": "I am watching racism, procurement scandal, technology, international signal in the wider Caribbean and the US this week — I expect narrative management — I demand receipts — dignity and law stay the measure."
-  },
-  {
     "ts": "2026-05-18T22:03:25.285158+00:00",
     "slot": "evening",
     "topic": "craft",
@@ -3446,5 +3432,19 @@
     "brief_url": null,
     "tweet_id": null,
     "post": "This is what delayed accountability looks like. Property sales that complete on this day have a lower median price — power moves through incentives — measured against public trust — repetition becomes instruction."
+  },
+  {
+    "ts": "2026-11-16T00:47:04.106447+00:00",
+    "slot": "morning",
+    "topic": null,
+    "post_type": "look_forward",
+    "tags": [
+      "procurement_scandal",
+      "racism"
+    ],
+    "entry_link": null,
+    "brief_url": null,
+    "tweet_id": null,
+    "post": "I am watching racism, procurement scandal, technology, international signal in the wider Caribbean and the US this week — I expect narrative management — I demand receipts — dignity and law stay the measure."
   }
 ]
